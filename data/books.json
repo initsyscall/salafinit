@@ -1,0 +1,44 @@
+[
+  {
+    "title": "Fundamentals of Tawheed",
+    "author": "Dr. Abu Ameenah Bilal Philips",
+    "description": "An overview of the fundamental Islamic belief regarding the Oneness of God.",
+    "category": "Aqeedah",
+    "downloadUrl": "https://example.com/tawheed.pdf"
+  },
+  {
+    "title": "Riyad as-Salihin",
+    "author": "Imam An-Nawawi",
+    "description": "A compilation of verses from the Quran and hadiths by Imam Nawawi.",
+    "category": "Hadith",
+    "downloadUrl": "https://example.com/riyad-as-salihin.pdf"
+  },
+  {
+    "title": "The Book of Prayer",
+    "author": "Sheikh Ibn Baz",
+    "description": "A comprehensive guide on how to perform Salah according to the Sunnah.",
+    "category": "Fiqh",
+    "downloadUrl": "https://example.com/book-of-prayer.pdf"
+  },
+  {
+    "title": "40 Hadith Nawawi",
+    "author": "Imam An-Nawawi",
+    "description": "Forty essential hadiths covering the fundamental principles of Islam.",
+    "category": "Hadith",
+    "downloadUrl": "https://example.com/40-hadith.pdf"
+  },
+  {
+    "title": "Kitab at-Tawheed",
+    "author": "Sheikh Muhammad ibn Abdul-Wahhab",
+    "description": "A foundational text on the Islamic concept of monotheism.",
+    "category": "Aqeedah",
+    "downloadUrl": "https://example.com/kitab-at-tawheed.pdf"
+  },
+  {
+    "title": "Al-Usul ath-Thalathah",
+    "author": "Sheikh Muhammad ibn Abdul-Wahhab",
+    "description": "The Three Fundamental Principles that every Muslim must know.",
+    "category": "Aqeedah",
+    "downloadUrl": "https://example.com/usul-thalathah.pdf"
+  }
+]

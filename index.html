@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="salafInit - A comprehensive Salafi Islamic learning app with Quran, Hadith, Salah timings, and study resources">
+  <meta name="theme-color" content="#201D33">
+
+  <title>salafInit</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="assets/icons/icon-192.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Amiri+Quran&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+
+  <style>
+    .home-hero {
+      text-align: center;
+      padding: var(--spacing-2xl) 0;
+      position: relative;
+    }
+
+    .home-hero__title {
+      font-size: var(--font-size-3xl);
+      margin-bottom: var(--spacing-sm);
+      background: linear-gradient(135deg, var(--color-quran), var(--color-primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .home-hero__subtitle {
+      font-size: var(--font-size-base);
+      color: var(--color-text-secondary);
+      max-width: 36rem;
+      margin: 0 auto;
+      line-height: var(--line-height-relaxed);
+    }
+
+    .home-hero__bismillah {
+      font-family: var(--font-arabic);
+      font-size: var(--font-size-xl);
+      color: var(--color-quran);
+      margin-bottom: var(--spacing-lg);
+      font-weight: 700;
+      text-shadow: 0 0 20px rgba(246, 193, 119, 0.3);
+    }
+
+    @media (min-width: 768px) {
+      .home-hero {
+        padding: var(--spacing-3xl) 0 var(--spacing-2xl);
+      }
+
+      .home-hero__title {
+        font-size: var(--font-size-4xl);
+      }
+
+      .home-hero__subtitle {
+        font-size: var(--font-size-lg);
+      }
+
+      .home-hero__bismillah {
+        font-size: var(--font-size-2xl);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header class="header">
+      <a href="#/" class="header__brand">
+        <svg class="header__brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z" />
+          <path d="M2 17l10 5 10-5" />
+          <path d="M2 12l10 5 10-5" />
+        </svg>
+        <span class="header__brand-text">salafInit</span>
+      </a>
+      <button class="header__hamburger" id="header-hamburger" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <nav class="header__nav" id="header-nav">
+        <a href="#quran" class="header__nav-link">Quran</a>
+        <a href="#hadiths" class="header__nav-link">Hadiths</a>
+        <a href="#salah" class="header__nav-link">Salah</a>
+        <a href="#learn" class="header__nav-link">Learn</a>
+        <a href="#note" class="header__nav-link">Notes</a>
+      </nav>
+    </header>
+
+    <main id="app-main" class="main">
+    </main>
+
+    <footer class="footer">
+      <p>salafInit &mdash; Built for the Ummah | <a href="https://codeberg.org/initsyscall/salafInit" target="_blank"
+          rel="noopener">Source</a></p>
+    </footer>
+  </div>
+
+  <script src="js/core/store.js"></script>
+  <script src="js/api/client.js"></script>
+  <script src="js/core/router.js"></script>
+  <script src="js/core/utils.js"></script>
+  <script src="js/api/quran.js"></script>
+  <script src="js/api/tafsir-api.js"></script>
+  <script src="js/api/hadith.js"></script>
+  <script src="js/api/salah.js"></script>
+  <script src="js/views/quran/quran-view.js"></script>
+  <script src="js/views/hadith/hadith-view.js"></script>
+  <script src="js/views/salah/salah-view.js"></script>
+  <script src="js/views/learn/learn-view.js"></script>
+  <script src="js/views/note/note-view.js"></script>
+  <script src="js/core/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@zumer/snapdom@latest/dist/snapdom.min.js"></script>
+</body>
+
+</html>
