@@ -117,6 +117,8 @@ const QuranView = (() => {
 
     if (params.tafsir) {
       loadSurahForTafsir(container, params);
+    } else if (params.image) {
+      loadSurahForImage(container, params);
     } else if (params.surah) {
       loadSurah(container, params);
     } else {
@@ -417,6 +419,34 @@ const QuranView = (() => {
       container.appendChild(Utils.createElement('div', { className: 'empty-state' }, [
         Utils.createElement('div', { className: 'empty-state__title' }, 'Failed to Load'),
         Utils.createElement('div', { className: 'empty-state__description' }, 'Could not load surah.'),
+        Utils.createElement('a', { className: 'btn btn--primary', href: '#quran', style: 'margin-top: var(--spacing-xl); display: inline-block;' }, 'Back to Surah List')
+      ]));
+    }
+  }
+
+  async function loadSurahForImage(container, params) {
+    const translations = [
+      Store.get('quranTranslation1') || 'en.hilali',
+      Store.get('quranTranslation2'),
+      Store.get('quranTranslation3')
+    ].filter(Boolean);
+
+    try {
+      const [uthmaniData, ...translationData] = await Promise.all([
+        QuranApi.getSurah(params.surah, 'quran-uthmani'),
+        ...translations.map(t => QuranApi.getSurah(params.surah, t))
+      ]);
+      const ayah = uthmaniData.data.ayahs.find(a => a.numberInSurah == params.ayah);
+      const translation = translationData[0]?.data?.ayahs?.find(a => a.numberInSurah == params.ayah);
+      
+      if (ayah) {
+        setTimeout(() => shareAyah(ayah, translation, uthmaniData.data, true), 300);
+      }
+      renderSurahContent(container, uthmaniData.data, translationData[0]?.data, params.ayah, translationData);
+    } catch (error) {
+      container.appendChild(Utils.createElement('div', { className: 'empty-state' }, [
+        Utils.createElement('div', { className: 'empty-state__title' }, 'Failed to Load'),
+        Utils.createElement('div', { className: 'empty-state__description' }, 'Could not load hadith.'),
         Utils.createElement('a', { className: 'btn btn--primary', href: '#quran', style: 'margin-top: var(--spacing-xl); display: inline-block;' }, 'Back to Surah List')
       ]));
     }
@@ -793,9 +823,12 @@ const QuranView = (() => {
     });
   }
 
-  async function shareAyah(ayah, translation, surah) {
+  async function shareAyah(ayah, translation, surah, isImageMode = false) {
     const existingModal = document.querySelector('.quran-share-modal');
     if (existingModal) existingModal.remove();
+
+    const imageUrl = `#quran/image/${surah.number}/${ayah.numberInSurah}`;
+    const appUrl = `#quran/${surah.number}/${ayah.numberInSurah}`;
 
     const template = Utils.createElement('div', {
       className: 'quran-share-template',
@@ -811,8 +844,7 @@ const QuranView = (() => {
       translation?.text ? Utils.createElement('p', {
         style: 'font-size: 14px; line-height: 1.6; color: #908CAA; margin-bottom: 16px; text-align: center;'
       }, `"${translation.text}"`) : null,
-      Utils.createElement('div', { style: 'display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #322D4A; padding-top: 12px; font-size: 12px; color: #6E6A86; flex-shrink: 0;' }, [
-        Utils.createElement('span', {}, `${surah.englishName} ${ayah.numberInSurah}`),
+      Utils.createElement('div', { style: 'display: flex; justify-content: center; align-items: center; border-top: 1px solid #322D4A; padding-top: 12px; font-size: 12px; flex-shrink: 0;' }, [
         Utils.createElement('span', { style: 'color: #A277FF;' }, 'salaf.Init();')
       ])
     ]);
@@ -820,6 +852,9 @@ const QuranView = (() => {
     const closeShareModal = () => {
       document.querySelector('.quran-share-modal')?.remove();
       document.body.style.overflow = '';
+      if (isImageMode) {
+        window.location.hash = appUrl;
+      }
     };
 
     const modal = Utils.createElement('div', {
@@ -827,13 +862,26 @@ const QuranView = (() => {
       style: 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 9999; padding: 80px 20px 100px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; overflow-y: auto; -webkit-overflow-scrolling: touch;'
     }, [
       template,
-      Utils.createElement('div', { style: 'margin-top: 20px; display: flex; gap: 10px; flex-shrink: 0; z-index: 10;' }, [
+      Utils.createElement('div', { style: 'margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; flex-shrink: 0; z-index: 10;' }, [
         Utils.createElement('button', {
           className: 'btn btn--primary',
           onClick: () => generateShareImage(template, ayah, surah)
         }, 'Download Image'),
         Utils.createElement('button', {
           className: 'btn btn--outline',
+          onClick: () => {
+            navigator.clipboard.writeText(window.location.origin + window.location.pathname + imageUrl).then(() => {
+              Utils.showToast('Link copied!');
+            });
+          }
+        }, 'Copy Link'),
+        isImageMode ? Utils.createElement('a', {
+          className: 'btn btn--ghost',
+          href: appUrl,
+          style: 'text-decoration: none;'
+        }, 'Open in App') : null,
+        Utils.createElement('button', {
+          className: 'btn btn--ghost',
           onClick: closeShareModal
         }, 'Close')
       ])

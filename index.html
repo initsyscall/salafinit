@@ -88,14 +88,14 @@
           <path d="M2 17l10 5 10-5" />
           <path d="M2 12l10 5 10-5" />
         </svg>
-        <span class="header__brand-text">salafInit</span>
+        <span class="header__brand-text">salaf.Init();</span>
       </a>
       <button class="header__hamburger" id="header-hamburger" aria-label="Menu">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
+        <div class="hamburger-lines">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
       </button>
       <nav class="header__nav" id="header-nav">
         <a href="#quran" class="header__nav-link">Quran</a>
@@ -115,13 +115,56 @@
     </footer>
   </div>
 
+  <button id="hard-refresh-btn" aria-label="Hard Refresh">↻</button>
+
+  <script>
+    (function () {
+      var btn = document.getElementById('hard-refresh-btn');
+      function isOnHome() {return !window.location.hash || window.location.hash === '#/';}
+      function isMobile() {return window.innerWidth < 768;}
+
+      function updateVisibility() {
+        if ((isMobile() || localStorage.getItem('showHardRefresh') === '1') && isOnHome()) {
+          btn.classList.remove('hidden');
+        } else {
+          btn.classList.add('hidden');
+        }
+      }
+
+      document.addEventListener('keydown', function (e) {
+        if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+          e.preventDefault();
+          localStorage.setItem('showHardRefresh', localStorage.getItem('showHardRefresh') === '1' ? '0' : '1');
+          updateVisibility();
+        }
+      });
+
+      btn.addEventListener('click', function () {
+        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({action: 'skipWaiting'});
+        }
+        caches.keys().then(function (keys) {
+          keys.forEach(function (key) {caches.delete(key);});
+        });
+        location.reload();
+      });
+
+      updateVisibility();
+      window.addEventListener('hashchange', updateVisibility);
+      window.addEventListener('resize', updateVisibility);
+    })();
+  </script>
+
   <script src="js/core/store.js"></script>
   <script src="js/api/client.js"></script>
   <script src="js/core/router.js"></script>
   <script src="js/core/utils.js"></script>
   <script src="js/api/quran.js"></script>
   <script src="js/api/tafsir-api.js"></script>
-  <script src="js/api/hadith.js"></script>
+  <script src="js/api/hadiths/config.js"></script>
+  <script src="js/api/hadiths/books.js"></script>
+  <script src="js/api/hadiths/fetcher.js"></script>
+  <script src="js/api/hadiths/index.js"></script>
   <script src="js/api/salah.js"></script>
   <script src="js/views/quran/quran-view.js"></script>
   <script src="js/views/hadith/hadith-view.js"></script>

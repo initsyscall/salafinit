@@ -1,4 +1,4 @@
-const CACHE_NAME = 'salafinit-v1';
+const CACHE_NAME = 'salafinit-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -34,6 +34,12 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+
+  // Always fetch navigation requests fresh from network to prevent stale HTML
+  if (event.request.mode === 'navigate') {
+    event.respondWith(fetch(event.request));
+    return;
+  }
 
   const url = new URL(event.request.url);
   const path = url.pathname;

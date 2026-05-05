@@ -12,11 +12,13 @@ const App = (() => {
     if (!hamburger || !nav) return;
 
     hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
       nav.classList.toggle('open');
     });
 
     document.querySelectorAll('.header__nav-link').forEach(link => {
       link.addEventListener('click', () => {
+        hamburger.classList.remove('open');
         nav.classList.remove('open');
       });
     });
@@ -48,10 +50,11 @@ const App = (() => {
     Router.on('quran/:surah', (container, params) => QuranView.render(container, params));
     Router.on('quran/tafsir/:surah/:ayah', (container, params) => QuranView.render(container, { tafsir: true, surah: params.surah, ayah: params.ayah }));
     Router.on('quran/:surah/:ayah', (container, params) => QuranView.render(container, params));
+    Router.on('quran/image/:surah/:ayah', (container, params) => QuranView.render(container, { image: true, surah: params.surah, ayah: params.ayah }));
 
     Router.on('hadiths', () => HadithView.render(document.getElementById('app-main')));
-    Router.on('hadiths/:book', (container, params) => HadithView.render(container, params));
-    Router.on('hadiths/:book/:number', (container, params) => HadithView.render(container, params));
+    Router.on('hadiths/:collection/:book/:hadith', (container, params) => HadithView.render(container, params));
+    Router.on('hadiths/:collection/:book', (container, params) => HadithView.render(container, params));
 
     Router.on('salah', () => SalahView.render(document.getElementById('app-main')));
 

@@ -1,348 +1,478 @@
 const HadithView = (() => {
+  let currentCollection = 'sunni';
   let currentBook = null;
-  let currentHadithIndex = 0;
-  let hadithsData = null;
-  let currentBookId = 'bukhari';
+  let currentChapter = null;
 
   async function render(container, params = {}) {
     container.innerHTML = '';
-    const content = Utils.createElement('div', { id: 'hadith-content', className: 'hadith-page' });
+    const content = Utils.createElement('div', { className: 'hadith-page' });
     container.appendChild(content);
 
-    if (params.book && params.number) {
-      await loadSpecificHadith(content, params.book, params.number);
+    const collection = HadithApi.normalizeCollection(params.collection);
+    currentCollection = collection;
+
+    if (params.book && params.hadith) {
+      await renderHadithDetail(content, collection, params.book, params.hadith);
+    } else if (params.book) {
+      await renderBookInput(content, collection, params.book);
     } else {
-      renderBookSelector(content);
+      renderDashboard(content);
     }
   }
 
-  function renderBookSelector(container) {
-    const books = HadithApi.getKutubAlSittah();
-    
-    const header = Utils.createElement('div', { className: 'page-header' }, [
-      Utils.createElement('h1', { className: 'page-header__title', style: 'color: var(--color-hadith);' }, 'Hadith Collections'),
-      Utils.createElement('p', { className: 'page-header__subtitle' }, 'Kutub al-Sittah - The Six Major Books')
+  function renderDashboard(container) {
+    const { sunni, shia } = HadithApi.getAllBooks();
+    const goldBooks = sunni.filter(b => b.type === 'gold');
+
+    const header = Utils.createElement('div', { className: 'hadith-dashboard-header' }, [
+      Utils.createElement('svg', {
+        className: 'hadith-dashboard-calligraphy',
+        viewBox: '0 0 200 60',
+        xmlns: 'http://www.w3.org/2000/svg'
+      }, [
+        Utils.createElement('text', {
+          x: '100',
+          y: '45',
+          'text-anchor': 'middle',
+          'font-family': "'Amiri Quran', serif",
+          'font-size': '40',
+          fill: '#A277FF'
+        }, 'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ')
+      ]),
+      Utils.createElement('h1', { className: 'hadith-dashboard-title' }, 'Hadith Collections'),
+      Utils.createElement('p', { className: 'hadith-dashboard-subtitle' }, 'Sunni & Shia Hadith Libraries')
     ]);
     container.appendChild(header);
 
-    const selectWrapper = Utils.createElement('div', { 
-      style: 'display: flex; gap: var(--spacing-md); margin-bottom: var(--spacing-lg); flex-wrap: wrap; align-items: center;'
-    });
-
-    const bookSelect = Utils.createElement('select', {
-      className: 'input',
-      id: 'hadith-book-select',
-      style: 'flex: 1; min-width: 200px;'
-    });
-    
-    books.forEach((book, index) => {
-      const option = Utils.createElement('option', { 
-        value: book.id,
-        textContent: `${book.name} (${book.arabic})`
-      });
-      if (book.id === currentBookId) option.selected = true;
-      bookSelect.appendChild(option);
-    });
-
-    const numberInput = Utils.createElement('input', {
-      type: 'number',
-      className: 'input',
-      id: 'hadith-number-input',
-      placeholder: 'Hadith #',
-      min: 1,
-      style: 'width: 100px;'
-    });
-
-    const goBtn = Utils.createElement('button', {
-      className: 'btn btn--primary',
-      onClick: () => {
-        const bookId = document.getElementById('hadith-book-select').value;
-        const number = document.getElementById('hadith-number-input').value;
-        if (number) {
-          window.location.hash = `#hadiths/${bookId}/${number}`;
-        }
-      }
-    }, 'Go');
-
-    selectWrapper.appendChild(bookSelect);
-    selectWrapper.appendChild(numberInput);
-    selectWrapper.appendChild(goBtn);
-    container.appendChild(selectWrapper);
-
-    const booksGrid = Utils.createElement('div', { className: 'grid grid--responsive' });
-    
-    books.forEach(book => {
-      const card = Utils.createElement('a', {
-        className: 'card hadith-book-card',
-        href: `#hadiths/${book.id}/1`,
-        style: 'text-align: center; cursor: pointer;'
+    const searchSection = Utils.createElement('div', { className: 'hadith-search-hero' }, [
+      Utils.createElement('select', {
+        className: 'input hadith-book-select',
+        id: 'hadith-book-dropdown'
       }, [
-        Utils.createElement('div', { 
-          className: 'hadith-book-arabic',
-          style: 'font-family: var(--font-arabic); font-size: var(--font-size-2xl); color: var(--color-hadith); margin-bottom: var(--spacing-sm);'
-        }, book.arabic),
-        Utils.createElement('div', { 
-          className: 'hadith-book-name',
-          style: 'font-weight: 600;'
-        }, book.name)
-      ]);
-      booksGrid.appendChild(card);
+        Utils.createElement('option', { value: '', textContent: '— Select a Book —' }),
+        Utils.createElement('optgroup', { label: 'Salafi (Sunni)' }, [
+          ...sunni.map(b => Utils.createElement('option', {
+            value: `sunni|${b.id}`,
+            textContent: `${b.name} (${b.arabic})`
+          }))
+        ]),
+        Utils.createElement('optgroup', { label: 'Shia' }, [
+          ...shia.map(b => Utils.createElement('option', {
+            value: `shia|${b.id}`,
+            textContent: `${b.name} (${b.arabic})`
+          }))
+        ])
+      ]),
+      Utils.createElement('button', {
+        className: 'btn btn--primary hadith-search-btn',
+        onClick: () => {
+          const selected = document.getElementById('hadith-book-dropdown').value;
+          if (selected) {
+            const [collection, bookId] = selected.split('|');
+            window.location.hash = `#hadiths/${collection}/${bookId}`;
+          }
+        }
+      }, 'Go')
+    ]);
+    container.appendChild(searchSection);
+
+    const sunniSection = Utils.createElement('div', { className: 'hadith-section' }, [
+      Utils.createElement('h2', { className: 'hadith-section-title sunni-title' }, 'Salafi (Sunni) Hadiths'),
+      Utils.createElement('div', { className: 'hadith-books-grid' })
+    ]);
+    const sunniGrid = sunniSection.querySelector('.hadith-books-grid');
+
+    goldBooks.forEach(book => {
+      const card = createBookCard(book, 'sunni', 'gold');
+      sunniGrid.appendChild(card);
     });
 
-    container.appendChild(booksGrid);
+    const sunniKutub = sunni.filter(b => b.type === 'kutub');
+    sunniKutub.forEach(book => {
+      const card = createBookCard(book, 'sunni', 'kutub');
+      sunniGrid.appendChild(card);
+    });
+
+    const otherSunni = sunni.filter(b => !['gold', 'kutub'].includes(b.type));
+    otherSunni.forEach(book => {
+      const card = createBookCard(book, 'sunni', 'primary');
+      sunniGrid.appendChild(card);
+    });
+
+    container.appendChild(sunniSection);
+
+    const shiaSection = Utils.createElement('div', { className: 'hadith-section' }, [
+      Utils.createElement('h2', { className: 'hadith-section-title shia-title' }, 'Shia Hadiths'),
+      Utils.createElement('div', { className: 'hadith-warning' }, [
+        Utils.createElement('span', { className: 'hadith-warning-icon' }, '⚠'),
+        Utils.createElement('span', {}, 'According to the Salafi manhaj, the hadiths below and their gradings are unreliable and are listed only for the sake of knowledge.')
+      ]),
+      Utils.createElement('div', { className: 'hadith-books-grid' })
+    ]);
+    const shiaGrid = shiaSection.querySelector('.hadith-books-grid');
+
+    shia.forEach(book => {
+      const card = createBookCard(book, 'shia', 'shia');
+      shiaGrid.appendChild(card);
+    });
+    container.appendChild(shiaSection);
   }
 
-  async function loadSpecificHadith(container, bookId, hadithNumber) {
-    currentBookId = bookId;
-    
+  function createBookCard(book, collection, styleType) {
+    return Utils.createElement('a', {
+      className: `hadith-book-card ${styleType}-card`,
+      href: `#hadiths/${collection}/${book.id}`
+    }, [
+      Utils.createElement('div', { className: 'hadith-book-arabic' }, book.arabic),
+      Utils.createElement('div', { className: 'hadith-book-name' }, book.name),
+      book.totalHadiths ? Utils.createElement('div', { className: 'hadith-book-count' }, `${book.totalHadiths.toLocaleString()} hadiths`) : null
+    ]);
+  }
+
+  async function renderBookInput(container, collection, bookId) {
+    const backBtn = Utils.createElement('a', {
+      href: '#hadiths',
+      className: 'hadith-back-btn'
+    }, '← Back to Dashboard');
+    container.appendChild(backBtn);
+
+    const { sunni, shia } = HadithApi.getAllBooks();
+    const allBooks = [...sunni, ...shia];
+    const book = allBooks.find(b => b.id === bookId);
+
+    const header = Utils.createElement('div', { className: 'hadith-book-header' }, [
+      Utils.createElement('h1', { className: 'hadith-book-title' }, book?.name || bookId),
+      Utils.createElement('p', { className: 'hadith-book-arabic-title' }, book?.arabic || '')
+    ]);
+    container.appendChild(header);
+
+    const navSection = Utils.createElement('div', { className: 'hadith-search-box' }, [
+      Utils.createElement('p', { className: 'hadith-search-label' }, 'Enter a hadith number to view:'),
+      Utils.createElement('div', { className: 'hadith-search-row' }, [
+        Utils.createElement('input', {
+          type: 'number',
+          min: '1',
+          className: 'input hadith-search-input',
+          id: 'hadith-input',
+          placeholder: 'e.g. 735',
+          onKeydown: (e) => {
+            if (e.key === 'Enter') {
+              const h = document.getElementById('hadith-input').value;
+              if (h) window.location.hash = `#hadiths/${collection}/${bookId}/${h}`;
+            }
+          }
+        }),
+        Utils.createElement('button', {
+          className: 'btn btn--primary hadith-search-btn',
+          onClick: () => {
+            const h = document.getElementById('hadith-input').value;
+            if (h) window.location.hash = `#hadiths/${collection}/${bookId}/${h}`;
+          }
+        }, 'View')
+      ])
+    ]);
+    container.appendChild(navSection);
+
+    const collectionInfo = collection === 'shia'
+      ? { title: 'Shia Hadith Collection', desc: '8 volumes of Al-Kafi plus Al-Amali, Al-Khisal, Al-Tawhid, Kitab al-Ghayba, Ma\'ani al-Akhbar, and Uyun al-Rida.' }
+      : { title: 'Salafi (Sunni) Hadith Collection', desc: 'Kutub al-Sittah (6 books) + Musnad Ahmad, Muwatta Malik, Al-Adab Al-Mufrod, Mishkat al-Masabih, Riyadh as-Salihin, and more.' };
+
+    const descSection = Utils.createElement('div', { className: 'hadith-collection-desc' }, [
+      Utils.createElement('h3', { className: 'hadith-collection-title' }, collectionInfo.title),
+      Utils.createElement('p', { className: 'hadith-collection-text' }, collectionInfo.desc)
+    ]);
+    container.appendChild(descSection);
+  }
+
+  async function renderChapterHadiths(container, collection, bookId, chapter) {
+    const backBtn = Utils.createElement('a', {
+      href: `#hadiths/${collection}/${bookId}`,
+      className: 'hadith-back-btn'
+    }, '← Back to Chapters');
+    container.appendChild(backBtn);
+
+    const header = Utils.createElement('div', { className: 'hadith-chapter-header' }, [
+      Utils.createElement('h1', { className: 'hadith-chapter-title' }, `Chapter ${chapter}`)
+    ]);
+    container.appendChild(header);
+
     const loader = Utils.createElement('div', { className: 'loader' }, [
       Utils.createElement('div', { className: 'loader__spinner' }),
-      Utils.createElement('span', { className: 'loader__text' }, `Loading ${hadithNumber}...`)
+      Utils.createElement('span', { className: 'loader__text' }, 'Loading hadiths...')
     ]);
     container.appendChild(loader);
 
     try {
-      const data = await HadithApi.getBookHadiths(bookId);
-      const processed = HadithApi.processHadithData(data, bookId);
-      
-      if (!processed || !processed.hadiths) throw new Error('No hadiths found');
-      
-      hadithsData = processed;
-      const index = processed.hadiths.findIndex(h => h.hadithNumber == hadithNumber);
-      currentHadithIndex = index >= 0 ? index : 0;
-      
+      const rawData = await HadithApi.getChapterHadiths(collection, bookId, chapter);
       loader.remove();
-      renderHadithView(container);
+
+      const hadiths = Array.isArray(rawData) ? rawData : (rawData?.hadiths || []);
+      const hadithsGrid = Utils.createElement('div', { className: 'hadiths-mini-list' });
+
+      if (hadiths.length > 0) {
+        hadiths.forEach(h => {
+          const grade = h.grade || 'Unknown';
+          const gradeClass = getGradeClass(grade);
+
+          const miniCard = Utils.createElement('a', {
+            href: `#hadiths/${collection}/${bookId}/${chapter}/${h.idInBook || h.id}`,
+            className: `hadith-mini-card ${gradeClass}`
+          }, [
+            Utils.createElement('span', { className: 'hadith-num' }, `#${h.idInBook || h.id}`),
+            Utils.createElement('span', { className: 'hadith-grade' }, grade)
+          ]);
+          hadithsGrid.appendChild(miniCard);
+        });
+      }
+
+      container.appendChild(hadithsGrid);
     } catch (err) {
-      console.error('Failed to load hadith:', err);
       loader.remove();
       container.appendChild(Utils.createElement('div', { className: 'empty-state' }, [
         Utils.createElement('div', { className: 'empty-state__title' }, 'Failed to Load'),
-        Utils.createElement('div', { className: 'empty-state__description' }, `Could not load hadith #${hadithNumber} from ${bookId}`),
-        Utils.createElement('a', { className: 'btn btn--primary', href: '#hadiths', style: 'margin-top: var(--spacing-xl); display: inline-block;' }, 'Back to Books')
+        Utils.createElement('div', { className: 'empty-state__description' }, err.message)
       ]));
     }
   }
 
-  function renderHadithView(container) {
-    container.innerHTML = '';
-    
-    const books = HadithApi.getKutubAlSittah();
-    const currentBook = books.find(b => b.id === currentBookId) || { name: currentBookId };
-    
-    const breadcrumb = Utils.createElement('div', { className: 'breadcrumb' }, [
-      Utils.createElement('a', { className: 'breadcrumb__item', href: '#hadiths' }, 'Hadiths'),
-      Utils.createElement('span', { className: 'breadcrumb__separator' }, '/'),
-      Utils.createElement('span', { className: 'breadcrumb__item' }, currentBook.name)
+  async function renderHadithDetail(container, collection, bookId, hadithNum) {
+    const backBtn = Utils.createElement('a', {
+      href: `#hadiths/${collection}/${bookId}`,
+      className: 'hadith-back-btn'
+    }, '← Back to Book');
+    container.appendChild(backBtn);
+
+    const loader = Utils.createElement('div', { className: 'loader' }, [
+      Utils.createElement('div', { className: 'loader__spinner' }),
+      Utils.createElement('span', { className: 'loader__text' }, 'Loading hadith...')
     ]);
-    container.appendChild(breadcrumb);
+    container.appendChild(loader);
 
-    const controls = Utils.createElement('div', { 
-      style: 'display: flex; gap: var(--spacing-md); margin-bottom: var(--spacing-lg); flex-wrap: wrap;'
-    });
+    try {
+      const hadith = await HadithApi.getSingleHadith(collection, bookId, hadithNum);
+      loader.remove();
 
-    const bookSelect = Utils.createElement('select', {
-      className: 'input',
-      id: 'hadith-book-select',
-      style: 'flex: 1; min-width: 150px;'
-    });
-    
-    books.forEach(book => {
-      const option = Utils.createElement('option', { 
-        value: book.id,
-        textContent: book.name
-      });
-      if (book.id === currentBookId) option.selected = true;
-      bookSelect.appendChild(option);
-    });
-
-    const numberInput = Utils.createElement('input', {
-      type: 'number',
-      className: 'input',
-      id: 'hadith-number-input',
-      min: 1,
-      value: hadithsData.hadiths[currentHadithIndex]?.hadithNumber || 1,
-      style: 'width: 80px;'
-    });
-
-    const goBtn = Utils.createElement('button', {
-      className: 'btn btn--primary btn--sm',
-      onClick: () => {
-        const bookId = document.getElementById('hadith-book-select').value;
-        const number = document.getElementById('hadith-number-input').value;
-        window.location.hash = `#hadiths/${bookId}/${number}`;
+      if (!hadith) {
+        container.appendChild(Utils.createElement('div', { className: 'empty-state' }, [
+          Utils.createElement('div', { className: 'empty-state__title' }, 'Hadith Not Found')
+        ]));
+        return;
       }
-    }, 'Go');
 
-    controls.appendChild(bookSelect);
-    controls.appendChild(numberInput);
-    controls.appendChild(goBtn);
-    container.appendChild(controls);
+      const { sunni, shia } = HadithApi.getAllBooks();
+      const allBooks = [...sunni, ...shia];
+      const book = allBooks.find(b => b.id === bookId);
 
-    const hadith = hadithsData.hadiths[currentHadithIndex];
-    if (!hadith) {
-      container.appendChild(Utils.createElement('div', { className: 'empty-state' }, [
-        Utils.createElement('div', { className: 'empty-state__title' }, 'Hadith not found')
-      ]));
-      return;
-    }
+      let grade, gradeInfo;
+      let shiaGrading = null;
 
-    const gradeInfo = hadith.gradeInfo;
-    const gradeClass = HadithApi.getGradeClass(gradeInfo.type);
+      if (collection === 'shia') {
+        // Shia: use majlisiGrading if available, otherwise behdudiGrading
+        grade = hadith.majlisiGrading || hadith.behdudiGrading || hadith.grade || 'Unknown';
+        gradeInfo = getGradeInfo(grade);
 
-    const hadithCard = Utils.createElement('div', { 
-      className: `card hadith-card ${gradeClass}`,
-      style: `border-left: 4px solid ${gradeInfo.color};`
-    });
-
-    const gradeSection = Utils.createElement('div', { 
-      className: 'hadith-grade-section',
-      style: `background: ${gradeInfo.color}15; border-bottom: 1px solid ${gradeInfo.color}30; padding: var(--spacing-md); margin: calc(-1 * var(--spacing-lg)) calc(-1 * var(--spacing-lg)) var(--spacing-md) calc(-1 * var(--spacing-lg));`
-    });
-    
-    gradeSection.appendChild(Utils.createElement('div', { 
-      className: 'hadith-grade-main',
-      style: `color: ${gradeInfo.color}; font-weight: 700; font-size: var(--font-size-lg); margin-bottom: var(--spacing-sm);`
-    }, gradeInfo.label));
-
-    if (hadith.grades && hadith.grades.length > 0) {
-      const gradesList = Utils.createElement('div', { className: 'hadith-grades-list' });
-      hadith.grades.forEach(g => {
-        gradesList.appendChild(Utils.createElement('span', { 
-          className: 'hadith-grade-item',
-          style: 'display: inline-block; margin-right: var(--spacing-md); margin-bottom: var(--spacing-xs); font-size: var(--font-size-xs); color: var(--color-text-secondary);'
-        }, `${g.scholar}: ${g.grade}`));
-      });
-      gradeSection.appendChild(gradesList);
-    }
-
-    hadithCard.appendChild(gradeSection);
-
-    if (hadith.text?.arabic) {
-      const arabicText = Utils.createElement('p', {
-        className: 'rtl arab-text',
-        style: 'font-family: var(--font-arabic); font-size: var(--font-size-xl); line-height: var(--line-height-arabic); color: var(--color-hadith); margin-bottom: var(--spacing-lg); text-align: right;'
-      }, hadith.text.arabic);
-      hadithCard.appendChild(arabicText);
-    }
-
-    if (hadith.text?.english) {
-      const englishText = Utils.createElement('p', {
-        className: 'hadith-english',
-        style: 'font-size: var(--font-size-lg); line-height: var(--line-height-relaxed); color: var(--color-text);'
-      }, hadith.text.english);
-      hadithCard.appendChild(englishText);
-    }
-
-    const navButtons = Utils.createElement('div', { 
-      className: 'hadith-nav',
-      style: 'display: flex; gap: var(--spacing-sm); justify-content: center; margin-top: var(--spacing-xl); flex-wrap: wrap;'
-    });
-
-    const hasPrev = currentHadithIndex > 0;
-    const hasNext = currentHadithIndex < hadithsData.hadiths.length - 1;
-
-    navButtons.appendChild(Utils.createElement('button', {
-      className: 'btn btn--outline btn--sm',
-      disabled: !hasPrev,
-      onClick: () => {
-        if (hasPrev) {
-          currentHadithIndex--;
-          const prevNum = hadithsData.hadiths[currentHadithIndex].hadithNumber;
-          window.location.hash = `#hadiths/${currentBookId}/${prevNum}`;
+        // Store all Shia gradings for display
+        if (hadith.majlisiGrading || hadith.behdudiGrading) {
+          shiaGrading = {
+            majlisi: hadith.majlisiGrading || '',
+            behdudi: hadith.behdudiGrading || ''
+          };
         }
+      } else {
+        grade = hadith.grade || 'Unknown';
+        gradeInfo = getGradeInfo(grade);
       }
-    }, '← Previous'));
 
-    navButtons.appendChild(Utils.createElement('button', {
-      className: 'btn btn--ghost btn--sm',
-      onClick: () => copyHadith(hadith, currentBook)
-    }, 'Copy'));
+      const chapterInfo = hadith.chapter ? hadith.chapter.name_en || hadith.chapter.name_ar : null;
 
-    const shareBtn = Utils.createElement('button', {
-      className: 'btn btn--ghost btn--sm',
-      onClick: () => shareHadith(hadith, currentBook)
-    }, 'Share');
-
-    navButtons.appendChild(shareBtn);
-
-    navButtons.appendChild(Utils.createElement('button', {
-      className: 'btn btn--outline btn--sm',
-      disabled: !hasNext,
-      onClick: () => {
-        if (hasNext) {
-          currentHadithIndex++;
-          const nextNum = hadithsData.hadiths[currentHadithIndex].hadithNumber;
-          window.location.hash = `#hadiths/${currentBookId}/${nextNum}`;
-        }
-      }
-    }, 'Next →'));
-
-    hadithCard.appendChild(navButtons);
-
-    container.appendChild(hadithCard);
-
-    const allHadithsSection = Utils.createElement('div', { className: 'hadith-all-section' });
-    allHadithsSection.appendChild(Utils.createElement('h3', { 
-      style: 'margin-bottom: var(--spacing-md); color: var(--color-text-secondary);'
-    }, `All ${currentBook.name} Hadiths`));
-
-    const hadithsList = Utils.createElement('div', { className: 'hadiths-mini-list' });
-    
-    hadithsData.hadiths.slice(0, 50).forEach((h, idx) => {
-      const gInfo = HadithApi.normalizeGrading(h.grade);
-      const miniCard = Utils.createElement('a', {
-        href: `#hadiths/${currentBookId}/${h.hadithNumber}`,
-        className: `hadith-mini-card ${HadithApi.getGradeClass(gInfo.type)}`,
-        style: `border-left: 3px solid ${gInfo.color};`
+      const hadithCard = Utils.createElement('div', {
+        className: 'hadith-detail-card',
+        style: `border-left: 4px solid ${gradeInfo.outline};`
       }, [
-        Utils.createElement('span', { 
-          style: 'font-weight: 600; margin-right: var(--spacing-sm);'
-        }, `#${h.hadithNumber}`),
-        Utils.createElement('span', { 
-          style: 'color: var(--color-text-muted); font-size: var(--font-size-xs);'
-        }, h.grade)
+        Utils.createElement('div', {
+          className: 'hadith-grade-badge',
+          style: `background: ${gradeInfo.outline}20; color: ${gradeInfo.outline}; border: 1px solid ${gradeInfo.outline};`
+        }, gradeInfo.label),
+        Utils.createElement('div', { className: 'hadith-number' }, `${book?.name || bookId}: #${hadithNum}`),
+        hadith.chapter?.number ? Utils.createElement('div', { className: 'hadith-chapter-name' }, `Chp ${hadith.chapter.number}: ${chapterInfo || ''}`) : null,
+        hadith.english?.narrator ? Utils.createElement('div', { className: 'hadith-narrator', style: 'font-style: italic; margin-bottom: var(--spacing-sm);' }, hadith.english.narrator) : null,
+        hadith.english?.text ? Utils.createElement('div', { className: 'hadith-text' }, hadith.english.text) : (hadith.text || null),
+        hadith.arabic ? Utils.createElement('div', {
+          className: 'hadith-arabic rtl',
+          style: 'font-family: var(--font-arabic); margin-top: var(--spacing-md); font-size: var(--font-size-lg);'
+        }, hadith.arabic) : null,
+        collection === 'shia' && shiaGrading ? Utils.createElement('div', { className: 'shia-grading' }, [
+          shiaGrading.majlisi ? Utils.createElement('div', { className: 'shia-grading-item' }, [
+            Utils.createElement('span', { className: 'shia-grading-label' }, 'Allamah Majlisi: '),
+            Utils.createElement('span', {}, shiaGrading.majlisi)
+          ]) : null,
+          shiaGrading.behdudi ? Utils.createElement('div', { className: 'shia-grading-item' }, [
+            Utils.createElement('span', { className: 'shia-grading-label' }, 'Shaykh Behbudi: '),
+            Utils.createElement('span', {}, shiaGrading.behdudi)
+          ]) : null
+        ]) : null
       ]);
-      hadithsList.appendChild(miniCard);
-    });
 
-    allHadithsSection.appendChild(hadithsList);
-    container.appendChild(allHadithsSection);
+      container.appendChild(hadithCard);
+
+      const navRow1 = Utils.createElement('div', { className: 'hadith-nav-row' }, [
+        Utils.createElement('a', {
+          className: 'btn btn--secondary',
+          href: parseInt(hadithNum) > 1 ? `#hadiths/${collection}/${bookId}/${parseInt(hadithNum) - 1}` : '#',
+          style: parseInt(hadithNum) <= 1 ? 'opacity: 0.3; pointer-events: none;' : '',
+          innerHTML: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg><span>Previous</span>'
+        }),
+        Utils.createElement('a', {
+          className: 'btn btn--primary',
+          href: `#hadiths/${collection}/${bookId}/${parseInt(hadithNum) + 1}`,
+          innerHTML: '<span>Next</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>'
+        })
+      ]);
+      container.appendChild(navRow1);
+
+      const navRow2 = Utils.createElement('div', { className: 'hadith-nav-row hadith-actions-row' }, [
+        Utils.createElement('button', {
+          className: 'btn btn--secondary hadith-action-btn',
+          onClick: () => copyHadith(hadith, book, hadithNum, gradeInfo, collection, bookId),
+          innerHTML: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><span>Copy</span>'
+        }),
+        Utils.createElement('button', {
+          className: 'btn btn--secondary hadith-action-btn',
+          onClick: () => shareHadithImage(hadith, book, hadithNum, gradeInfo, container),
+          innerHTML: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg><span>Share Image</span>'
+        }),
+        Utils.createElement('button', {
+          className: 'btn btn--secondary hadith-action-btn',
+          onClick: () => copyHadithLink(collection, bookId, hadithNum),
+          innerHTML: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span>Copy Link</span>'
+        })
+      ]);
+      container.appendChild(navRow2);
+    } catch (err) {
+      loader.remove();
+      container.appendChild(Utils.createElement('div', { className: 'empty-state' }, [
+        Utils.createElement('div', { className: 'empty-state__title' }, 'Failed to Load'),
+        Utils.createElement('div', { className: 'empty-state__description' }, err.message)
+      ]));
+    }
   }
 
-  function copyHadith(hadith, book) {
-    let text = `${book.name}\n`;
-    text += `Hadith #${hadith.hadithNumber}\n\n`;
-    if (hadith.text?.arabic) text += `${hadith.text.arabic}\n\n`;
-    if (hadith.text?.english) text += `${hadith.text.english}\n\n`;
-    text += `Grade: ${hadith.gradeInfo.label}\n`;
-    if (hadith.grades) {
-      hadith.grades.forEach(g => {
-        text += `${g.scholar}: ${g.grade}\n`;
-      });
+  function getGradeInfo(grade) {
+    const g = (grade || '').toLowerCase();
+    if (g.includes('sahih') || g.includes('authentic')) {
+      return { outline: '#10B981', label: grade || 'Sahih' };
     }
-    text += `\n— salaf.Init();`;
+    if (g.includes('hasan') || g.includes('good')) {
+      return { outline: '#F97316', label: grade || 'Hasan' };
+    }
+    return { outline: '#EF4444', label: grade || 'Daif' };
+  }
+
+  function getGradeClass(grade) {
+    const g = (grade || '').toLowerCase();
+    if (g.includes('sahih') || g.includes('authentic')) return 'grade-sahih';
+    if (g.includes('hasan') || g.includes('good')) return 'grade-hasan';
+    return 'grade-daif';
+  }
+
+  function copyHadith(hadith, book, hadithNum, gradeInfo, collection, bookId) {
+    const chapter = hadith.chapter?.name_en || hadith.chapter?.name_ar || '';
+    const bookName = book?.name || bookId;
+    const link = `${window.location.origin}/#hadiths/${collection}/${bookId}/${hadithNum}`;
+
+    let text = `${bookName} — Hadith #${hadithNum}\n`;
+    if (hadith.chapter?.number) text += `Chp ${hadith.chapter.number}: ${chapter}\n`;
+    text += `${'─'.repeat(40)}\n`;
+
+    // Handle Shia multiple gradings
+    if (collection === 'shia') {
+      if (hadith.majlisiGrading) text += `Allamah Majlisi: ${hadith.majlisiGrading}\n`;
+      if (hadith.behdudiGrading) text += `Shaykh Behbudi: ${hadith.behdudiGrading}\n`;
+    } else {
+      text += `Grade: ${gradeInfo.label}\n`;
+    }
+
+    text += `${'─'.repeat(40)}\n`;
+    if (hadith.english?.narrator) {
+      text += `${hadith.english.narrator}\n\n`;
+    }
+    if (hadith.english?.text) {
+      text += `${hadith.english.text}\n\n`;
+    }
+    if (hadith.arabic) {
+      text += `${hadith.arabic}\n`;
+    }
+    text += `\n🔗 ${link}`;
 
     navigator.clipboard.writeText(text).then(() => {
-      Utils.showToast('Hadith copied with all details!');
-    }).catch(() => {
-      Utils.showToast('Failed to copy', 'error');
+      const btns = document.querySelectorAll('.hadith-action-btn');
+      if (btns[0]) {
+        const originalHTML = btns[0].innerHTML;
+        btns[0].innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Copied!</span>';
+        setTimeout(() => { btns[0].innerHTML = originalHTML; }, 2000);
+      }
     });
   }
 
-  function shareHadith(hadith, book) {
-    const url = `${window.location.origin}${window.location.pathname}#hadiths/${currentBookId}/${hadith.hadithNumber}`;
-    
-    if (navigator.share) {
-      navigator.share({
-        title: `${book.name} - Hadith #${hadith.hadithNumber}`,
-        text: `"${hadith.text?.english?.substring(0, 100)}..." - Grade: ${hadith.grade}`,
-        url: url
-      });
-    } else {
-      navigator.clipboard.writeText(url).then(() => {
-        Utils.showToast('Link copied!');
-      });
+  function copyHadithLink(collection, bookId, hadithNum) {
+    const url = `${window.location.origin}${window.location.pathname}#hadiths/${collection}/${bookId}/${hadithNum}`;
+    navigator.clipboard.writeText(url).then(() => {
+      const btns = document.querySelectorAll('.hadith-action-btn');
+      if (btns[2]) {
+        const originalHTML = btns[2].innerHTML;
+        btns[2].innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Copied!</span>';
+        setTimeout(() => { btns[2].innerHTML = originalHTML; }, 2000);
+      }
+    });
+  }
+
+  async function shareHadithImage(hadith, book, hadithNum, gradeInfo, container) {
+    const card = container.querySelector('.hadith-detail-card');
+    if (!card) return;
+
+    try {
+      if (typeof snapdom !== 'undefined') {
+        const img = await snapdom.toPng(card, { scale: 2 });
+        const a = document.createElement('a');
+        a.href = img.src;
+        a.download = `hadith-${book.id}-${hadithNum}.png`;
+        a.click();
+        Utils.showToast('Image downloaded!');
+      } else {
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = 'position: absolute; left: -9999px; background: #1a1a2e; padding: 24px; border-radius: 12px; color: white; font-family: system-ui, sans-serif; max-width: 500px;';
+        wrapper.innerHTML = card.innerHTML;
+        document.body.appendChild(wrapper);
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', wrapper.offsetWidth);
+        svg.setAttribute('height', wrapper.offsetHeight);
+        const foreign = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+        foreign.setAttribute('width', '100%');
+        foreign.setAttribute('height', '100%');
+        foreign.appendChild(wrapper);
+        svg.appendChild(foreign);
+
+        const img = new Image();
+        const svgData = new XMLSerializer().serializeToString(svg);
+        img.onload = () => {
+          canvas.width = wrapper.offsetWidth;
+          canvas.height = wrapper.offsetHeight;
+          ctx.drawImage(img, 0, 0);
+          const link = document.createElement('a');
+          link.download = `hadith-${book.id}-${hadithNum}.png`;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+          document.body.removeChild(wrapper);
+          Utils.showToast('Image downloaded!');
+        };
+        img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+      }
+    } catch (err) {
+      console.error('Share image error:', err);
+      Utils.showToast('Failed to generate image');
     }
   }
 
