@@ -1,0 +1,132 @@
+.hadith-back-btn {
+  display: inline-block;
+  margin-bottom: var(--spacing-lg);
+  color: var(--hadith-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.hadith-back-btn:hover {
+  text-decoration: underline;
+}
+
+.hadith-book-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.hadith-book-title {
+  font-size: var(--font-size-xl);
+  color: var(--color-text);
+}
+
+.hadith-book-arabic-title {
+  font-family: var(--font-arabic);
+  font-size: var(--font-size-lg);
+  color: var(--hadith-primary);
+}
+
+.hadith-search-box {
+  background: var(--color-bg-secondary);
+  border-radius: 16px;
+  padding: var(--spacing-xl);
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.hadith-search-label {
+  font-size: var(--font-size-md);
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-md);
+}
+
+.hadith-search-row {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.hadith-search-input {
+  flex: 1;
+  min-width: 150px;
+  max-width: 200px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-size-md);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.hadith-search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.hadith-search-input::placeholder {
+  color: var(--color-text-lighter);
+}
+
+.hadith-search-btn {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-md);
+  border-radius: 12px;
+  font-weight: 600;
+  transition: transform 0.1s, box-shadow 0.2s;
+}
+
+.hadith-search-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.hadith-search-btn:active {
+  transform: translateY(0);
+}
+
+.hadith-collection-desc {
+  text-align: center;
+  max-width: 600px;
+  margin: var(--spacing-xl) auto 0;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-secondary);
+  border-radius: 12px;
+}
+
+.hadith-collection-title {
+  font-size: var(--font-size-md);
+  color: var(--color-text);
+  margin-bottom: var(--spacing-sm);
+}
+
+.hadith-collection-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-light);
+  line-height: 1.6;
+}
+
+@media (max-width: 480px) {
+  .hadith-search-box {
+    padding: var(--spacing-lg);
+    border-radius: 12px;
+  }
+
+  .hadith-search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hadith-search-input {
+    max-width: none;
+    text-align: center;
+  }
+
+  .hadith-search-btn {
+    width: 100%;
+  }
+}

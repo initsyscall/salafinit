@@ -1,0 +1,27 @@
+/* Base Components */
+@import 'base-card.css';
+@import 'base-button.css';
+@import 'base-badge.css';
+@import 'base-state.css';
+
+/* Salah */
+@import 'salah-main.css';
+@import 'salah-grid.css';
+@import 'salah-extra.css';
+
+/* Quran */
+@import 'quran-list.css';
+@import 'quran-content.css';
+@import 'quran-modal.css';
+@import 'quran-settings.css';
+
+/* Hadith */
+@import 'hadith-dashboard.css';
+@import 'hadith-books.css';
+@import 'hadith-search.css';
+@import 'hadith-chapters.css';
+@import 'hadith-detail.css';
+@import 'hadith-grading.css';
+
+/* Utilities */
+@import 'utilities.css';

@@ -1,0 +1,81 @@
+/* === QURAN ROYAL DESIGN === */
+
+/* Title with gold gradient */
+.quran-title {
+  background: linear-gradient(135deg, var(--color-salah), var(--color-primary), var(--color-quran));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+}
+
+/* Surah List Cards */
+.quran-surah-card {
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-base);
+}
+
+.quran-surah-card__border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.quran-surah-card:hover .quran-surah-card__border {
+  opacity: 1;
+}
+
+.quran-surah-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+}
+
+.quran-surah-card__title {
+  transition: color var(--transition-fast);
+}
+
+/* Meccan Surah Badge - Black & Gold */
+.badge--Meccan {
+  background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+  border: 1px solid #F6C177;
+  color: #F6C177 !important;
+}
+
+/* Madinan Surah Badge - Green & Gold */
+.badge--Madinah, .badge--Medinan {
+  background: linear-gradient(135deg, #0a2e1a 0%, #1a3d2e 100%);
+  border: 1px solid #80FFEA;
+  color: #80FFEA !important;
+}
+
+.quran-surah-card:hover .quran-surah-card__title {
+  color: var(--color-quran);
+}
+
+/* Continue Reading Button */
+.quran-continue-btn {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-salah));
+  color: var(--color-bg);
+  border: none;
+  font-size: var(--font-size-lg);
+  padding: var(--spacing-md);
+  font-weight: 600;
+}
+
+.quran-continue-btn:hover {
+  filter: brightness(1.1);
+  box-shadow: var(--shadow-glow);
+}
+
+/* Search Input Focus */
+.quran-search-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-subtle);
+}

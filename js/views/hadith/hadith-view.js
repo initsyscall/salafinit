@@ -121,7 +121,8 @@ const HadithView = (() => {
   function createBookCard(book, collection, styleType) {
     return Utils.createElement('a', {
       className: `hadith-book-card ${styleType}-card`,
-      href: `#hadiths/${collection}/${book.id}`
+      href: `#hadiths/${collection}/${book.id}`,
+      'data-book': book.id
     }, [
       Utils.createElement('div', { className: 'hadith-book-arabic' }, book.arabic),
       Utils.createElement('div', { className: 'hadith-book-name' }, book.name),

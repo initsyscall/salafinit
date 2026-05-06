@@ -1,0 +1,110 @@
+/* Qiyam al-Layl */
+.qiyam-section {
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: 
+    linear-gradient(var(--color-surface-hover), var(--color-surface-hover)),
+    repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(246, 193, 119, 0.05) 10px, rgba(246, 193, 119, 0.05) 20px);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-quran);
+  position: relative;
+  overflow: hidden;
+}
+
+.qiyam-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(246, 193, 119, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.section-title {
+  font-size: var(--font-size-sm);
+  color: var(--color-quran);
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.qiyam-time {
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+/* Forbidden Times */
+.forbidden-section {
+  padding: var(--spacing-md);
+  background: 
+    linear-gradient(var(--color-surface), var(--color-surface)),
+    repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(239, 68, 68, 0.05) 10px, rgba(239, 68, 68, 0.05) 20px);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-danger);
+  position: relative;
+  overflow: hidden;
+}
+
+.forbidden-section::before {
+  content: '✕';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  color: rgba(239, 68, 68, 0.1);
+  pointer-events: none;
+}
+
+.forbidden-list {
+  list-style: none;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.forbidden-list li {
+  padding: var(--spacing-xs) 0;
+  border-bottom: 1px solid rgba(239, 68, 68, 0.1);
+}
+
+.forbidden-list li:last-child {
+  border-bottom: none;
+}
+
+/* Bottom Section */
+.salah-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.location-date {
+  text-align: left;
+}
+
+.location-date .location {
+  font-size: var(--font-size-base);
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+}
+
+.location-date .date {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.method-info {
+  text-align: right;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+}

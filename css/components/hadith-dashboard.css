@@ -1,0 +1,111 @@
+/* === HADITH STYLES === */
+:root {
+  --hadith-primary: #A277FF;
+  --hadith-secondary: #80FFEA;
+  --hadith-gold: #F6C177;
+  --hadith-green: #22C55E;
+  --hadith-orange: #B87333;
+  --hadith-bg: rgba(162, 119, 255, 0.08);
+  --hadith-border: rgba(162, 119, 255, 0.25);
+}
+
+.hadith-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+}
+
+.hadith-dashboard-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-xl) 0;
+}
+
+.hadith-dashboard-calligraphy {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  margin: 0 auto var(--spacing-md);
+}
+
+.hadith-dashboard-calligraphy text {
+  fill: #A277FF;
+}
+
+.hadith-dashboard-title {
+  font-size: var(--font-size-2xl);
+  color: var(--color-text);
+  margin-bottom: var(--spacing-xs);
+  font-weight: 700;
+}
+
+.hadith-dashboard-subtitle {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+}
+
+.hadith-search-hero {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-2xl);
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.hadith-book-select {
+  min-width: 300px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-size-base);
+}
+
+.hadith-search-btn {
+  padding: var(--spacing-md) var(--spacing-xl);
+}
+
+.hadith-section {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.hadith-section-title {
+  font-size: var(--font-size-xl);
+  color: var(--color-text);
+  margin-bottom: var(--spacing-lg);
+  font-weight: 700;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg) 100%);
+  border-bottom: 3px solid var(--hadith-primary);
+  display: inline-block;
+}
+
+.hadith-section-title.shia-title {
+  border-bottom-color: #EF4444;
+}
+
+.hadith-section-title.suni-title {
+  border-bottom-color: var(--hadith-primary);
+}
+
+.hadith-warning {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  background: linear-gradient(135deg, rgba(162, 119, 255, 0.15) 0%, rgba(162, 119, 255, 0.1) 100%);
+  border: 2px solid #EF4444;
+  border-left: 4px solid #EF4444;
+  border-radius: 8px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin: var(--spacing-md) 0 var(--spacing-lg);
+  color: #FFFFFF;
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+}
+
+.hadith-warning-icon {
+  font-size: 18px;
+  color: #EF4444;
+  flex-shrink: 0;
+  line-height: 1;
+}

@@ -1,0 +1,148 @@
+.hadith-chapters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.hadith-chapter-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all var(--transition-base);
+}
+
+.hadith-chapter-card:hover {
+  border-color: var(--hadith-primary);
+  background: var(--hadith-bg);
+}
+
+.hadith-chapter-card .chapter-number {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--hadith-primary);
+}
+
+.hadith-chapter-card .chapter-title {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.hadiths-mini-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: var(--spacing-sm);
+}
+
+.hadith-mini-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: all var(--transition-base);
+}
+
+.hadith-mini-card:hover {
+  border-color: var(--hadith-primary);
+  background: var(--hadith-bg);
+}
+
+.hadith-mini-card .hadith-number {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.hadith-mini-card .hadith-grade {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.hadith-chapter-header {
+  margin-bottom: var(--spacing-lg);
+}
+
+.hadith-chapter-title {
+  font-size: var(--font-size-xl);
+}
+
+.hadith-card {
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.hadith-grade-section {
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.hadith-grade-main {
+  font-weight: 700;
+}
+
+.hadith-grades-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.hadith-grade-item {
+  background: var(--color-surface-hover);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+}
+
+.hadith-english {
+  line-height: var(--line-height-relaxed);
+  padding: var(--spacing-md) 0;
+}
+
+.hadith-nav {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: center;
+  margin-top: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.hadith-nav .btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.hadith-all-section {
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-xl);
+  border-top: 1px solid var(--color-border);
+}
+
+.hadiths-mini-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.hadith-mini-card {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  transition: all var(--transition-fast);
+}
+
+.hadith-mini-card:hover {
+  background: var(--color-surface-hover);
+  transform: translateY(-1px);
+}

@@ -1,0 +1,196 @@
+/* Tafsir Floating Modal */
+.quran-tafsir-modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.85) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 99999 !important;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.quran-tafsir-modal {
+  background: linear-gradient(135deg, #161423 0%, #201D33 50%, #2A2647 100%);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  max-width: 700px;
+  width: 100% !important;
+  max-height: 85vh;
+  display: flex !important;
+  flex-direction: column;
+  box-shadow: 0 0 40px rgba(162, 119, 255, 0.3);
+  animation: slideUp 0.3s ease;
+  margin: auto;
+  flex-shrink: 0;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.quran-tafsir-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid rgba(246, 193, 119, 0.2);
+}
+
+.quran-tafsir-modal-title {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.quran-tafsir-modal-title span:first-child {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-quran);
+}
+
+.quran-tafsir-modal-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.quran-tafsir-modal-close {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.quran-tafsir-modal-close:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+  border-color: var(--color-primary);
+}
+
+.quran-tafsir-modal-body {
+  padding: var(--spacing-lg);
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.quran-tafsir-modal-arabic {
+  font-family: var(--font-arabic) !important;
+  font-size: var(--font-size-3xl) !important;
+  color: #80FFEA !important;
+  line-height: var(--line-height-arabic) !important;
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+  text-shadow: 0 0 10px rgba(128, 255, 234, 0.3);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+.quran-tafsir-modal-translation {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text);
+  padding: var(--spacing-md);
+  background: var(--color-surface-hover);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-primary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.quran-tafsir-modal-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-quran), transparent);
+  margin: var(--spacing-lg) 0;
+}
+
+.quran-tafsir-modal-content {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text);
+}
+
+.quran-tafsir-modal-content .quran-tafsir-h1 {
+  font-size: var(--font-size-xl);
+  color: var(--color-quran);
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  font-weight: 600;
+}
+
+.quran-tafsir-modal-content .quran-tafsir-h2 {
+  font-size: var(--font-size-lg);
+  color: var(--color-quran);
+  margin-top: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  font-weight: 600;
+}
+
+.quran-tafsir-modal-content .quran-tafsir-h3 {
+  font-size: var(--font-size-base);
+  color: var(--color-primary);
+  margin-top: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+  font-weight: 600;
+}
+
+.quran-tafsir-modal-content .quran-tafsir-p {
+  margin-bottom: var(--spacing-sm);
+  line-height: var(--line-height-relaxed);
+}
+
+.quran-tafsir-modal-footer {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: flex-end;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-top: 1px solid rgba(246, 193, 119, 0.2);
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .quran-arabic {
+    font-size: var(--font-size-4xl) !important;
+  }
+
+  .quran-surah-header__title {
+    font-size: var(--font-size-4xl) !important;
+  }
+
+  .quran-tafsir-modal-arabic {
+    font-size: var(--font-size-4xl) !important;
+    font-family: var(--font-arabic) !important;
+  }
+
+  .quran-tafsir-modal {
+    max-width: 800px;
+  }
+
+  .quran-ayah-card {
+    padding: var(--spacing-xl);
+  }
+}
