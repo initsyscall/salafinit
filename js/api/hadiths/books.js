@@ -1,11 +1,11 @@
 const HadithBooks = (() => {
   const SUNNI_BOOKS = [
-    { id: 'bukhari', name: 'Sahih al-Bukhari', arabic: 'صحيح البخاري', type: 'gold', collection: 'sunni', totalHadiths: 7563, apiSource: 'fawaz', fawazId: 'eng-bukhari' },
-    { id: 'muslim', name: 'Sahih Muslim', arabic: 'صحيح مسلم', type: 'gold', collection: 'sunni', totalHadiths: 7232, apiSource: 'fawaz', fawazId: 'eng-muslim' },
-    { id: 'tirmidhi', name: "Jami' at-Tirmidhi", arabic: 'جامع الترمذي', type: 'kutub', collection: 'sunni', totalHadiths: 3956, apiSource: 'fawaz', fawazId: 'eng-tirmidhi' },
-    { id: 'abudawud', name: 'Sunan Abu Dawud', arabic: 'سنن أبي داود', type: 'kutub', collection: 'sunni', totalHadiths: 5274, apiSource: 'fawaz', fawazId: 'eng-abudawud' },
-    { id: 'nasai', name: 'Sunan an-Nasai', arabic: 'سنن النسائي', type: 'kutub', collection: 'sunni', totalHadiths: 5662, apiSource: 'fawaz', fawazId: 'eng-nasai' },
-    { id: 'ibnmajah', name: 'Sunan Ibn Majah', arabic: 'سنن ابن ماجه', type: 'kutub', collection: 'sunni', totalHadiths: 4341, apiSource: 'fawaz', fawazId: 'eng-ibnmajah' },
+    { id: 'bukhari', name: 'Sahih al-Bukhari', arabic: 'صحيح البخاري', type: 'gold', collection: 'sunni', totalHadiths: 7563, apiSource: 'fawaz', fawazId: 'eng-bukhari', fawazArabicId: 'ara-bukhari' },
+    { id: 'muslim', name: 'Sahih Muslim', arabic: 'صحيح مسلم', type: 'gold', collection: 'sunni', totalHadiths: 7232, apiSource: 'fawaz', fawazId: 'eng-muslim', fawazArabicId: 'ara-muslim' },
+    { id: 'tirmidhi', name: "Jami' at-Tirmidhi", arabic: 'جامع الترمذي', type: 'kutub', collection: 'sunni', totalHadiths: 3956, apiSource: 'fawaz', fawazId: 'eng-tirmidhi', fawazArabicId: 'ara-tirmidhi' },
+    { id: 'abudawud', name: 'Sunan Abu Dawud', arabic: 'سنن أبي داود', type: 'kutub', collection: 'sunni', totalHadiths: 5274, apiSource: 'fawaz', fawazId: 'eng-abudawud', fawazArabicId: 'ara-abudawud' },
+    { id: 'nasai', name: 'Sunan an-Nasai', arabic: 'سنن النسائي', type: 'kutub', collection: 'sunni', totalHadiths: 5662, apiSource: 'fawaz', fawazId: 'eng-nasai', fawazArabicId: 'ara-nasai' },
+    { id: 'ibnmajah', name: 'Sunan Ibn Majah', arabic: 'سنن ابن ماجه', type: 'kutub', collection: 'sunni', totalHadiths: 4341, apiSource: 'fawaz', fawazId: 'eng-ibnmajah', fawazArabicId: 'ara-ibnmajah' },
     { id: 'malik', name: 'Muwatta Malik', arabic: 'موطأ مالك', type: 'mutawa', collection: 'sunni', totalHadiths: 1893, apiSource: 'itqan' },
     { id: 'darimi', name: 'Sunan al-Darimi', arabic: 'سنن الدارمي', type: 'primary', collection: 'sunni', totalHadiths: 2919, apiSource: 'itqan' },
     { id: 'ahmed', name: 'Musnad Ahmad', arabic: 'مسند أحمد', type: 'primary', collection: 'sunni', totalHadiths: 27097, apiSource: 'itqan' },

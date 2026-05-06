@@ -1,4 +1,4 @@
-const CACHE_NAME = 'salafinit-v2';
+const CACHE_NAME = 'salafinit-v1';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -25,9 +25,13 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    )
+    caches.keys().then((keys) => {
+      const currentCache = CACHE_NAME;
+      return Promise.all(
+        keys.filter((k) => k !== currentCache && k.startsWith('salafinit-'))
+          .map((k) => caches.delete(k))
+      );
+    })
   );
   self.clients.claim();
 });

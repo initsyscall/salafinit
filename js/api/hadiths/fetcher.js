@@ -13,10 +13,24 @@ const HadithFetcher = (() => {
       const sectionNum = Object.keys(data.metadata.section || {})[0] || '1';
       const chapterName = data.metadata.section?.[sectionNum] || '';
       
+      let arabicText = '';
+      if (book.fawazArabicId) {
+        try {
+          const arabicUrl = `${FWAZ_BASE}/${book.fawazArabicId}/${hadithNum}.json`;
+          const arabicData = await ApiClient.fetchApi(arabicUrl);
+          if (arabicData && arabicData.hadiths && arabicData.hadiths.length > 0) {
+            arabicText = arabicData.hadiths[0].text || '';
+          }
+        } catch (e) {
+          console.warn(`Failed to fetch Arabic for ${book.id}#${hadithNum}:`, e.message);
+        }
+      }
+      
       return {
         idInBook: h.hadithnumber,
         hadithnumber: h.hadithnumber,
         arabicnumber: h.arabicnumber,
+        arabic: arabicText,
         english: {
           narrator: '',
           text: h.text || ''

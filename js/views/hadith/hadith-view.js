@@ -284,6 +284,30 @@ const HadithView = (() => {
       }
 
       const chapterInfo = hadith.chapter ? hadith.chapter.name_en || hadith.chapter.name_ar : null;
+      const showArabic = localStorage.getItem('hadithShowArabic') === 'true';
+      const isArabicOn = showArabic;
+
+      const isKutubAlSittah = book?.apiSource === 'fawaz';
+      let toggleArabicBtn = null;
+
+      if (isKutubAlSittah && hadith.arabic) {
+        toggleArabicBtn = document.createElement('button');
+        toggleArabicBtn.className = 'arabic-toggle-btn';
+        
+        let arabicElement = null;
+        
+        toggleArabicBtn.addEventListener('click', () => {
+          const newState = localStorage.getItem('hadithShowArabic') !== 'true';
+          localStorage.setItem('hadithShowArabic', newState.toString());
+          toggleArabicBtn.innerHTML = newState ? 'Hide Arabic' : 'Show Arabic';
+          if (!arabicElement) {
+            arabicElement = hadithCard.querySelector('.hadith-arabic');
+          }
+          if (arabicElement) {
+            arabicElement.style.display = newState ? 'block' : 'none';
+          }
+        });
+      }
 
       const hadithCard = Utils.createElement('div', {
         className: 'hadith-detail-card',
@@ -297,10 +321,14 @@ const HadithView = (() => {
         hadith.chapter?.number ? Utils.createElement('div', { className: 'hadith-chapter-name' }, `Chp ${hadith.chapter.number}: ${chapterInfo || ''}`) : null,
         hadith.english?.narrator ? Utils.createElement('div', { className: 'hadith-narrator', style: 'font-style: italic; margin-bottom: var(--spacing-sm);' }, hadith.english.narrator) : null,
         hadith.english?.text ? Utils.createElement('div', { className: 'hadith-text' }, hadith.english.text) : (hadith.text || null),
-        hadith.arabic ? Utils.createElement('div', {
+        isKutubAlSittah && hadith.arabic ? Utils.createElement('div', {
+          className: 'hadith-arabic rtl',
+          style: `font-family: var(--font-arabic); margin-top: var(--spacing-md); font-size: var(--font-size-lg); display: ${showArabic ? 'block' : 'none'};`
+        }, hadith.arabic) : (hadith.arabic ? Utils.createElement('div', {
           className: 'hadith-arabic rtl',
           style: 'font-family: var(--font-arabic); margin-top: var(--spacing-md); font-size: var(--font-size-lg);'
-        }, hadith.arabic) : null,
+        }, hadith.arabic) : null),
+        isKutubAlSittah && hadith.arabic ? toggleArabicBtn : null,
         collection === 'shia' && shiaGrading ? Utils.createElement('div', { className: 'shia-grading' }, [
           shiaGrading.majlisi ? Utils.createElement('div', { className: 'shia-grading-item' }, [
             Utils.createElement('span', { className: 'shia-grading-label' }, 'Allamah Majlisi: '),
@@ -314,6 +342,15 @@ const HadithView = (() => {
       ]);
 
       container.appendChild(hadithCard);
+
+      if (isKutubAlSittah && hadith.arabic) {
+        const toggleWrapper = Utils.createElement('div', {
+          style: 'display: flex; justify-content: flex-end; margin: var(--spacing-xs) 0 var(--spacing-sm) 0;'
+        }, [toggleArabicBtn]);
+        toggleArabicBtn.style.cssText = `background: none; border: none; color: var(--color-text-secondary); cursor: pointer; font-size: 11px; font-weight: 400; padding: 4px 8px;`;
+        toggleArabicBtn.innerHTML = showArabic ? 'Hide Arabic' : 'Show Arabic';
+        container.appendChild(toggleWrapper);
+      }
 
       const navRow1 = Utils.createElement('div', { className: 'hadith-nav-row' }, [
         Utils.createElement('a', {
@@ -400,7 +437,12 @@ const HadithView = (() => {
       text += `${hadith.english.text}\n\n`;
     }
     if (hadith.arabic) {
-      text += `${hadith.arabic}\n`;
+      const bookData = HadithBooks.getById(bookId);
+      const isKutubAlSittah = bookData?.apiSource === 'fawaz';
+      const showArabic = localStorage.getItem('hadithShowArabic') === 'true';
+      if (!isKutubAlSittah || showArabic) {
+        text += `${hadith.arabic}\n`;
+      }
     }
     text += `\n🔗 ${link}`;
 

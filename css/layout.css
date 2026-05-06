@@ -122,74 +122,129 @@
   transform: translateY(-7px) rotate(-45deg);
 }
 
-.header__nav {
-  display: flex;
-  position: fixed;
-  top: var(--header-height);
-  left: 0;
-  right: 0;
-  bottom: 0;
-  flex-direction: column;
-  background: var(--color-bg);
-  padding: var(--spacing-md);
-  gap: var(--spacing-xs);
-  z-index: 105;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateX(-100%);
-  transition: transform var(--transition-base), opacity var(--transition-base), visibility var(--transition-base);
-}
-
-.header__nav.open {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(0);
-}
-
-@media (min-width: 640px) {
-  .header__left {
+/* Mobile nav - slide from right */
+@media (max-width: 639px) {
+  .header__nav {
+    display: flex;
+    position: fixed;
+    top: var(--header-height);
+    right: 0;
+    bottom: 0;
+    width: 280px;
+    max-width: 85vw;
+    flex-direction: column;
+    background: transparent;
+    padding: var(--spacing-md);
     gap: var(--spacing-sm);
+    z-index: 105;
+    box-shadow: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(100%);
+    transition: transform var(--transition-base), opacity var(--transition-base), visibility var(--transition-base);
   }
-  .header__hamburger {
-    display: flex !important;
-  }
-}
 
   .header__nav.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+  }
+}
+
+/* Desktop nav - inline */
+@media (min-width: 640px) {
+  .header__hamburger {
+    display: none !important;
+  }
+
+  .header__nav {
+    display: flex !important;
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    gap: var(--spacing-xs);
+    opacity: 1 !important;
+    visibility: visible !important;
     transform: none !important;
   }
 
   .header__nav-link {
-    padding: var(--spacing-sm) var(--spacing-sm);
-    font-size: var(--font-size-xs);
-    white-space: nowrap;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    border: none;
+    background: transparent !important;
+    color: var(--color-text-secondary);
+  }
+
+  .header__nav-link:hover {
+    color: var(--color-text);
+    background: var(--color-surface-hover) !important;
+  }
+
+  .header__nav-link .nav-icon {
+    display: none;
   }
 }
 
 .header__nav-link {
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-md);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  font-weight: 600;
   transition: all var(--transition-fast);
+  border: none;
+  background: #2d1f3d;
+}
+
+.header__nav-link[href="#quran"] {
+  color: #FACC15;
+}
+.header__nav-link[href="#quran"] .nav-icon {
+  color: #FACC15;
+}
+
+.header__nav-link[href="#hadiths"] {
+  color: #4ADE80;
+}
+.header__nav-link[href="#hadiths"] .nav-icon {
+  color: #4ADE80;
+}
+
+.header__nav-link[href="#salah"] {
+  color: #FB923C;
+}
+.header__nav-link[href="#salah"] .nav-icon {
+  color: #FB923C;
+}
+
+.header__nav-link[href="#learn"] {
+  color: #C084FC;
+}
+.header__nav-link[href="#learn"] .nav-icon {
+  color: #C084FC;
+}
+
+.header__nav-link[href="#bookmark"] {
+  color: #F472C6;
+}
+.header__nav-link[href="#bookmark"] .nav-icon {
+  color: #F472C6;
 }
 
 .header__nav-link:hover {
-  color: var(--color-text);
-  background: var(--color-surface-hover);
+  background: #3d2952;
 }
 
-.header__nav::-webkit-scrollbar { display: none; }
-    white-space: nowrap;
-  }
-}
-
-.header__nav::-webkit-scrollbar { display: none; }
-
-.header__nav-link {
-  color: var(--color-primary);
-  background: var(--color-primary-subtle);
+.header__nav-link .nav-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
 
 .main {
