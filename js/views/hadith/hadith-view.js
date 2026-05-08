@@ -39,7 +39,7 @@ const HadithView = (() => {
           fill: '#A277FF'
         }, 'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ')
       ]),
-      Utils.createElement('h1', { className: 'hadith-dashboard-title' }, 'Hadith Collections'),
+      Utils.createElement('h1', { className: 'hadith-dashboard-title' }, 'Hadiths Collection'),
       Utils.createElement('p', { className: 'hadith-dashboard-subtitle' }, 'Sunni & Shia Hadith Libraries')
     ]);
     container.appendChild(header);
@@ -153,9 +153,10 @@ const HadithView = (() => {
         Utils.createElement('input', {
           type: 'number',
           min: '1',
+          max: book?.totalHadiths || 9999,
           className: 'input hadith-search-input',
           id: 'hadith-input',
-          placeholder: 'e.g. 735',
+          placeholder: `e.g. 1 - ${book?.totalHadiths || 735}`,
           onKeydown: (e) => {
             if (e.key === 'Enter') {
               const h = document.getElementById('hadith-input').value;
@@ -237,6 +238,13 @@ const HadithView = (() => {
   }
 
   async function renderHadithDetail(container, collection, bookId, hadithNum) {
+    const num = parseInt(hadithNum);
+
+    if (isNaN(num) || num < 1) {
+      window.location.hash = `#hadiths/${collection}/${bookId}/1`;
+      return;
+    }
+
     const backBtn = Utils.createElement('a', {
       href: `#hadiths/${collection}/${bookId}`,
       className: 'hadith-back-btn'
@@ -250,10 +258,26 @@ const HadithView = (() => {
     container.appendChild(loader);
 
     try {
-      const hadith = await HadithApi.getSingleHadith(collection, bookId, hadithNum);
+      const hadith = await HadithApi.getSingleHadith(collection, bookId, num);
       loader.remove();
 
-      if (!hadith) {
+      if (hadith && hadith.isEndOfCollection) {
+        const { sunni, shia } = HadithApi.getAllBooks();
+        const allBooks = [...sunni, ...shia];
+        const book = allBooks.find(b => b.id === bookId);
+
+        container.appendChild(Utils.createElement('div', { className: 'empty-state empty-state--end' }, [
+          Utils.createElement('div', { className: 'empty-state__title' }, `You've reached the end of ${book?.name || bookId}`),
+          Utils.createElement('div', { className: 'empty-state__description' }, `This collection contains ${hadith.totalInCollection.toLocaleString()} ahadiths. Hadith #${hadith.requestedNum} is the last one.`),
+          Utils.createElement('a', {
+            className: 'btn btn--primary',
+            href: `#hadiths/${collection}/${bookId}`
+          }, 'Return to Book')
+        ]));
+        return;
+      }
+
+      if (!hadith || hadith.notFound) {
         container.appendChild(Utils.createElement('div', { className: 'empty-state' }, [
           Utils.createElement('div', { className: 'empty-state__title' }, 'Hadith Not Found')
         ]));
@@ -270,7 +294,7 @@ const HadithView = (() => {
       if (collection === 'shia') {
         // Shia: use majlisiGrading if available, otherwise behdudiGrading
         grade = hadith.majlisiGrading || hadith.behdudiGrading || hadith.grade || 'Unknown';
-        gradeInfo = getGradeInfo(grade);
+        gradeInfo = getGradeInfo(grade, collection);
 
         // Store all Shia gradings for display
         if (hadith.majlisiGrading || hadith.behdudiGrading) {
@@ -281,7 +305,7 @@ const HadithView = (() => {
         }
       } else {
         grade = hadith.grade || 'Unknown';
-        gradeInfo = getGradeInfo(grade);
+        gradeInfo = getGradeInfo(grade, collection);
       }
 
       const chapterInfo = hadith.chapter ? hadith.chapter.name_en || hadith.chapter.name_ar : null;
@@ -294,9 +318,9 @@ const HadithView = (() => {
       if (isKutubAlSittah && hadith.arabic) {
         toggleArabicBtn = document.createElement('button');
         toggleArabicBtn.className = 'arabic-toggle-btn';
-        
+
         let arabicElement = null;
-        
+
         toggleArabicBtn.addEventListener('click', () => {
           const newState = localStorage.getItem('hadithShowArabic') !== 'true';
           localStorage.setItem('hadithShowArabic', newState.toString());
@@ -395,7 +419,10 @@ const HadithView = (() => {
     }
   }
 
-  function getGradeInfo(grade) {
+  function getGradeInfo(grade, collection) {
+    if (collection === 'shia') {
+      return { outline: '#EF4444', label: grade || ' Shia' };
+    }
     const g = (grade || '').toLowerCase();
     if (g.includes('sahih') || g.includes('authentic')) {
       return { outline: '#10B981', label: grade || 'Sahih' };
@@ -416,11 +443,10 @@ const HadithView = (() => {
   function copyHadith(hadith, book, hadithNum, gradeInfo, collection, bookId) {
     const chapter = hadith.chapter?.name_en || hadith.chapter?.name_ar || '';
     const bookName = book?.name || bookId;
-    const link = `${window.location.origin}/#hadiths/${collection}/${bookId}/${hadithNum}`;
+    const link = `${window.location.origin}${window.location.pathname}#hadiths/${collection}/${bookId}/${hadithNum}`;
 
     let text = `${bookName} — Hadith #${hadithNum}\n`;
     if (hadith.chapter?.number) text += `Chp ${hadith.chapter.number}: ${chapter}\n`;
-    text += `${'─'.repeat(40)}\n`;
 
     // Handle Shia multiple gradings
     if (collection === 'shia') {
@@ -430,7 +456,6 @@ const HadithView = (() => {
       text += `Grade: ${gradeInfo.label}\n`;
     }
 
-    text += `${'─'.repeat(40)}\n`;
     if (hadith.english?.narrator) {
       text += `${hadith.english.narrator}\n\n`;
     }

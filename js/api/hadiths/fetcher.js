@@ -6,7 +6,7 @@ const HadithFetcher = (() => {
     try {
       const data = await ApiClient.fetchApi(url);
       if (!data || !data.hadiths || data.hadiths.length === 0) {
-        return null;
+        return { notFound: true, isEndOfCollection: true, requestedNum: hadithNum, totalInCollection: book.totalHadiths };
       }
       
       const h = data.hadiths[0];
@@ -46,7 +46,9 @@ const HadithFetcher = (() => {
       };
     } catch (e) {
       console.error(`Failed to fetch fawaz hadith ${book.id}#${hadithNum}:`, e.message);
-      return null;
+      const isHttpError = e.message.includes('403') || e.message.includes('404');
+      const isAtOrBeyondEnd = hadithNum >= (book.totalHadiths || 0);
+      return { notFound: true, isEndOfCollection: isHttpError && isAtOrBeyondEnd, requestedNum: hadithNum };
     }
   }
 
@@ -64,64 +66,93 @@ const HadithFetcher = (() => {
   async function getItqanChapterHadiths(collection, bookId, chapter) {
     const baseUrl = HadithConfig.getBaseUrl(collection);
     const url = `${baseUrl}/${bookId}/${chapter}.json`;
+    console.log(`[ITQAN] Fetching chapter ${chapter} for ${bookId}: ${url}`);
     try {
-      return await ApiClient.fetchApi(url);
+      const data = await ApiClient.fetchApi(url);
+      if (Array.isArray(data)) {
+        console.log(`[ITQAN] Chapter ${chapter} loaded ${data.length} hadiths`);
+      }
+      return data;
     } catch (e) {
       console.error(`Failed to fetch chapter ${chapter} for ${bookId}:`, e.message);
       return [];
     }
   }
 
-  async function findItqanHadith(collection, bookId, hadithNum) {
+async function findItqanHadith(collection, bookId, hadithNum) {
     const chapters = await getItqanChapterIndex(collection, bookId);
     
     if (!chapters || !Array.isArray(chapters)) {
-      console.error(`No chapter index found for ${bookId}`);
-      return null;
+        console.error(`No chapter index found for ${bookId}`);
+        return null;
+    }
+    
+    const totalFromIndex = chapters.reduce((sum, ch) => sum + (ch.count || 0), 0);
+    console.log(`[ITQAN] Book ${bookId} total hadiths: ${totalFromIndex}, requested: ${hadithNum}`);
+    
+    if (hadithNum > totalFromIndex) {
+        return { notFound: true, isEndOfCollection: true, requestedNum: hadithNum, totalInCollection: totalFromIndex };
     }
     
     let cumulative = 0;
     for (const chapter of chapters) {
-      const count = chapter.count || 0;
-      if (hadithNum <= cumulative + count) {
-        const chapterNum = parseInt(chapter.file.replace('.json', ''));
-        const rawData = await getItqanChapterHadiths(collection, bookId, chapterNum);
-        const hadiths = Array.isArray(rawData) ? rawData : (rawData?.hadiths || []);
-        
-        // Search by actual hadith number (not local position in chapter)
-        let hadith = hadiths.find(h => {
-          const hId = h.idInBook || h.id || h.hadithnumber;
-          return parseInt(hId) === parseInt(hadithNum);
-        }) || null;
-        
-        if (hadith) {
-          if (collection === 'shia' && hadith.chapter) {
-            hadith.chapter = {
-              number: chapterNum,
-              name_en: hadith.chapter || '',
-              name_ar: ''
-            };
-          } else {
-            hadith.chapter = {
-              number: chapterNum,
-              name_en: chapter.name_en || '',
-              name_ar: chapter.name_ar || ''
-            };
-          }
+        const count = chapter.count || 0;
+        console.log(`[ITQAN] Checking chapter ${chapter.file} cumulative=${cumulative} count=${count} target=${hadithNum}`);
+        if (hadithNum <= cumulative + count) {
+            const chapterNum = parseInt(chapter.file.replace('.json', ''));
+            console.log(`[ITQAN] Found hadith ${hadithNum} in chapter ${chapter.file}, local position: ${hadithNum - cumulative}`);
+            const rawData = await getItqanChapterHadiths(collection, bookId, chapterNum);
+            const hadiths = Array.isArray(rawData) ? rawData : (rawData?.hadiths || []);
+            
+            let hadith;
+            if (collection === 'shia') {
+                hadith = hadiths.find(h => parseInt(h.id) === parseInt(hadithNum)) || null;
+            } else {
+                const localPosition = hadithNum - cumulative;
+                console.log(`[ITQAN] Searching for local position ${localPosition} in ${hadiths.length} hadiths`);
+                hadith = hadiths.find(h => parseInt(h.id) === parseInt(hadithNum)) || null;
+                if (!hadith) {
+                    hadith = hadiths.find(h => {
+                        const hId = h.idInBook || h.hadithnumber;
+                        return parseInt(hId) === parseInt(localPosition);
+                    }) || null;
+                }
+                if (!hadith) {
+                    console.log(`[ITQAN] NOT FOUND! First 3 hadith IDs:`, hadiths.slice(0, 3).map(h => h.id || h.idInBook));
+                }
+            }
+            
+            if (hadith) {
+                if (collection === 'shia' && hadith.chapter) {
+                    hadith.chapter = {
+                        number: chapterNum,
+                        name_en: hadith.chapter || '',
+                        name_ar: ''
+                    };
+                } else {
+                    hadith.chapter = {
+                        number: chapterNum,
+                        name_en: chapter.name_en || '',
+                        name_ar: chapter.name_ar || ''
+                    };
+                }
+            }
+            
+            return hadith;
         }
-        
-        return hadith;
-      }
-      cumulative += count;
+        cumulative += count;
     }
     
-    return null;
-  }
+    return { notFound: true, isEndOfCollection: true, requestedNum: hadithNum, totalInCollection: totalFromIndex };
+}
 
   async function findHadithByNumber(collection, bookId, hadithNum) {
     const book = HadithBooks.getById(bookId);
     
     if (book && book.apiSource === 'fawaz') {
+      if (book.totalHadiths && hadithNum > book.totalHadiths) {
+        return { notFound: true, isEndOfCollection: true, requestedNum: hadithNum, totalInCollection: book.totalHadiths };
+      }
       return await fetchFawazHadith(book, hadithNum);
     }
     
