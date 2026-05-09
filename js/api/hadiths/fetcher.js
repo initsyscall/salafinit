@@ -66,13 +66,8 @@ const HadithFetcher = (() => {
   async function getItqanChapterHadiths(collection, bookId, chapter) {
     const baseUrl = HadithConfig.getBaseUrl(collection);
     const url = `${baseUrl}/${bookId}/${chapter}.json`;
-    console.log(`[ITQAN] Fetching chapter ${chapter} for ${bookId}: ${url}`);
     try {
-      const data = await ApiClient.fetchApi(url);
-      if (Array.isArray(data)) {
-        console.log(`[ITQAN] Chapter ${chapter} loaded ${data.length} hadiths`);
-      }
-      return data;
+      return await ApiClient.fetchApi(url);
     } catch (e) {
       console.error(`Failed to fetch chapter ${chapter} for ${bookId}:`, e.message);
       return [];
@@ -88,7 +83,6 @@ async function findItqanHadith(collection, bookId, hadithNum) {
     }
     
     const totalFromIndex = chapters.reduce((sum, ch) => sum + (ch.count || 0), 0);
-    console.log(`[ITQAN] Book ${bookId} total hadiths: ${totalFromIndex}, requested: ${hadithNum}`);
     
     if (hadithNum > totalFromIndex) {
         return { notFound: true, isEndOfCollection: true, requestedNum: hadithNum, totalInCollection: totalFromIndex };
@@ -97,10 +91,8 @@ async function findItqanHadith(collection, bookId, hadithNum) {
     let cumulative = 0;
     for (const chapter of chapters) {
         const count = chapter.count || 0;
-        console.log(`[ITQAN] Checking chapter ${chapter.file} cumulative=${cumulative} count=${count} target=${hadithNum}`);
         if (hadithNum <= cumulative + count) {
             const chapterNum = parseInt(chapter.file.replace('.json', ''));
-            console.log(`[ITQAN] Found hadith ${hadithNum} in chapter ${chapter.file}, local position: ${hadithNum - cumulative}`);
             const rawData = await getItqanChapterHadiths(collection, bookId, chapterNum);
             const hadiths = Array.isArray(rawData) ? rawData : (rawData?.hadiths || []);
             
@@ -109,16 +101,12 @@ async function findItqanHadith(collection, bookId, hadithNum) {
                 hadith = hadiths.find(h => parseInt(h.id) === parseInt(hadithNum)) || null;
             } else {
                 const localPosition = hadithNum - cumulative;
-                console.log(`[ITQAN] Searching for local position ${localPosition} in ${hadiths.length} hadiths`);
                 hadith = hadiths.find(h => parseInt(h.id) === parseInt(hadithNum)) || null;
                 if (!hadith) {
                     hadith = hadiths.find(h => {
                         const hId = h.idInBook || h.hadithnumber;
                         return parseInt(hId) === parseInt(localPosition);
                     }) || null;
-                }
-                if (!hadith) {
-                    console.log(`[ITQAN] NOT FOUND! First 3 hadith IDs:`, hadiths.slice(0, 3).map(h => h.id || h.idInBook));
                 }
             }
             

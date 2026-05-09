@@ -127,16 +127,18 @@
 }
 
 .hadith-actions-row {
+  display: flex;
   flex-wrap: wrap;
   justify-content: center;
   padding-top: var(--spacing-md);
   gap: var(--spacing-sm);
+  width: 100%;
 }
 
 .hadith-action-btn {
-  flex: 1;
-  min-width: calc(33% - 8px);
-  max-width: 150px;
+  flex: 1 1 0;
+  min-width: 80px;
+  max-width: 180px;
   padding: var(--spacing-sm) var(--spacing-md);
 }
 
@@ -154,7 +156,7 @@
 
   .hadith-actions-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-xs);
   }
 

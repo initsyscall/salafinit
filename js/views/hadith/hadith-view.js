@@ -116,6 +116,44 @@ const HadithView = (() => {
       shiaGrid.appendChild(card);
     });
     container.appendChild(shiaSection);
+
+    const footerSection = Utils.createElement('div', { className: 'hadith-footer' }, [
+      Utils.createElement('div', { className: 'hadith-translation-setting' }, [
+        Utils.createElement('label', { className: 'hadith-translation-label', textContent: 'Translation language:' }),
+        Utils.createElement('select', {
+          className: 'input hadith-lang-select',
+          id: 'translation-lang-select'
+        }, [
+          ...TranslationModule.getSupportedLanguages().map(lang => 
+            Utils.createElement('option', { 
+              value: lang.code, 
+              textContent: lang.native 
+            })
+          )
+        ]),
+        Utils.createElement('button', {
+          className: 'btn btn--primary',
+          id: 'save-translation-lang-btn',
+          style: 'padding: var(--spacing-sm) var(--spacing-md); font-size: var(--font-size-sm);',
+          textContent: 'Save'
+        })
+      ])
+    ]);
+    container.appendChild(footerSection);
+
+    const langSelect = document.getElementById('translation-lang-select');
+    if (langSelect) {
+      langSelect.value = TranslationModule.getPreferredLanguage();
+    }
+
+    const saveBtn = document.getElementById('save-translation-lang-btn');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', () => {
+        const selectedLang = langSelect.value;
+        TranslationModule.setPreferredLanguage(selectedLang);
+        Utils.showToast(`Translation language saved to ${langSelect.options[langSelect.selectedIndex].text}`);
+      });
+    }
   }
 
   function createBookCard(book, collection, styleType) {
@@ -392,7 +430,7 @@ const HadithView = (() => {
       ]);
       container.appendChild(navRow1);
 
-      const navRow2 = Utils.createElement('div', { className: 'hadith-nav-row hadith-actions-row' }, [
+      const actionButtons = [
         Utils.createElement('button', {
           className: 'btn btn--secondary hadith-action-btn',
           onClick: () => copyHadith(hadith, book, hadithNum, gradeInfo, collection, bookId),
@@ -407,8 +445,15 @@ const HadithView = (() => {
           className: 'btn btn--secondary hadith-action-btn',
           onClick: () => copyHadithLink(collection, bookId, hadithNum),
           innerHTML: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span>Copy Link</span>'
+        }),
+        Utils.createElement('button', {
+          className: 'btn btn--secondary hadith-action-btn',
+          onClick: () => TranslationModule.translateHadith(hadith.arabic, hadith.english?.text || hadith.english?.narrator),
+          innerHTML: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Translate</span>'
         })
-      ]);
+      ];
+
+      const navRow2 = Utils.createElement('div', { className: 'hadith-nav-row hadith-actions-row' }, actionButtons);
       container.appendChild(navRow2);
     } catch (err) {
       loader.remove();
@@ -445,32 +490,31 @@ const HadithView = (() => {
     const bookName = book?.name || bookId;
     const link = `${window.location.origin}${window.location.pathname}#hadiths/${collection}/${bookId}/${hadithNum}`;
 
-    let text = `${bookName} — Hadith #${hadithNum}\n`;
+    let text = `${bookName} - ${hadithNum}\n`;
     if (hadith.chapter?.number) text += `Chp ${hadith.chapter.number}: ${chapter}\n`;
+    text += '\n';
 
     // Handle Shia multiple gradings
     if (collection === 'shia') {
-      if (hadith.majlisiGrading) text += `Allamah Majlisi: ${hadith.majlisiGrading}\n`;
-      if (hadith.behdudiGrading) text += `Shaykh Behbudi: ${hadith.behdudiGrading}\n`;
+      if (hadith.majlisiGrading) text += `Grade: ${hadith.majlisiGrading}\n`;
+      else if (hadith.behdudiGrading) text += `Grade: ${hadith.behdudiGrading}\n`;
     } else {
       text += `Grade: ${gradeInfo.label}\n`;
     }
+    text += '\n';
 
-    if (hadith.english?.narrator) {
-      text += `${hadith.english.narrator}\n\n`;
-    }
     if (hadith.english?.text) {
-      text += `${hadith.english.text}\n\n`;
+      text += `${hadith.english.text}\n`;
     }
-    if (hadith.arabic) {
-      const bookData = HadithBooks.getById(bookId);
-      const isKutubAlSittah = bookData?.apiSource === 'fawaz';
-      const showArabic = localStorage.getItem('hadithShowArabic') === 'true';
-      if (!isKutubAlSittah || showArabic) {
-        text += `${hadith.arabic}\n`;
-      }
+    text += '\n';
+
+    const showArabic = localStorage.getItem('hadithShowArabic') === 'true';
+    if (hadith.arabic && showArabic) {
+      text += `${hadith.arabic}\n`;
     }
-    text += `\n🔗 ${link}`;
+    text += '\n';
+
+    text += `Link: ${link}`;
 
     navigator.clipboard.writeText(text).then(() => {
       const btns = document.querySelectorAll('.hadith-action-btn');
