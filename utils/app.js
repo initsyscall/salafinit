@@ -1,0 +1,153 @@
+const App = (() => {
+  function init() {
+    initHamburger();
+    registerRoutes();
+    Router.init();
+    registerServiceWorker();
+  }
+
+  function initHamburger() {
+    const hamburger = document.getElementById('header-hamburger');
+    const nav = document.getElementById('header-nav');
+    if (!hamburger || !nav) return;
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      nav.classList.toggle('open');
+    });
+
+    document.querySelectorAll('.header__nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        nav.classList.remove('open');
+      });
+    });
+  }
+
+  function registerRoutes() {
+    Router.on('/', () => {
+      const main = document.getElementById('app-main');
+      main.innerHTML = '';
+
+      const hero = Utils.createElement('div', { className: 'home-hero' }, [
+        Utils.createElement('p', { className: 'home-hero__bismillah' }, 'بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ'),
+        Utils.createElement('h1', { className: 'home-hero__title', innerHTML: 'salaf<span class="hero__dot">.</span><span class="hero__init">Init</span><span class="hero__parens">();</span>' }),
+        Utils.createElement('p', { className: 'home-hero__subtitle', style: 'max-width: 600px; line-height: 1.8;' }, 'Pray, "My Lord! Increase me in knowledge." - Surah taha 114')
+      ]);
+      main.appendChild(hero);
+
+      const grid = Utils.createElement('div', { className: 'grid grid--responsive home-grid' }, [
+        createFeatureCard('ٱلْقُرْآن', 'The Noble Quran - Uthmani Text with Translation and Tafsir', 'quran', '#quran'),
+        createFeatureCard('ٱلْحَدِيثُ', 'Hadith Collections - Kutub al-Sittah + More', 'hadith', '#hadiths'),
+        createFeatureCard('ٱلصَّلَاةُ', 'Salah Timings - Prayer times based on your location', 'salah', '#salah'),
+        createFeatureCard('ٱلْعِلْمُ', 'Learn Salafiyyah, shia & other religion', 'learn', '#learn'),
+        createFeatureCard('ٱلْأَدَوَاتُ', 'Utils - Bookmark, Notes & More (Coming Soon)', 'utils', '#utils')
+      ]);
+      main.appendChild(grid);
+    });
+
+    Router.on('quran', () => QuranView.render(document.getElementById('app-main')));
+    Router.on('quran/:surah', (container, params) => QuranView.render(container, params));
+    Router.on('quran/tafsir/:surah/:ayah', (container, params) => QuranView.render(container, { tafsir: true, surah: params.surah, ayah: params.ayah }));
+    Router.on('quran/:surah/:ayah', (container, params) => QuranView.render(container, params));
+    Router.on('quran/image/:surah/:ayah', (container, params) => QuranView.render(container, { image: true, surah: params.surah, ayah: params.ayah }));
+
+    Router.on('hadiths', () => HadithView.render(document.getElementById('app-main')));
+    Router.on('hadiths/:book', (container, params) => HadithView.render(container, { book: params.book }));
+    Router.on('hadiths/:book/:hadith', (container, params) => HadithView.render(container, { book: params.book, hadith: params.hadith }));
+    Router.on('hadiths/:collection/:book/:hadith', (container, params) => HadithView.render(container, params));
+    Router.on('hadiths/:collection/:book', (container, params) => HadithView.render(container, params));
+
+    Router.on('salah', () => SalahView.render(document.getElementById('app-main')));
+
+    Router.on('learn', () => LearnView.render(document.getElementById('app-main')));
+
+    Router.on('learn/shia/:book/:hadith', (container, params) => HadithView.render(container, { collection: 'shia', book: params.book, hadith: params.hadith }));
+    Router.on('learn/shia/:book', (container, params) => HadithView.render(container, { collection: 'shia', book: params.book }));
+    Router.on('learn/shia', () => {
+      const main = document.getElementById('app-main');
+      main.innerHTML = '';
+      HadithView.render(main, { collection: 'shia' });
+    });
+
+    Router.on('learn/salafiyyah', () => {
+      const main = document.getElementById('app-main');
+      main.innerHTML = `
+        <div class="empty-state" style="min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.5" style="margin-bottom: var(--spacing-lg); opacity: 0.8;">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+          <h2 class="empty-state__title" style="color: var(--color-text);">Coming Soon</h2>
+          <p class="empty-state__description" style="max-width: 400px; text-align: center;">
+            Salafiyyah books and resources will be available soon. Download Salafi books and study materials.
+          </p>
+        </div>
+      `;
+    });
+
+    Router.on('learn/other', () => {
+      const main = document.getElementById('app-main');
+      main.innerHTML = `
+        <div class="empty-state" style="min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="1.5" style="margin-bottom: var(--spacing-lg); opacity: 0.8;">
+            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+          </svg>
+          <h2 class="empty-state__title" style="color: var(--color-text);">Coming Soon</h2>
+          <p class="empty-state__description" style="max-width: 400px; text-align: center;">
+            Other religious texts - Compare and contrast with Islamic sources. Bible, Hinduism, Old Testament and more.
+          </p>
+        </div>
+      `;
+    });
+
+    Router.on('utils', () => {
+      const main = document.getElementById('app-main');
+      main.innerHTML = `
+        <div class="empty-state" style="min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#F472C6" stroke-width="1.5" style="margin-bottom: var(--spacing-lg); opacity: 0.8;">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+          <h2 class="empty-state__title" style="color: var(--color-text);">Coming Soon</h2>
+          <p class="empty-state__description" style="max-width: 400px; text-align: center;">
+            Utils feature is under development. Bookmark your favorite hadiths, verses, and notes.
+          </p>
+        </div>
+      `;
+    });
+
+    Router.notFound((container) => {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state__title">Page Not Found</div>
+          <div class="empty-state__description">The page you are looking for does not exist.</div>
+          <a href="#/" class="btn btn--primary" style="margin-top: var(--spacing-xl);">Go Home</a>
+        </div>
+      `;
+    });
+  }
+
+  function createFeatureCard(arabicTitle, description, type, href) {
+    const card = Utils.createElement('a', {
+      className: `card feature-card feature-card--${type}`,
+      href: href,
+      style: 'cursor: pointer;'
+    }, [
+      Utils.createElement('div', { className: `feature-card__arabic feature-card__arabic--${type}` }, arabicTitle),
+      Utils.createElement('p', { className: 'feature-card__description' }, description)
+    ]);
+    return card;
+  }
+
+  function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .catch(() => { });
+      });
+    }
+  }
+
+  return { init };
+})();
+
+document.addEventListener('DOMContentLoaded', () => App.init());

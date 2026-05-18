@@ -19,10 +19,27 @@
     href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Amiri+Quran&family=Inter:wght@400;500;600;700&display=swap"
     rel="stylesheet">
 
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/tokens.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/components/index.css">
+  <link rel="stylesheet" href=".const/reset.css">
+  <link rel="stylesheet" href=".const/tokens.css">
+  <link rel="stylesheet" href=".const/layout.css">
+  <link rel="stylesheet" href=".const/components/css/base-button.css">
+  <link rel="stylesheet" href=".const/components/css/base-badge.css">
+  <link rel="stylesheet" href=".const/components/css/base-card.css">
+  <link rel="stylesheet" href=".const/components/css/base-state.css">
+  <link rel="stylesheet" href=".const/components/css/utilities.css">
+  <link rel="stylesheet" href="hadiths/.const/components/css/hadith-books.css">
+  <link rel="stylesheet" href="hadiths/.const/components/css/hadith-chapters.css">
+  <link rel="stylesheet" href="hadiths/.const/components/css/hadith-dashboard.css">
+  <link rel="stylesheet" href="hadiths/.const/components/css/hadith-detail.css">
+  <link rel="stylesheet" href="hadiths/.const/components/css/hadith-grading.css">
+  <link rel="stylesheet" href="hadiths/.const/components/css/hadith-search.css">
+  <link rel="stylesheet" href="quran/.const/components/css/quran-content.css">
+  <link rel="stylesheet" href="quran/.const/components/css/quran-list.css">
+  <link rel="stylesheet" href="quran/.const/components/css/quran-modal.css">
+  <link rel="stylesheet" href="quran/.const/components/css/quran-settings.css">
+  <link rel="stylesheet" href="salah/.const/components/css/salah-main.css">
+  <link rel="stylesheet" href="salah/.const/components/css/salah-grid.css">
+  <link rel="stylesheet" href="salah/.const/components/css/salah-extra.css">
 
   <style>
     .home-hero {
@@ -100,7 +117,7 @@
         <a href="#hadiths" class="header__nav-link">Hadiths</a>
         <a href="#salah" class="header__nav-link">Salah</a>
         <a href="#learn" class="header__nav-link">Learn</a>
-        <a href="#bookmark" class="header__nav-link">Bookmark</a>
+        <a href="#utils" class="header__nav-link">Utils</a>
       </nav>
     </header>
 
@@ -114,23 +131,23 @@
     </footer>
   </div>
 
-  <script src="js/core/store.js"></script>
-  <script src="js/api/client.js"></script>
-  <script src="js/core/router.js"></script>
-  <script src="js/core/utils.js"></script>
-  <script src="js/api/quran.js"></script>
-  <script src="js/api/tafsir-api.js"></script>
-  <script src="js/api/hadiths/config.js"></script>
-  <script src="js/api/hadiths/books.js"></script>
-  <script src="js/api/hadiths/fetcher.js"></script>
-  <script src="js/api/hadiths/index.js"></script>
-  <script src="js/api/hadiths/translation.js"></script>
-  <script src="js/api/salah.js"></script>
-  <script type="module" src="js/views/quran/index.js"></script>
-  <script src="js/views/hadith/hadith-view.js"></script>
-  <script src="js/views/salah/salah-view.js"></script>
-  <script src="js/views/learn/learn-view.js"></script>
-  <script src="js/core/app.js"></script>
+  <script src=".const/api/store.js"></script>
+  <script src=".const/api/client.js"></script>
+  <script src=".const/router.js"></script>
+  <script src="utils/utils.js"></script>
+  <script src="quran/.const/api.js"></script>
+  <script src="quran/.const/tafsir.js"></script>
+  <script src="hadiths/.const/api.js"></script>
+  <script src="hadiths/.const/books.js"></script>
+  <script src="hadiths/sunni/fetcher.js"></script>
+  <script src="hadiths/sunni/index.js"></script>
+  <script src="hadiths/sunni/translation.js"></script>
+  <script src="salah/.const/api.js"></script>
+  <script type="module" src="quran/.const/components/js/index.js"></script>
+  <script src="hadiths/.const/components/js/hadith-view.js"></script>
+  <script src="salah/.const/components/js/salah-view.js"></script>
+  <script src="learn/index.js"></script>
+  <script src="utils/app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@zumer/snapdom@latest/dist/snapdom.min.js"></script>
 </body>
 
