@@ -29,7 +29,10 @@ function getTranslations() {
 }
 
 function createBreadcrumb(englishName) {
-  return Utils.createElement('div', { className: 'breadcrumb' }, [
+  return Utils.createElement('div', { 
+    className: 'breadcrumb', 
+    style: 'margin-bottom: 0.5rem;'
+  }, [
     Utils.createElement('a', { className: 'breadcrumb__item', href: '#quran' }, 'Quran'),
     Utils.createElement('span', { className: 'breadcrumb__separator' }, '/'),
     Utils.createElement('span', { className: 'breadcrumb__item' }, englishName)
@@ -37,30 +40,24 @@ function createBreadcrumb(englishName) {
 }
 
 function createSurahHeader(uthmani) {
-  return Utils.createElement('div', { className: 'card quran-surah-header', style: 'margin-bottom: var(--spacing-xl); text-align: center; position: relative; overflow: hidden;' }, [
-    Utils.createElement('div', { className: 'quran-surah-header__bismillah' }, QuranConfig.BISMILLAH),
-    Utils.createElement('h2', { className: 'card__title quran-surah-header__title' }, uthmani.name),
-    Utils.createElement('p', { className: 'card__description quran-surah-header__subtitle' }, `${uthmani.englishName} • ${uthmani.englishNameTranslation}`),
-    Utils.createElement('p', { className: 'card__description' }, `${uthmani.numberOfAyahs} Ayahs • ${uthmani.revelationType}`)
+  return Utils.createElement('div', { className: 'quran-surah-header' }, [
+    Utils.createElement('h2', { className: 'quran-surah-header__title' }, uthmani.name),
+    Utils.createElement('p', { className: 'quran-surah-header__subtitle' }, `${uthmani.englishName}`)
   ]);
 }
 
 function createSearchWrapper() {
-  const searchWrapper = Utils.createElement('div', {
-    style: 'display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-lg);'
-  });
+  const searchWrapper = Utils.createElement('div', { className: 'quran-search-wrapper' });
   
   const searchInput = Utils.createElement('input', {
     className: 'input quran-search-input',
     id: 'ayah-search',
-    placeholder: QuranConfig.LABELS.AYAH_SEARCH_PLACEHOLDER,
-    style: 'flex: 1;'
+    placeholder: 'Search ayah...'
   });
   
   const goBtn = Utils.createElement('button', {
-    className: 'btn btn--primary',
-    style: 'padding: var(--spacing-sm) var(--spacing-md);'
-  }, QuranConfig.LABELS.SEARCH_BTN);
+    className: 'btn btn--ghost'
+  }, 'Go');
   
   searchWrapper.appendChild(searchInput);
   searchWrapper.appendChild(goBtn);
@@ -78,80 +75,66 @@ function createScrollToTopBtn() {
 
 function createAyahCard(ayah, primaryTrans, isHighlighted, uthmani, allTranslations, openTafsirFn, copyAyahFn, shareAyahFn) {
   const ayahCard = Utils.createElement('div', {
-    className: 'card quran-ayah-card',
+    className: 'quran-ayah-card',
     id: `ayah-${ayah.numberInSurah}`,
-    style: `${isHighlighted ? 'border-color: var(--color-quran); box-shadow: var(--shadow-gold);' : ''}`
   });
 
-  const ayahHeader = Utils.createElement('div', {
-    style: 'display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); padding-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-border);'
-  }, [
-    Utils.createElement('div', { style: 'display: flex; align-items: center; gap: var(--spacing-sm);' }, [
-      Utils.createElement('span', { className: 'badge badge--primary quran-ayah-badge' }, `${QuranConfig.LABELS.AYAH} ${ayah.numberInSurah}`),
-      Utils.createElement('button', {
-        className: 'btn btn--ghost btn--sm quran-tafsir-btn',
-        onClick: () => {
-          window.location.hash = `#quran/tafsir/${uthmani.number}/${ayah.numberInSurah}`;
-        }
-      }, QuranConfig.LABELS.TAFSIR_IBN_KATHIR)
-    ]),
-    Utils.createElement('div', { style: 'display: flex; gap: var(--spacing-xs);' }, [
-      Utils.createElement('button', {
-        className: 'btn btn--ghost btn--icon',
-        title: 'Copy',
-        innerHTML: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>',
-        onClick: () => copyAyahFn(ayah, primaryTrans, uthmani)
-      }),
-      Utils.createElement('button', {
-        className: 'btn btn--ghost btn--icon quran-share-btn',
-        title: 'Share',
-        innerHTML: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>',
-        onClick: () => shareAyahFn(ayah, primaryTrans, uthmani)
-      }),
-      Utils.createElement('a', {
-        className: 'btn btn--ghost btn--icon',
-        title: 'Link',
-        href: `#quran/${uthmani.number}/${ayah.numberInSurah}`,
-        innerHTML: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>'
-      })
-    ])
-  ]);
-  ayahCard.appendChild(ayahHeader);
+  const headerRow = Utils.createElement('div', { className: 'quran-ayah-header' });
+  
+  const leftSide = Utils.createElement('div', { className: 'quran-ayah-left' });
+  const ayahNumber = Utils.createElement('span', {
+    className: 'quran-ayah-number'
+  }, `${ ayah.numberInSurah}`);
+  const surahName = Utils.createElement('span', {
+    className: 'quran-ayah-surah-name'
+  }, ` ${uthmani.englishName}`);
+  leftSide.appendChild(ayahNumber);
+  leftSide.appendChild(surahName);
+  
+  const tafsirLink = Utils.createElement('a', {
+    className: 'quran-tafsir-link',
+    href: `#quran/tafsir/${uthmani.number}/${ayah.numberInSurah}`
+  }, 'Tafsir Ibn Kathir');
+  
+  headerRow.appendChild(leftSide);
+  headerRow.appendChild(tafsirLink);
+  ayahCard.appendChild(headerRow);
 
   const arabicText = Utils.createElement('p', {
-    className: 'rtl arab-text quran-arabic',
+    className: 'quran-arabic',
     innerHTML: ayah.text
   });
   ayahCard.appendChild(arabicText);
 
   if (primaryTrans?.text) {
-    const translationsContainer = Utils.createElement('div', { 
-      className: 'quran-translations-container',
-      style: 'margin-top: var(--spacing-md);'
-    });
-    
     const primaryTransDiv = Utils.createElement('p', {
-      className: 'card__description quran-translation quran-translation--primary',
+      className: 'quran-translation',
       innerHTML: formatTranslation(primaryTrans.text)
     });
-    translationsContainer.appendChild(primaryTransDiv);
-    
-    if (allTranslations && allTranslations.length > 1) {
-      allTranslations.slice(1).forEach((transData, idx) => {
-        const trans = transData?.data?.ayahs?.find(t => t.numberInSurah === ayah.numberInSurah);
-        if (trans?.text) {
-          const secTransDiv = Utils.createElement('p', {
-            className: 'card__description quran-translation quran-translation--secondary',
-            style: 'margin-top: var(--spacing-sm); font-size: var(--font-size-sm);',
-            innerHTML: formatTranslation(trans.text)
-          });
-          translationsContainer.appendChild(secTransDiv);
-        }
-      });
-    }
-    
-    ayahCard.appendChild(translationsContainer);
+    ayahCard.appendChild(primaryTransDiv);
   }
+
+  const actions = Utils.createElement('div', { className: 'quran-ayah-actions' }, [
+    Utils.createElement('button', {
+      className: 'btn btn--ghost',
+      title: 'Share',
+      innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>',
+      onClick: () => shareAyahFn(ayah, primaryTrans, uthmani)
+    }),
+    Utils.createElement('a', {
+      className: 'btn btn--ghost',
+      title: 'Link',
+      href: `#quran/${uthmani.number}/${ayah.numberInSurah}`,
+      innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>'
+    }),
+    Utils.createElement('button', {
+      className: 'btn btn--ghost',
+      title: 'Copy',
+      innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>',
+      onClick: () => copyAyahFn(ayah, primaryTrans, uthmani)
+    })
+  ]);
+  ayahCard.appendChild(actions);
 
   return ayahCard;
 }

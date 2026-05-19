@@ -59,23 +59,47 @@
   color: var(--color-quran);
 }
 
-/* Continue Reading Button */
-.quran-continue-btn {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-salah));
-  color: var(--color-bg);
-  border: none;
-  font-size: var(--font-size-lg);
-  padding: var(--spacing-md);
-  font-weight: 600;
+/* === SEARCH === */
+.quran-search-input {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
 }
 
-.quran-continue-btn:hover {
-  filter: brightness(1.1);
+.quran-search-input:focus {
+  border-color: var(--color-primary);
   box-shadow: var(--shadow-glow);
 }
 
-/* Search Input Focus */
-.quran-search-input:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-primary-subtle);
+/* Page Header */
+.quran-page-header {
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.quran-page-header__title {
+  color: var(--color-primary);
+}
+
+.quran-page-header__subtitle {
+  color: var(--color-text-secondary);
+}
+
+/* Breadcrumb */
+.quran-breadcrumb {
+  color: var(--color-text-secondary);
+}
+
+.quran-breadcrumb__item {
+  color: var(--color-text-secondary);
+}
+
+.quran-breadcrumb__item:hover {
+  color: var(--color-primary);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 600px) {
+  .quran-surah-card__title {
+    font-size: var(--font-size-lg);
+  }
 }

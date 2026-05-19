@@ -36,21 +36,17 @@ const SalahView = (() => {
       lat = ipLocation.lat;
       lng = ipLocation.lng;
       const city = ipLocation.city || '';
-      const isIndia = ipLocation.country === 'India' || ipLocation.country_code === 'IN';
-      const isWrongCity = isIndia && (city === 'Ghaziabad' || city === 'Hyderabad' || city === 'Kolkata');
       
-      if (isWrongCity || !city) {
-        lat = 19.075;
-        lng = 72.8777;
-        locationName = 'Mumbai, India';
-      } else {
+      if (city) {
         locationName = `${city}, ${ipLocation.country}`;
+      } else {
+        locationName = `${ipLocation.country}`;
       }
     } catch (err) {
       console.error('IP location failed:', err.message);
       lat = 19.075;
       lng = 72.8777;
-      locationName = 'Mumbai, India';
+      locationName = 'Mumbai, India (default)';
     }
 
     try {
@@ -123,9 +119,38 @@ const SalahView = (() => {
 
     container.appendChild(renderCountdown(prayers, now, nextPrayer));
     
-    const locationBar = Utils.createElement('div', { className: 'salah-location' });
+    const locationBar = Utils.createElement('div', { className: 'salah-location', style: 'justify-content: center;' });
     locationBar.innerHTML = `<span>${locationName}</span>`;
     container.appendChild(locationBar);
+    
+    const gpsBtn = Utils.createElement('button', {
+      className: 'btn btn--secondary',
+      style: 'width: auto; display: block; margin: 0 auto var(--spacing-md); font-size: var(--font-size-sm);'
+    }, 'Fetch accurate location');
+    container.appendChild(gpsBtn);
+    
+    gpsBtn.addEventListener('click', async () => {
+      if (!navigator.geolocation) {
+        Utils.showToast('Geolocation not supported', 'error');
+        return;
+      }
+      gpsBtn.textContent = 'Getting...';
+      gpsBtn.disabled = true;
+      try {
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
+        });
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const data = await SalahApi.getTimingsByCoords(lat, lng);
+        renderTimings(container, data.data, 'Your Location (GPS)');
+      } catch (err) {
+        console.error('GPS error:', err);
+        Utils.showToast('Could not get GPS location', 'error');
+        gpsBtn.textContent = 'Fetch accurate';
+        gpsBtn.disabled = false;
+      }
+    });
     
     container.appendChild(renderMethod(meta));
 
@@ -148,12 +173,18 @@ const SalahView = (() => {
     const [nextH, nextM] = nextPrayerData.time.split(':').map(Number);
     const nextMinutes = nextH * 60 + nextM;
     
-    let diff = nextMinutes - nowMinutes;
-    if (diff < 0) diff += 24 * 60;
+    let diffMinutes = nextMinutes - nowMinutes;
+    if (diffMinutes < 0) diffMinutes += 24 * 60;
     
-    const h = Math.floor(diff / 60);
-    const m = diff % 60;
-    const s = now.getSeconds();
+    const nowSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+    const nextSeconds = nextH * 3600 + nextM * 60;
+    let diffTotalSeconds = nextSeconds - nowSeconds;
+    if (diffTotalSeconds < 0) diffTotalSeconds += 24 * 3600;
+    
+    const h = Math.floor(diffTotalSeconds / 3600);
+    const m = Math.floor((diffTotalSeconds % 3600) / 60);
+    const s = diffTotalSeconds % 60;
+    
     countdownEl.textContent = `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   }
 

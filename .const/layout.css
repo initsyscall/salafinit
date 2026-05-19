@@ -1,3 +1,9 @@
+@font-face {
+  font-family: 'QPC_V2';
+  src: url('../assets/UthmanicHafs_V20.ttf') format('truetype');
+  font-display: swap;
+}
+
 .app {
   display: flex;
   flex-direction: column;

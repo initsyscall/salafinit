@@ -17,6 +17,9 @@ export function formatTafsirText(text) {
     .replace(/<h2>/gi, '<h2 class="quran-tafsir-h2">')
     .replace(/<h3>/gi, '<h3 class="quran-tafsir-h3">')
     .replace(/<p>/gi, '<p class="quran-tafsir-p">');
+  
+  formatted = formatted.replace(/([\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]+)/g, '<arabic>$1</arabic>');
+  
   return formatted;
 }
 
