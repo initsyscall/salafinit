@@ -150,7 +150,6 @@ export async function shareAyah(ayah, translation, surah, isImageMode = false) {
   const existingModal = document.querySelector('.quran-share-modal');
   if (existingModal) existingModal.remove();
 
-  const imageUrl = `#quran/image/${surah.number}/${ayah.numberInSurah}`;
   const appUrl = `#quran/${surah.number}/${ayah.numberInSurah}`;
 
   const template = Utils.createElement('div', {
@@ -193,7 +192,7 @@ export async function shareAyah(ayah, translation, surah, isImageMode = false) {
       Utils.createElement('button', {
         className: 'btn btn--outline',
         onClick: () => {
-          navigator.clipboard.writeText(window.location.origin + window.location.pathname + imageUrl).then(() => {
+          navigator.clipboard.writeText(window.location.origin + window.location.pathname + appUrl).then(() => {
             Utils.showToast(QuranConfig.TOAST.LINK_COPIED);
           });
         }

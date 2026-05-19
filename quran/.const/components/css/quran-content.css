@@ -58,8 +58,8 @@
 }
 
 .quran-ayah-card:hover {
-  border-color: rgba(128, 255, 234, 0.2);
-  background: linear-gradient(135deg, rgba(128, 255, 234, 0.03) 0%, transparent 100%);
+  border-color: rgba(162, 119, 255, 0.4);
+  box-shadow: 0 0 12px rgba(162, 119, 255, 0.2);
 }
 
 .quran-ayah-card:last-child {
@@ -229,4 +229,21 @@
   .quran-surah-header__bismillah {
     font-size: 1.4rem;
   }
+}
+
+.quran-capturing .quran-card-exclude {
+  display: none !important;
+}
+
+.quran-capturing,
+.quran-capturing * {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.quran-capturing .quran-ayah-card {
+  background: var(--color-surface) !important;
+  border-color: transparent !important;
 }

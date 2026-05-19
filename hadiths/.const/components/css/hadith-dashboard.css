@@ -15,77 +15,94 @@
   padding: var(--spacing-lg);
 }
 
+/* Dashboard Header - Clean */
 .hadith-dashboard-header {
   text-align: center;
-  margin-bottom: var(--spacing-xl);
-  padding: var(--spacing-xl) 0;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
 }
 
 .hadith-dashboard-calligraphy {
-  display: block;
-  width: 100%;
-  max-width: 280px;
-  height: auto;
-  margin: 0 auto var(--spacing-md);
-}
-
-.hadith-dashboard-calligraphy text {
-  fill: #A277FF;
+  display: none;
 }
 
 .hadith-dashboard-title {
-  font-size: var(--font-size-2xl);
-  color: var(--color-text);
-  margin-bottom: var(--spacing-xs);
-  font-weight: 700;
+  font-size: var(--font-size-xl);
+  color: #80FFEA;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.hadith-dashboard-title.shia-title {
+  color: #EF4444;
 }
 
 .hadith-dashboard-subtitle {
   color: var(--color-text-muted);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
 }
 
+/* Search - Compact */
 .hadith-search-hero {
   display: flex;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-2xl);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
 }
 
 .hadith-book-select {
-  min-width: 300px;
-  padding: var(--spacing-md) var(--spacing-lg);
-  font-size: var(--font-size-base);
+  min-width: 260px;
+  padding: 0.6rem 1rem;
+  font-size: var(--font-size-sm);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
 }
 
-.hadith-search-btn {
-  padding: var(--spacing-md) var(--spacing-xl);
+.hadith-book-select:focus {
+  border-color: #22C55E;
+  outline: none;
 }
 
+.hadith-search-btn.hadith-search-btn {
+  padding: 0.5rem 0.75rem !important;
+  font-size: var(--font-size-xs) !important;
+  background: transparent !important;
+  color: var(--color-text-muted) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+.hadith-search-btn.hadith-search-btn:hover {
+  color: #22C55E !important;
+  border-color: #22C55E !important;
+}
+
+/* Sections - Clean */
 .hadith-section {
-  margin-bottom: var(--spacing-2xl);
+  margin-bottom: 1.5rem;
 }
 
 .hadith-section-title {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-md);
   color: var(--color-text);
-  margin-bottom: var(--spacing-lg);
-  font-weight: 700;
-  padding: var(--spacing-md) var(--spacing-lg);
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg) 100%);
-  border-bottom: 3px solid var(--hadith-primary);
+  margin-bottom: 1rem;
+  font-weight: 600;
+  padding: 0.5rem 0;
+  border-bottom: 2px solid var(--color-border);
   display: inline-block;
 }
 
 .hadith-section-title.shia-title {
   border-bottom-color: #EF4444;
+  color: #EF4444;
 }
 
 .hadith-section-title.suni-title {
-  border-bottom-color: var(--hadith-primary);
+  border-bottom-color: #22C55E;
+  color: #22C55E;
 }
 
 .hadith-warning {

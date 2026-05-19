@@ -52,8 +52,8 @@
 }
 
 .feature-card--hadith {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.12) 0%, rgba(34, 197, 94, 0.05) 100%);
-  border: 2px solid rgba(34, 197, 94, 0.4);
+  background: linear-gradient(135deg, rgba(128, 255, 234, 0.12) 0%, rgba(128, 255, 234, 0.05) 100%);
+  border: 2px solid rgba(128, 255, 234, 0.4);
 }
 
 .feature-card--salah {
@@ -93,8 +93,8 @@
 }
 
 .feature-card--hadith:hover {
-  border-color: #22C55E;
-  box-shadow: 0 8px 32px rgba(34, 197, 94, 0.25);
+  border-color: #80FFEA;
+  box-shadow: 0 8px 32px rgba(128, 255, 234, 0.25);
 }
 
 .feature-card--salah:hover {
@@ -133,7 +133,7 @@
 }
 
 .feature-card__arabic--hadith {
-  background: linear-gradient(135deg, #4ADE80, #86EFAC);
+  background: linear-gradient(135deg, #80FFEA, #A5F3FC);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

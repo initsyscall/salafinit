@@ -50,7 +50,6 @@ const App = (() => {
     Router.on('quran/:surah', (container, params) => QuranView.render(container, params));
     Router.on('quran/tafsir/:surah/:ayah', (container, params) => QuranView.render(container, { tafsir: true, surah: params.surah, ayah: params.ayah }));
     Router.on('quran/:surah/:ayah', (container, params) => QuranView.render(container, params));
-    Router.on('quran/image/:surah/:ayah', (container, params) => QuranView.render(container, { image: true, surah: params.surah, ayah: params.ayah }));
 
     Router.on('hadiths', () => HadithView.render(document.getElementById('app-main')));
     Router.on('hadiths/:book', (container, params) => HadithView.render(container, { book: params.book }));

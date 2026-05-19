@@ -2,13 +2,13 @@ const LearnView = (() => {
   async function render(container) {
     container.innerHTML = '';
 
-    const header = Utils.createElement('div', { className: 'page-header' }, [
-      Utils.createElement('h1', { className: 'page-header__title' }, 'Learn'),
-      Utils.createElement('p', { className: 'page-header__subtitle' }, 'Salafiyyah resources, Shia Hadiths,  & Other Religion resources')
+    const header = Utils.createElement('div', { className: 'learn-header' }, [
+      Utils.createElement('h1', { className: 'learn-title' }, 'Learn'),
+      Utils.createElement('p', { className: 'learn-subtitle' }, 'Salafiyyah, Shia Hadiths (Academic), & Other Religions')
     ]);
     container.appendChild(header);
 
-    const grid = Utils.createElement('div', { className: 'grid grid--responsive' }, [
+    const grid = Utils.createElement('div', { className: 'learn-grid' }, [
       createSalafiyyahCard(),
       createShiaHadithsCard(),
       createOtherCard()
@@ -18,39 +18,39 @@ const LearnView = (() => {
 
   function createShiaHadithsCard() {
     const card = Utils.createElement('a', {
-      className: 'card feature-card feature-card--shia',
-      href: '#learn/shia',
-      style: 'cursor: pointer;'
+      className: 'learn-card learn-card--shia',
+      href: '#learn/shia'
     }, [
-      Utils.createElement('div', { className: 'feature-card__arabic feature-card__arabic--shia' }, 'ٱلْحَدِيثُ الشِّيعِيُّ'),
-      Utils.createElement('p', { className: 'feature-card__description' }, 'Shia Hadith Collections - Al-Kafi, Al-Amali, and more. Only for academic purposes - we do not accept Shia narrations.'),
-      Utils.createElement('span', { className: 'badge badge--danger', style: 'margin-top: var(--spacing-sm);' }, 'Academic Use Only')
+      Utils.createElement('div', { className: 'learn-card-arabic' }, 'ٱلْحَدِيثُ الشِّيعِيُّ'),
+      Utils.createElement('div', { className: 'learn-card-title' }, 'Shia Hadiths'),
+      Utils.createElement('div', { className: 'learn-card-desc' }, 'Al-Kafi, Al-Amali, and more. Academic use only.'),
+      Utils.createElement('div', { className: 'learn-card-badge' }, 'Academic')
     ]);
     return card;
   }
 
   function createSalafiyyahCard() {
     const card = Utils.createElement('a', {
-      className: 'card feature-card feature-card--salafiyyah',
-      href: '#learn/salafiyyah',
-      style: 'cursor: pointer; background: linear-gradient(135deg, rgba(162, 119, 255, 0.2) 0%, rgba(162, 119, 255, 0.1) 100%); border: 2px solid #F6C177;'
+      className: 'learn-card learn-card--salafiyyah',
+      href: '#learn/salafiyyah'
     }, [
-      Utils.createElement('div', { className: 'feature-card__arabic feature-card__arabic--salafiyyah', style: 'color: #F6C177;' }, 'السَّلَفِيَّةُ'),
-      Utils.createElement('p', { className: 'feature-card__description' }, 'Salafi books and resources - Coming Soon'),
-      Utils.createElement('span', { className: 'badge badge--primary', style: 'margin-top: var(--spacing-sm);' }, 'Coming Soon')
+      Utils.createElement('div', { className: 'learn-card-arabic' }, 'السَّلَفِيَّةُ'),
+      Utils.createElement('div', { className: 'learn-card-title' }, 'Salafiyyah'),
+      Utils.createElement('div', { className: 'learn-card-desc' }, 'Salafi books and resources'),
+      Utils.createElement('div', { className: 'learn-card-badge' }, 'Coming Soon')
     ]);
     return card;
   }
 
   function createOtherCard() {
     const card = Utils.createElement('a', {
-      className: 'card feature-card feature-card--other',
-      href: '#learn/other',
-      style: 'cursor: pointer; background: linear-gradient(135deg, rgba(107, 114, 128, 0.15) 0%, rgba(107, 114, 128, 0.08) 100%); border: 2px solid #6B7280;'
+      className: 'learn-card learn-card--other',
+      href: '#learn/other'
     }, [
-      Utils.createElement('div', { className: 'feature-card__arabic feature-card__arabic--other', style: 'color: #6B7280;' }, 'أَدْيَانٌ أُخْرَى'),
-      Utils.createElement('p', { className: 'feature-card__description' }, 'Other religious texts - Bible, Hinduism, Old Testament - Coming Soon'),
-      Utils.createElement('span', { className: 'badge badge--secondary', style: 'margin-top: var(--spacing-sm);' }, 'Coming Soon')
+      Utils.createElement('div', { className: 'learn-card-arabic' }, 'أَدْيَانٌ أُخْرَى'),
+      Utils.createElement('div', { className: 'learn-card-title' }, 'Other Religions'),
+      Utils.createElement('div', { className: 'learn-card-desc' }, 'Bible, Hinduism, Old Testament'),
+      Utils.createElement('div', { className: 'learn-card-badge' }, 'Coming Soon')
     ]);
     return card;
   }

@@ -52,7 +52,7 @@ const HadithView = (() => {
           fill: '#A277FF'
         }, 'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ')
       ]),
-      Utils.createElement('h1', { className: 'hadith-dashboard-title' }, isShia ? 'Shia Hadiths' : 'Hadiths Collection'),
+      Utils.createElement('h1', { className: `hadith-dashboard-title ${isShia ? 'shia-title' : ''}` }, isShia ? 'Shia Hadiths' : 'Hadiths Collection'),
       Utils.createElement('p', { className: 'hadith-dashboard-subtitle' }, isShia ? 'Academic purposes only' : 'Kutub al-Sittah + More')
     ]);
     container.appendChild(header);
@@ -360,14 +360,17 @@ const HadithView = (() => {
 
       const hadithCard = Utils.createElement('div', {
         className: 'hadith-detail-card',
-        style: `border-left: 4px solid ${gradeInfo.outline};`
+        style: `border-left: 3px solid ${gradeInfo.outline};`
       }, [
         Utils.createElement('div', {
           className: 'hadith-grade-badge',
-          style: `background: ${gradeInfo.outline}20; color: ${gradeInfo.outline}; border: 1px solid ${gradeInfo.outline};`
+          style: `color: ${gradeInfo.outline}; border-color: ${gradeInfo.outline};`
         }, gradeInfo.label),
-        Utils.createElement('div', { className: 'hadith-number' }, `${book?.name || bookId}: #${hadithNum}`),
-        hadith.chapter?.number ? Utils.createElement('div', { className: 'hadith-chapter-name' }, `Chp ${hadith.chapter.number}: ${chapterInfo || ''}`) : null,
+        Utils.createElement('div', { className: 'hadith-book-line' }, [
+          Utils.createElement('span', { className: 'hadith-book-ref' }, book?.name || bookId),
+          Utils.createElement('span', { className: 'hadith-number-badge' }, ` #${hadithNum}`)
+        ]),
+        hadith.chapter?.number ? Utils.createElement('div', { className: 'hadith-chapter-name' }, `Chapter ${hadith.chapter.number}`) : null,
         collection === 'shia' && typeof hadith.english === 'string' ? Utils.createElement('div', { className: 'hadith-text' }, hadith.english) : (
           hadith.english?.narrator ? Utils.createElement('div', { className: 'hadith-narrator', style: 'font-style: italic; margin-bottom: var(--spacing-sm);' }, hadith.english.narrator) : null
         ),
@@ -386,60 +389,63 @@ const HadithView = (() => {
             Utils.createElement('span', { className: 'shia-grading-label' }, 'Shaykh Behbudi: '),
             Utils.createElement('span', {}, shiaGrading.behdudi)
           ]) : null
-        ]) : null
+        ]) : null,
+        Utils.createElement('div', { className: 'hadith-actions-row hadith-card-exclude' }, [
+          Utils.createElement('button', {
+            className: 'btn hadith-action-btn',
+            title: 'Copy',
+            onClick: () => copyHadith(hadith, book, hadithNum, gradeInfo, collection, bookId),
+            innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>'
+          }),
+          Utils.createElement('button', {
+            className: 'btn hadith-action-btn',
+            title: 'Share Image',
+            onClick: () => shareHadithImage(hadith, book, hadithNum, gradeInfo, container),
+            innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>'
+          }),
+          Utils.createElement('button', {
+            className: 'btn hadith-action-btn',
+            title: 'Copy Link',
+            onClick: () => copyHadithLink(collection, bookId, hadithNum),
+            innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>'
+          }),
+          Utils.createElement('button', {
+            className: 'btn hadith-action-btn',
+            title: 'Translate',
+            onClick: () => TranslationModule.translateHadith(hadith.arabic, hadith.english?.text || hadith.english?.narrator),
+            innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>'
+          })
+        ])
       ]);
 
       container.appendChild(hadithCard);
 
-      if ((isKutubAlSittah || collection === 'shia') && hadith.arabic) {
+      const navItems = [];
+
+        if (parseInt(hadithNum) > 1) {
+          navItems.push(Utils.createElement('a', {
+            className: 'hadith-nav-link',
+            href: buildRoute(collection, bookId, parseInt(hadithNum) - 1)
+          }, [Utils.createElement('svg', { width: 10, height: 10, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2 }, Utils.createElement('path', { d: 'M19 12H5M12 19l-7-7 7-7' })), ' Prev']));
+        }
+        
+        if ((isKutubAlSittah || collection === 'shia') && hadith.arabic) {
+          toggleArabicBtn.style.cssText = `background: none; border: none; color: var(--color-text-secondary); cursor: pointer; font-size: 11px; font-weight: 400; padding: 4px 8px;`;
+          toggleArabicBtn.innerHTML = showArabic ? 'Hide Arabic' : 'Show Arabic';
+          navItems.push(toggleArabicBtn);
+        }
+        
+        navItems.push(Utils.createElement('a', {
+          className: 'hadith-nav-link',
+          href: buildRoute(collection, bookId, parseInt(hadithNum) + 1)
+        }, ['Next ', Utils.createElement('svg', { width: 10, height: 10, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2 }, Utils.createElement('path', { d: 'M5 12h14M12 5l7 7-7 7' }))]));
+        
         const toggleWrapper = Utils.createElement('div', {
-          style: 'display: flex; justify-content: flex-end; margin: var(--spacing-xs) 0 var(--spacing-sm) 0;'
-        }, [toggleArabicBtn]);
-        toggleArabicBtn.style.cssText = `background: none; border: none; color: var(--color-text-secondary); cursor: pointer; font-size: 11px; font-weight: 400; padding: 4px 8px;`;
-        toggleArabicBtn.innerHTML = showArabic ? 'Hide Arabic' : 'Show Arabic';
+          style: 'display: flex; justify-content: center; gap: var(--spacing-md); margin: var(--spacing-sm) 0;'
+        }, navItems);
         container.appendChild(toggleWrapper);
-      }
 
-      const navRow1 = Utils.createElement('div', { className: 'hadith-nav-row' }, [
-        Utils.createElement('a', {
-          className: 'btn btn--secondary',
-          href: parseInt(hadithNum) > 1 ? buildRoute(collection, bookId, parseInt(hadithNum) - 1) : '#',
-          style: parseInt(hadithNum) <= 1 ? 'opacity: 0.3; pointer-events: none;' : '',
-          innerHTML: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg><span>Previous</span>'
-        }),
-        Utils.createElement('a', {
-          className: 'btn btn--primary',
-          href: buildRoute(collection, bookId, parseInt(hadithNum) + 1),
-          innerHTML: '<span>Next</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>'
-        })
-      ]);
-      container.appendChild(navRow1);
-
-      const actionButtons = [
-        Utils.createElement('button', {
-          className: 'btn btn--secondary hadith-action-btn',
-          onClick: () => copyHadith(hadith, book, hadithNum, gradeInfo, collection, bookId),
-          innerHTML: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><span>Copy</span>'
-        }),
-        Utils.createElement('button', {
-          className: 'btn btn--secondary hadith-action-btn',
-          onClick: () => shareHadithImage(hadith, book, hadithNum, gradeInfo, container),
-          innerHTML: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg><span>Share Image</span>'
-        }),
-        Utils.createElement('button', {
-          className: 'btn btn--secondary hadith-action-btn',
-          onClick: () => copyHadithLink(collection, bookId, hadithNum),
-          innerHTML: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span>Copy Link</span>'
-        }),
-        Utils.createElement('button', {
-          className: 'btn btn--secondary hadith-action-btn',
-          onClick: () => TranslationModule.translateHadith(hadith.arabic, hadith.english?.text || hadith.english?.narrator),
-          innerHTML: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><span>Translate</span>'
-        })
-      ];
-
-      const navRow2 = Utils.createElement('div', { className: 'hadith-nav-row hadith-actions-row' }, actionButtons);
-      container.appendChild(navRow2);
+      // Navigation removed - consistent with Quran (users can use keyboard arrows or scroll)
     } catch (err) {
       loader.remove();
       container.appendChild(Utils.createElement('div', { className: 'empty-state' }, [
@@ -530,7 +536,10 @@ const HadithView = (() => {
 
     try {
       if (typeof snapdom !== 'undefined') {
+        document.getSelection()?.removeAllRanges();
+        card.classList.add('hadith-capturing');
         const img = await snapdom.toPng(card, { scale: 2 });
+        card.classList.remove('hadith-capturing');
         const a = document.createElement('a');
         a.href = img.src;
         a.download = `hadith-${book.id}-${hadithNum}.png`;
