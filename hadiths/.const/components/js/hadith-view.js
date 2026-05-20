@@ -337,7 +337,40 @@ const HadithView = (() => {
       const isArabicOn = showArabic;
 
       const isKutubAlSittah = book?.apiSource === 'fawaz';
+      const isScholarsBook = book?.apiSource === 'fawaz' && !['bukhari', 'muslim'].includes(book?.id);
       let toggleArabicBtn = null;
+      let scholarsContainer = null;
+      let scholarsToggleBtn = null;
+
+      if (isScholarsBook && hadith.allGrades?.length > 0) {
+        scholarsContainer = Utils.createElement('div', {
+          className: 'hadith-scholars',
+          style: 'display: none;'
+        });
+        hadith.allGrades.forEach(s => {
+          scholarsContainer.appendChild(Utils.createElement('div', { className: 'hadith-scholar-item' }, [
+            Utils.createElement('span', { className: 'hadith-scholar-name' }, s.name),
+            Utils.createElement('span', { className: 'hadith-scholar-grade' }, s.grade)
+          ]));
+        });
+        scholarsToggleBtn = document.createElement('button');
+        scholarsToggleBtn.className = 'btn hadith-action-btn hadith-scholars-toggle';
+        scholarsToggleBtn.title = 'Scholar gradings';
+        scholarsToggleBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>`;
+        scholarsToggleBtn.addEventListener('click', () => {
+          const hidden = scholarsContainer.style.display === 'none';
+          scholarsContainer.style.display = hidden ? 'block' : 'none';
+          scholarsToggleBtn.classList.toggle('active', hidden);
+          if (hidden) {
+            const items = scholarsContainer.querySelectorAll('.hadith-scholar-item');
+            items.forEach((item, i) => {
+              item.style.animation = `none`;
+              item.offsetHeight;
+              item.style.animation = `scholarFadeIn 0.25s ease ${i * 0.04}s both`;
+            });
+          }
+        });
+      }
 
       if (hadith.arabic) {
         toggleArabicBtn = document.createElement('button');
@@ -390,6 +423,7 @@ const HadithView = (() => {
             Utils.createElement('span', {}, shiaGrading.behdudi)
           ]) : null
         ]) : null,
+        scholarsContainer,
         Utils.createElement('div', { className: 'hadith-actions-row hadith-card-exclude' }, [
           Utils.createElement('button', {
             className: 'btn hadith-action-btn',
@@ -414,7 +448,8 @@ const HadithView = (() => {
             title: 'Translate',
             onClick: () => TranslationModule.translateHadith(hadith.arabic, hadith.english?.text || hadith.english?.narrator),
             innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>'
-          })
+          }),
+          scholarsToggleBtn
         ])
       ]);
 
@@ -491,6 +526,11 @@ const HadithView = (() => {
       else if (hadith.behdudiGrading) text += `Grade: ${hadith.behdudiGrading}\n`;
     } else {
       text += `Grade: ${gradeInfo.label}\n`;
+    }
+    if (hadith.allGrades?.length > 1) {
+      hadith.allGrades.forEach(s => {
+        text += `  ${s.name}: ${s.grade}\n`;
+      });
     }
     text += '\n';
 

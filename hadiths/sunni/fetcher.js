@@ -23,6 +23,7 @@ const HadithFetcher = (() => {
 
       prefetchNextHadith(book, hadithNum);
 
+      const grades = h.grades || [];
       return {
         idInBook: h.hadithnumber,
         hadithnumber: h.hadithnumber,
@@ -32,7 +33,8 @@ const HadithFetcher = (() => {
           narrator: '',
           text: h.text || ''
         },
-        grade: (h.grades && h.grades.length > 0) ? h.grades[0].grade : 'Sahih',
+        grade: grades.length > 0 ? grades[0].grade : 'Sahih',
+        allGrades: grades,
         chapter: {
           number: parseInt(sectionNum),
           name_en: chapterName,
