@@ -247,3 +247,11 @@
   background: var(--color-surface) !important;
   border-color: transparent !important;
 }
+
+.quran-translation--alt {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.85;
+}

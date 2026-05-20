@@ -114,6 +114,18 @@ function createAyahCard(ayah, primaryTrans, isHighlighted, uthmani, allTranslati
     ayahCard.appendChild(primaryTransDiv);
   }
 
+  if (allTranslations?.length > 1) {
+    for (let i = 1; i < allTranslations.length; i++) {
+      const t = allTranslations[i]?.data?.ayahs?.find(a => a.numberInSurah === ayah.numberInSurah);
+      if (t?.text) {
+        ayahCard.appendChild(Utils.createElement('p', {
+          className: 'quran-translation quran-translation--alt',
+          innerHTML: formatTranslation(t.text)
+        }));
+      }
+    }
+  }
+
   const actions = Utils.createElement('div', { className: 'quran-ayah-actions quran-card-exclude' }, [
     Utils.createElement('button', {
       className: 'btn btn--ghost',
@@ -318,7 +330,7 @@ export function createPageHeader() {
     Utils.createElement('p', { className: 'page-header__subtitle' }, QuranConfig.PAGE_SUBTITLE),
     Utils.createElement('button', {
       className: 'quran-settings-btn',
-      onClick: () => import('./settings.js').then(m => m.openSettingsModal())
+      onClick: () => import('./settings.js?t=' + Date.now()).then(m => m.openSettingsModal())
     }, '⚙')
   ]);
 }

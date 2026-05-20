@@ -49,7 +49,7 @@
   white-space: nowrap;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 769px) {
   .header__hamburger {
     order: 1;
     margin-left: var(--spacing-md);
@@ -121,7 +121,7 @@
 }
 
 /* Mobile nav - slide from right */
-@media (max-width: 639px) {
+@media (max-width: 768px) {
   .header__nav {
     display: flex;
     position: fixed;
@@ -162,7 +162,7 @@
 }
 
 /* Desktop nav - inline */
-@media (min-width: 640px) {
+@media (min-width: 769px) {
   .header__hamburger {
     display: none !important;
   }

@@ -1,9 +1,18 @@
 const App = (() => {
   function init() {
+    lockPortrait();
     initHamburger();
     registerRoutes();
     Router.init();
     registerServiceWorker();
+  }
+
+  function lockPortrait() {
+    if (!screen.orientation?.lock) return;
+    screen.orientation.lock('portrait').catch(() => {});
+    const unlock = () => { try { screen.orientation?.unlock?.(); } catch(e) {} };
+    document.addEventListener('click', unlock, { once: true });
+    document.addEventListener('touchstart', unlock, { once: true });
   }
 
   function initHamburger() {

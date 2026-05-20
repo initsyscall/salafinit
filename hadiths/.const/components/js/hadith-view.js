@@ -339,7 +339,7 @@ const HadithView = (() => {
       const isKutubAlSittah = book?.apiSource === 'fawaz';
       let toggleArabicBtn = null;
 
-      if ((isKutubAlSittah || collection === 'shia') && hadith.arabic) {
+      if (hadith.arabic) {
         toggleArabicBtn = document.createElement('button');
         toggleArabicBtn.className = 'arabic-toggle-btn';
 
@@ -370,16 +370,16 @@ const HadithView = (() => {
           Utils.createElement('span', { className: 'hadith-book-ref' }, book?.name || bookId),
           Utils.createElement('span', { className: 'hadith-number-badge' }, ` #${hadithNum}`)
         ]),
-        hadith.chapter?.number ? Utils.createElement('div', { className: 'hadith-chapter-name' }, `Chapter ${hadith.chapter.number}`) : null,
+        hadith.chapter?.number ? Utils.createElement('div', { className: 'hadith-chapter-name' }, `Chp ${hadith.chapter.number}${hadith.chapter.name_en ? `: ${hadith.chapter.name_en}` : ''}`) : null,
         collection === 'shia' && typeof hadith.english === 'string' ? Utils.createElement('div', { className: 'hadith-text' }, hadith.english) : (
           hadith.english?.narrator ? Utils.createElement('div', { className: 'hadith-narrator', style: 'font-style: italic; margin-bottom: var(--spacing-sm);' }, hadith.english.narrator) : null
         ),
-        collection === 'shia' && typeof hadith.english === 'string' ? null : (hadith.english?.text ? Utils.createElement('div', { className: 'hadith-text' }, hadith.english.text) : (hadith.text || null)),
+        collection === 'shia' && typeof hadith.english === 'string' ? null : (hadith.english?.text ? Utils.createElement('div', { className: 'hadith-text' }, hadith.english.text) : null),
         hadith.arabic ? Utils.createElement('div', {
           className: 'hadith-arabic rtl',
-          style: `font-family: var(--font-arabic); margin-top: var(--spacing-md); font-size: var(--font-size-lg); display: ${showArabic ? 'block' : 'none'};`
+          style: `font-family: var(--font-arabic); margin-top: var(--spacing-md); font-size: var(--font-size-lg); display: ${(hadith.english?.text || typeof hadith.english === 'string') ? (showArabic ? 'block' : 'none') : 'block'};`
         }, hadith.arabic) : null,
-        (isKutubAlSittah || collection === 'shia') && hadith.arabic ? toggleArabicBtn : null,
+        toggleArabicBtn,
         collection === 'shia' && shiaGrading ? Utils.createElement('div', { className: 'shia-grading' }, [
           shiaGrading.majlisi ? Utils.createElement('div', { className: 'shia-grading-item' }, [
             Utils.createElement('span', { className: 'shia-grading-label' }, 'Allamah Majlisi: '),
@@ -429,7 +429,7 @@ const HadithView = (() => {
           }, [Utils.createElement('svg', { width: 10, height: 10, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2 }, Utils.createElement('path', { d: 'M19 12H5M12 19l-7-7 7-7' })), ' Prev']));
         }
         
-        if ((isKutubAlSittah || collection === 'shia') && hadith.arabic) {
+      if (hadith.arabic) {
           toggleArabicBtn.style.cssText = `background: none; border: none; color: var(--color-text-secondary); cursor: pointer; font-size: 11px; font-weight: 400; padding: 4px 8px;`;
           toggleArabicBtn.innerHTML = showArabic ? 'Hide Arabic' : 'Show Arabic';
           navItems.push(toggleArabicBtn);
