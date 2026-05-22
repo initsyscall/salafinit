@@ -27,77 +27,77 @@
 
 /* Gold Card - Bukhari, Muslim */
 .hadith-book-card.gold-card {
-  border-color: rgba(246, 193, 119, 0.4);
+  border-color: color-mix(in srgb, var(--color-quran) 40%, transparent);
 }
 
 .hadith-book-card.gold-card:hover {
-  border-color: #F6C177;
-  box-shadow: 0 4px 15px rgba(246, 193, 119, 0.2);
+  border-color: var(--color-quran);
+  box-shadow: 0 4px 15px color-mix(in srgb, var(--color-quran) 20%, transparent);
 }
 
 .hadith-book-card.gold-card .hadith-book-arabic {
-  color: #F6C177;
+  color: var(--color-quran);
 }
 
 .hadith-book-card.gold-card[data-book="bukhari"],
 .hadith-book-card.gold-card[data-book="muslim"] {
-  border-color: rgba(246, 193, 119, 0.6);
+  border-color: color-mix(in srgb, var(--color-quran) 60%, transparent);
 }
 
 .hadith-book-card.gold-card[data-book="bukhari"] .hadith-book-arabic,
 .hadith-book-card.gold-card[data-book="muslim"] .hadith-book-arabic {
-  color: #F6C177;
+  color: var(--color-quran);
 }
 
-/* Green Card - Kutub */
+/* Hadith Card - Kutub */
 .hadith-book-card.kutub-card {
-  border-color: rgba(34, 197, 94, 0.4);
+  border-color: color-mix(in srgb, var(--color-hadith) 40%, transparent);
 }
 
 .hadith-book-card.kutub-card:hover {
-  border-color: #22C55E;
-  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.2);
+  border-color: var(--color-hadith);
+  box-shadow: 0 4px 15px color-mix(in srgb, var(--color-hadith) 20%, transparent);
 }
 
 .hadith-book-card.kutub-card .hadith-book-arabic {
-  color: #22C55E;
+  color: var(--color-hadith);
 }
 
-/* Purple Card - Other Sunni */
+/* Primary Card - Other Sunni */
 .hadith-book-card.primary-card,
 .hadith-book-card.forty-card,
 .hadith-book-card.qudsi-card,
 .hadith-book-card.mutawa-card {
-  border-color: rgba(162, 119, 255, 0.4);
+  border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
 }
 
 .hadith-book-card.primary-card:hover,
 .hadith-book-card.forty-card:hover,
 .hadith-book-card.qudsi-card:hover,
 .hadith-book-card.mutawa-card:hover {
-  border-color: #A277FF;
-  box-shadow: 0 4px 15px rgba(162, 119, 255, 0.2);
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 15px color-mix(in srgb, var(--color-primary) 20%, transparent);
 }
 
 .hadith-book-card.primary-card .hadith-book-arabic,
 .hadith-book-card.forty-card .hadith-book-arabic,
 .hadith-book-card.qudsi-card .hadith-book-arabic,
 .hadith-book-card.mutawa-card .hadith-book-arabic {
-  color: #A277FF;
+  color: var(--color-primary);
 }
 
-/* Red Card - Shia */
+/* Shia Card */
 .hadith-book-card.shia-card {
-  border-color: rgba(239, 68, 68, 0.4);
+  border-color: color-mix(in srgb, var(--color-shia) 40%, transparent);
 }
 
 .hadith-book-card.shia-card:hover {
-  border-color: #EF4444;
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+  border-color: var(--color-shia);
+  box-shadow: 0 4px 15px color-mix(in srgb, var(--color-shia) 20%, transparent);
 }
 
 .hadith-book-card.shia-card .hadith-book-arabic {
-  color: #EF4444;
+  color: var(--color-shia);
 }
 
 .hadith-book-card.shia-card .hadith-book-name {

@@ -8,7 +8,7 @@
 .quran-surah-header__title {
   font-family: 'QPC_V2', var(--font-arabic);
   font-size: 1.3rem;
-  color: #A277FF;
+  color: var(--color-primary);
   margin-bottom: 0.25rem;
 }
 
@@ -34,15 +34,15 @@
 }
 
 .quran-search-input:focus {
-  border-color: #80FFEA;
-  box-shadow: 0 0 0 2px rgba(128, 255, 234, 0.1);
+  border-color: var(--color-salah);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-salah) 10%, transparent);
 }
 
 .quran-search-wrapper .btn {
   padding: 0.75rem 1.25rem;
   font-size: var(--font-size-sm);
-  background: linear-gradient(135deg, #80FFEA 0%, #A277FF 100%);
-  color: #1a1a2e;
+  background: linear-gradient(135deg, var(--color-salah) 0%, var(--color-primary) 100%);
+  color: var(--color-bg);
   font-weight: 600;
   border-radius: var(--radius-md);
 }
@@ -58,8 +58,8 @@
 }
 
 .quran-ayah-card:hover {
-  border-color: rgba(162, 119, 255, 0.4);
-  box-shadow: 0 0 12px rgba(162, 119, 255, 0.2);
+  border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--color-primary) 20%, transparent);
 }
 
 .quran-ayah-card:last-child {
@@ -87,9 +87,9 @@
   width: 1.5rem;
   height: 1.5rem;
   font-size: 0.65rem;
-  color: #80FFEA;
-  background: rgba(128, 255, 234, 0.1);
-  border: 1px solid rgba(128, 255, 234, 0.25);
+  color: var(--color-salah);
+  background: color-mix(in srgb, var(--color-salah) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-salah) 25%, transparent);
   border-radius: 50%;
   font-weight: 600;
 }
@@ -106,13 +106,13 @@
 }
 
 .quran-tafsir-link:hover {
-  color: #80FFEA;
+  color: var(--color-salah);
 }
 
 /* Arabic Text - Beautiful */
 .quran-arabic {
   font-family: 'QPC_V2', var(--font-arabic);
-  color: #F6C177;
+  color: var(--color-quran);
   line-height: 2.2;
   font-size: 1.4rem;
   font-weight: 600;
@@ -150,12 +150,12 @@
 }
 
 .quran-ayah-actions .btn:hover {
-  color: #80FFEA;
+  color: var(--color-salah);
 }
 
 /* Actions */
 .quran-ayah-actions {
-  border-top: 1px solid rgba(162, 119, 255, 0.1);
+  border-top: 1px solid color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 .quran-action-btn {
@@ -167,24 +167,24 @@
 .quran-action-btn:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
-  background: rgba(162, 119, 255, 0.1);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 /* Play Audio */
 .quran-play-btn {
-  color: #F6C177;
-  background: rgba(246, 193, 119, 0.1);
-  border: 1px solid rgba(246, 193, 119, 0.3);
+  color: var(--color-quran);
+  background: color-mix(in srgb, var(--color-quran) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-quran) 30%, transparent);
 }
 
 .quran-play-btn:hover {
-  background: rgba(246, 193, 119, 0.2);
+  background: color-mix(in srgb, var(--color-quran) 20%, transparent);
 }
 
 /* === SETTINGS === */
 .quran-settings-btn {
   color: var(--color-primary);
-  background: rgba(162, 119, 255, 0.1);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
   border: 1px solid var(--color-primary);
 }
 
@@ -206,7 +206,7 @@
 
 .quran-modal__close {
   color: var(--color-text-secondary);
-  background: rgba(162, 119, 255, 0.1);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
   border: 1px solid var(--color-border);
 }
 

@@ -1,12 +1,12 @@
 /* === HADITH STYLES === */
 :root {
-  --hadith-primary: #A277FF;
-  --hadith-secondary: #80FFEA;
-  --hadith-gold: #F6C177;
-  --hadith-green: #22C55E;
+  --hadith-primary: var(--color-primary);
+  --hadith-secondary: var(--color-salah);
+  --hadith-gold: var(--color-quran);
+  --hadith-green: var(--grade-sahih);
   --hadith-orange: #B87333;
-  --hadith-bg: rgba(162, 119, 255, 0.08);
-  --hadith-border: rgba(162, 119, 255, 0.25);
+  --hadith-bg: var(--color-primary-subtle);
+  --hadith-border: color-mix(in srgb, var(--color-primary) 25%, transparent);
 }
 
 .hadith-page {
@@ -28,13 +28,13 @@
 
 .hadith-dashboard-title {
   font-size: var(--font-size-xl);
-  color: #80FFEA;
+  color: var(--color-hadith);
   margin-bottom: 0.25rem;
   font-weight: 600;
 }
 
 .hadith-dashboard-title.shia-title {
-  color: #EF4444;
+  color: var(--grade-daif);
 }
 
 .hadith-dashboard-subtitle {
@@ -76,8 +76,8 @@
 }
 
 .hadith-search-btn.hadith-search-btn:hover {
-  color: #22C55E !important;
-  border-color: #22C55E !important;
+  color: var(--grade-sahih) !important;
+  border-color: var(--grade-sahih) !important;
 }
 
 /* Sections - Clean */
@@ -96,33 +96,33 @@
 }
 
 .hadith-section-title.shia-title {
-  border-bottom-color: #EF4444;
-  color: #EF4444;
+  border-bottom-color: var(--color-shia);
+  color: var(--color-shia);
 }
 
 .hadith-section-title.suni-title {
-  border-bottom-color: #22C55E;
-  color: #22C55E;
+  border-bottom-color: var(--grade-sahih, #22C55E);
+  color: var(--grade-sahih, #22C55E);
 }
 
 .hadith-warning {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  background: linear-gradient(135deg, rgba(162, 119, 255, 0.15) 0%, rgba(162, 119, 255, 0.1) 100%);
-  border: 2px solid #EF4444;
-  border-left: 4px solid #EF4444;
+  background: linear-gradient(135deg, var(--color-primary-subtle) 0%, transparent 100%);
+  border: 2px solid var(--color-shia, #EF4444);
+  border-left: 4px solid var(--color-shia, #EF4444);
   border-radius: 8px;
   padding: var(--spacing-md) var(--spacing-lg);
   margin: var(--spacing-md) 0 var(--spacing-lg);
-  color: #FFFFFF;
+  color: var(--color-text);
   font-size: var(--font-size-sm);
   line-height: 1.4;
 }
 
 .hadith-warning-icon {
   font-size: 18px;
-  color: #EF4444;
+  color: var(--color-shia, #EF4444);
   flex-shrink: 0;
   line-height: 1;
 }

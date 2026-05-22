@@ -214,39 +214,25 @@
   border: none;
 }
 
-.header__nav-link[href="#quran"] {
-  color: #F6C177;
-}
+.header__nav-link[href="#quran"],
 .header__nav-link[href="#quran"] .nav-icon {
-  color: #F6C177;
+  color: var(--color-quran);
 }
-
-.header__nav-link[href="#hadiths"] {
-  color: #80FFEA;
-}
+.header__nav-link[href="#hadiths"],
 .header__nav-link[href="#hadiths"] .nav-icon {
-  color: #80FFEA;
+  color: var(--color-hadith);
 }
-
-.header__nav-link[href="#salah"] {
-  color: #A277FF;
-}
+.header__nav-link[href="#salah"],
 .header__nav-link[href="#salah"] .nav-icon {
-  color: #A277FF;
+  color: var(--color-salah);
 }
-
-.header__nav-link[href="#learn"] {
-  color: #60A5FA;
-}
+.header__nav-link[href="#learn"],
 .header__nav-link[href="#learn"] .nav-icon {
-  color: #60A5FA;
+  color: var(--color-learn);
 }
-
-.header__nav-link[href="#bookmark"] {
-  color: #6B7280;
-}
+.header__nav-link[href="#bookmark"],
 .header__nav-link[href="#bookmark"] .nav-icon {
-  color: #6B7280;
+  color: var(--color-bookmark);
 }
 
 .header__nav-link .nav-icon {

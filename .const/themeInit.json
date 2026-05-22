@@ -1,0 +1,42 @@
+{
+  "name": "themeInit",
+  "version": "1.0.0",
+  "author": "initsyscall",
+  "repository": "https://codeberg.org/initsyscall/themeInit",
+  "themes": {
+    "nightSyscall": {
+      "type": "dark",
+      "colors": {
+        "bg": "#161423",
+        "surface": "#201D33",
+        "border": "#322D4A",
+        "textPrimary": "#E0DEF4",
+        "textSecondary": "#908CAA",
+        "textMuted": "#6E6A86",
+        "kwd": "#A277FF",
+        "fnc": "#FF3366",
+        "typ": "#CBA6F7",
+        "str": "#F087BD",
+        "num": "#F6C177",
+        "opr": "#80FFEA"
+      }
+    },
+    "daySyscall": {
+      "type": "light",
+      "colors": {
+        "bg": "#fcf0e0",
+        "surface": "#f5e8d8",
+        "border": "#e0d0c0",
+        "textPrimary": "#201820",
+        "textSecondary": "#584870",
+        "textMuted": "#a888a8",
+        "kwd": "#8040e0",
+        "fnc": "#d03060",
+        "typ": "#9060d0",
+        "str": "#c06080",
+        "num": "#c08830",
+        "opr": "#30a890"
+      }
+    }
+  }
+}

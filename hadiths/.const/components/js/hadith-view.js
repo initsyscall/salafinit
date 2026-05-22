@@ -48,8 +48,7 @@ const HadithView = (() => {
           y: '45',
           'text-anchor': 'middle',
           'font-family': "'Amiri Quran', serif",
-          'font-size': '40',
-          fill: '#A277FF'
+          'font-size': '40'
         }, 'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ')
       ]),
       Utils.createElement('h1', { className: `hadith-dashboard-title ${isShia ? 'shia-title' : ''}` }, isShia ? 'Shia Hadiths' : 'Hadiths Collection'),
@@ -587,7 +586,7 @@ const HadithView = (() => {
         Utils.showToast('Image downloaded!');
       } else {
         const wrapper = document.createElement('div');
-        wrapper.style.cssText = 'position: absolute; left: -9999px; background: #1a1a2e; padding: 24px; border-radius: 12px; color: white; font-family: system-ui, sans-serif; max-width: 500px;';
+        wrapper.style.cssText = 'position: absolute; left: -9999px; background: var(--color-bg); padding: 24px; border-radius: 12px; color: white; font-family: system-ui, sans-serif; max-width: 500px;';
         wrapper.innerHTML = card.innerHTML;
         document.body.appendChild(wrapper);
 

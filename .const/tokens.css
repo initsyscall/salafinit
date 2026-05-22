@@ -1,41 +1,47 @@
 :root {
-  /* themeInit nightSyscall palette - royal religious */
   --color-bg: #161423;
   --color-surface: #201D33;
   --color-surface-hover: #2A2647;
   --color-surface-active: #322D4A;
   --color-border: #322D4A;
   --color-border-light: #3D3766;
-
   --color-text: #E0DEF4;
   --color-text-secondary: #908CAA;
   --color-text-muted: #6E6A86;
   --color-text-inverse: #161423;
-
   --color-primary: #A277FF;
   --color-primary-hover: #B58CFF;
   --color-primary-subtle: rgba(162, 119, 255, 0.15);
-
   --color-accent: #F6C177;
   --color-accent-hover: #F8D08F;
   --color-accent-subtle: rgba(246, 193, 119, 0.15);
-
   --color-warning: #F6C177;
   --color-warning-subtle: rgba(246, 193, 119, 0.15);
-
   --color-danger: #FF3366;
   --color-danger-subtle: rgba(255, 51, 102, 0.15);
-
   --color-quran: #F6C177;
   --color-quran-subtle: rgba(246, 193, 119, 0.15);
-  --color-hadith: #CBA6F7;
-  --color-hadith-subtle: rgba(203, 166, 247, 0.15);
-  --color-salah: #80FFEA;
-  --color-salah-subtle: rgba(128, 255, 234, 0.15);
-  --color-learn: #A277FF;
-  --color-learn-subtle: rgba(162, 119, 255, 0.15);
+  --color-hadith: #80FFEA;
+  --color-hadith-subtle: rgba(128, 255, 234, 0.15);
+  --color-salah: #A277FF;
+  --color-salah-subtle: rgba(162, 119, 255, 0.15);
+  --color-learn: #CBA6F7;
+  --color-learn-subtle: rgba(203, 166, 247, 0.15);
   --color-note: #F087BD;
   --color-note-subtle: rgba(240, 135, 189, 0.15);
+  --color-bookmark: #6E6A86;
+  --color-bookmark-subtle: rgba(110, 106, 134, 0.15);
+  --color-shia: #EF4444;
+  --color-shia-subtle: rgba(239, 68, 68, 0.15);
+  --grade-sahih: #22C55E;
+  --grade-hasan: #F6C177;
+  --grade-daif: #FF3366;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 24px rgba(162, 119, 255, 0.2);
+  --shadow-gold: 0 0 20px rgba(246, 193, 119, 0.15);
 
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
@@ -50,12 +56,6 @@
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-full: 9999px;
-
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
-  --shadow-glow: 0 0 24px rgba(162, 119, 255, 0.2);
-  --shadow-gold: 0 0 20px rgba(246, 193, 119, 0.15);
 
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-arabic: 'QPC_V2', 'UthmanicHafs', 'Scheherazade New', 'Amiri Quran', 'Amiri', 'Noto Naskh Arabic', serif;

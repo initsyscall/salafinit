@@ -10,6 +10,25 @@
 
   <title>salafInit</title>
 
+  <script>
+  (function(){try{
+  var t=localStorage.getItem('theme')||'nightSyscall';
+  var c=t==='nightSyscall'?{bg:'#161423',s:'#201D33',b:'#322D4A',t:'#E0DEF4',ts:'#908CAA',tm:'#6E6A86',k:'#A277FF',f:'#FF3366',ty:'#CBA6F7',st:'#F087BD',n:'#F6C177',o:'#80FFEA'}:
+  {bg:'#fcf0e0',s:'#f5e8d8',b:'#e0d0c0',t:'#201820',ts:'#584870',tm:'#a888a8',k:'#8040e0',f:'#d03060',ty:'#9060d0',st:'#c06080',n:'#c08830',o:'#30a890'};
+  var r=document.documentElement;
+  r.style.setProperty('--color-bg',c.bg);r.style.setProperty('--color-surface',c.s);
+  r.style.setProperty('--color-border',c.b);r.style.setProperty('--color-text',c.t);
+  r.style.setProperty('--color-text-secondary',c.ts);r.style.setProperty('--color-text-muted',c.tm);
+  r.style.setProperty('--color-primary',c.k);r.style.setProperty('--color-quran',c.n);
+  r.style.setProperty('--color-hadith',c.o);r.style.setProperty('--color-salah',c.k);
+  r.style.setProperty('--color-learn',c.ty);r.style.setProperty('--color-accent',c.n);
+  r.style.setProperty('--color-danger',c.f);r.style.setProperty('--color-shia',c.f);
+  r.style.setProperty('--grade-sahih',t==='nightSyscall'?'#22C55E':'#16a34a');
+  r.style.setProperty('--grade-daif',c.f);r.style.setProperty('--grade-hasan',c.n);
+  }catch(e){}
+  })();
+  </script>
+
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/svg+xml" href="assets/icons/icon.svg">
 
@@ -22,6 +41,7 @@
   <link rel="stylesheet" href=".const/reset.css">
   <link rel="stylesheet" href=".const/tokens.css">
   <link rel="stylesheet" href=".const/layout.css">
+  <script defer src=".const/theme.js"></script>
   <link rel="stylesheet" href=".const/components/css/base-button.css">
   <link rel="stylesheet" href=".const/components/css/base-badge.css">
   <link rel="stylesheet" href=".const/components/css/base-card.css">
@@ -77,6 +97,30 @@
       text-shadow: 0 0 20px rgba(246, 193, 119, 0.3);
     }
 
+    .theme-toggle {
+      display: flex; align-items: center; justify-content: center;
+      background: transparent; border: none; cursor: pointer;
+      color: var(--color-text-muted); padding: var(--spacing-xs);
+      border-radius: var(--radius-sm); transition: color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .theme-toggle:hover { color: var(--color-primary); }
+    .theme-toggle--desktop { margin: 0 var(--spacing-xs); }
+    .theme-toggle--mobile {
+      width: 100%; padding: var(--spacing-sm) var(--spacing-md);
+      justify-content: flex-start; gap: var(--spacing-sm);
+      font-size: var(--font-size-sm); color: var(--color-text-muted);
+      border-bottom: 1px solid var(--color-border); margin-bottom: var(--spacing-sm);
+    }
+    .theme-toggle--mobile:hover { color: var(--color-primary); }
+
+    @media (min-width: 769px) {
+      .theme-toggle--mobile { display: none; }
+    }
+    @media (max-width: 768px) {
+      .theme-toggle--desktop { display: none; }
+    }
+
     @media (min-width: 768px) {
       .home-hero {
         padding: var(--spacing-3xl) 0 var(--spacing-2xl);
@@ -128,7 +172,7 @@
     <footer class="footer">
       <p style="margin-bottom: 4px;">Any goodness is from Allah; any mistakes are from me.</p>
       <p><a href="https://codeberg.org/initsyscall/salafInit" target="_blank" rel="noopener"
-          style="color: #1e60c7; font-weight: 500;">Open Source on Codeberg</a></p>
+          style="color: var(--color-primary); font-weight: 500;">Open Source on Codeberg</a></p>
     </footer>
   </div>
 

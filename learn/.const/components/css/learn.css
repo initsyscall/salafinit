@@ -54,15 +54,15 @@
 }
 
 .learn-card--salafiyyah .learn-card-arabic {
-  color: #F6C177;
+  color: var(--color-quran);
 }
 
 .learn-card--shia .learn-card-arabic {
-  color: #EF4444;
+  color: var(--color-shia);
 }
 
 .learn-card--other .learn-card-arabic {
-  color: #A277FF;
+  color: var(--color-primary);
 }
 
 .learn-card-title {
@@ -92,16 +92,16 @@
 }
 
 .learn-card--salafiyyah:hover {
-  border-color: #F6C177;
-  box-shadow: 0 4px 12px rgba(246, 193, 119, 0.15);
+  border-color: var(--color-quran);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-quran) 15%, transparent);
 }
 
 .learn-card--shia:hover {
-  border-color: #EF4444;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+  border-color: var(--color-shia);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-shia) 15%, transparent);
 }
 
 .learn-card--other:hover {
-  border-color: #A277FF;
-  box-shadow: 0 4px 12px rgba(162, 119, 255, 0.15);
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 15%, transparent);
 }

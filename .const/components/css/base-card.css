@@ -47,27 +47,27 @@
 }
 
 .feature-card--quran {
-  background: linear-gradient(135deg, rgba(246, 193, 119, 0.12) 0%, rgba(246, 193, 119, 0.05) 100%);
-  border: 2px solid rgba(246, 193, 119, 0.4);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-quran) 12%, transparent) 0%, transparent 100%);
+  border: 2px solid color-mix(in srgb, var(--color-quran) 40%, transparent);
 }
 
 .feature-card--hadith {
-  background: linear-gradient(135deg, rgba(128, 255, 234, 0.12) 0%, rgba(128, 255, 234, 0.05) 100%);
-  border: 2px solid rgba(128, 255, 234, 0.4);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-hadith) 12%, transparent) 0%, transparent 100%);
+  border: 2px solid color-mix(in srgb, var(--color-hadith) 40%, transparent);
 }
 
 .feature-card--salah {
-  background: linear-gradient(135deg, rgba(162, 119, 255, 0.12) 0%, rgba(162, 119, 255, 0.05) 100%);
-  border: 2px solid rgba(162, 119, 255, 0.4);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-salah) 12%, transparent) 0%, transparent 100%);
+  border: 2px solid color-mix(in srgb, var(--color-salah) 40%, transparent);
 }
 
 .feature-card--learn {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.03) 100%);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-learn) 8%, transparent) 0%, transparent 100%);
+  border: 1px solid color-mix(in srgb, var(--color-learn) 30%, transparent);
 }
 
 .feature-card--utils {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
 }
 
@@ -88,23 +88,23 @@
 }
 
 .feature-card--quran:hover {
-  border-color: #F6C177;
-  box-shadow: 0 8px 32px rgba(246, 193, 119, 0.25);
+  border-color: var(--color-quran);
+  box-shadow: 0 8px 32px color-mix(in srgb, var(--color-quran) 25%, transparent);
 }
 
 .feature-card--hadith:hover {
-  border-color: #80FFEA;
-  box-shadow: 0 8px 32px rgba(128, 255, 234, 0.25);
+  border-color: var(--color-hadith);
+  box-shadow: 0 8px 32px color-mix(in srgb, var(--color-hadith) 25%, transparent);
 }
 
 .feature-card--salah:hover {
-  border-color: #A277FF;
-  box-shadow: 0 8px 32px rgba(162, 119, 255, 0.25);
+  border-color: var(--color-salah);
+  box-shadow: 0 8px 32px color-mix(in srgb, var(--color-salah) 25%, transparent);
 }
 
 .feature-card--learn:hover {
-  border-color: #3B82F6;
-  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
+  border-color: var(--color-learn);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--color-learn) 15%, transparent);
 }
 
 .feature-card--utils:hover {
@@ -126,63 +126,63 @@
 }
 
 .feature-card__arabic--quran {
-  background: linear-gradient(135deg, #F6C177, #F8D08F);
+  background: linear-gradient(135deg, var(--color-quran), var(--color-accent-hover));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .feature-card__arabic--hadith {
-  background: linear-gradient(135deg, #80FFEA, #A5F3FC);
+  background: linear-gradient(135deg, var(--color-hadith), color-mix(in srgb, var(--color-hadith) 70%, white));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .feature-card__arabic--salah {
-  background: linear-gradient(135deg, #A277FF, #C4B5FD);
+  background: linear-gradient(135deg, var(--color-salah), color-mix(in srgb, var(--color-salah) 70%, white));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .feature-card__arabic--learn {
-  background: linear-gradient(135deg, #60A5FA, #93C5FD);
+  background: linear-gradient(135deg, var(--color-learn), color-mix(in srgb, var(--color-learn) 70%, white));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .feature-card__arabic--utils {
-  background: linear-gradient(135deg, #6B7280, #9CA3AF);
+  background: linear-gradient(135deg, var(--color-text-muted), var(--color-text-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .feature-card__arabic--bookmark {
-  background: linear-gradient(135deg, #F472C6, #F687B5);
+  background: linear-gradient(135deg, var(--color-note), color-mix(in srgb, var(--color-note) 70%, white));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .feature-card__arabic--shia {
-  background: linear-gradient(135deg, #dc2626, #ef4444);
+  background: linear-gradient(135deg, var(--grade-daif), color-mix(in srgb, var(--grade-daif) 70%, white));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .feature-card__arabic--salafiyyah {
-  background: linear-gradient(135deg, #10B981, #34D399);
+  background: linear-gradient(135deg, var(--grade-sahih), color-mix(in srgb, var(--grade-sahih) 70%, white));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .feature-card__arabic--other {
-  background: linear-gradient(135deg, #6366F1, #818CF8);
+  background: linear-gradient(135deg, var(--color-primary), color-mix(in srgb, var(--color-primary) 70%, white));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
