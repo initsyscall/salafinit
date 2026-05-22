@@ -93,20 +93,11 @@ const App = (() => {
       `;
     });
 
-    Router.on('learn/other', () => {
-      const main = document.getElementById('app-main');
-      main.innerHTML = `
-        <div class="empty-state" style="min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="1.5" style="margin-bottom: var(--spacing-lg); opacity: 0.8;">
-            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
-          </svg>
-          <h2 class="empty-state__title" style="color: var(--color-text);">Coming Soon</h2>
-          <p class="empty-state__description" style="max-width: 400px; text-align: center;">
-            Other religious texts - Compare and contrast with Islamic sources. Bible, Hinduism, Old Testament and more.
-          </p>
-        </div>
-      `;
-    });
+    Router.on('learn/other/bible/:book/:chapter/:verse', (container, params) => BibleView.renderChapter(container, params));
+    Router.on('learn/other/bible/:book/:chapter', (container, params) => BibleView.renderChapter(container, params));
+    Router.on('learn/other/bible/:book', (container, params) => BibleView.renderBook(container, params));
+    Router.on('learn/other/bible', () => BibleView.render(document.getElementById('app-main')));
+    Router.on('learn/other', () => OtherView.render(document.getElementById('app-main')));
 
     Router.on('utils', () => {
       const main = document.getElementById('app-main');

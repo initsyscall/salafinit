@@ -1,0 +1,565 @@
+.bible-page {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding-bottom: var(--spacing-2xl);
+}
+
+.bible-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  transition: color var(--transition-fast);
+}
+
+.bible-back:hover {
+  color: var(--color-learn);
+}
+
+/* Header */
+.bible-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-learn) 8%, transparent) 0%, transparent 100%);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.bible-title {
+  font-size: var(--font-size-2xl);
+  margin-bottom: 0.25rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--color-learn), color-mix(in srgb, var(--color-learn) 70%, white));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bible-subtitle {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* Testament group */
+.bible-testament {
+  margin-bottom: var(--spacing-lg);
+}
+
+.bible-testament-title {
+  font-size: var(--font-size-md);
+  color: var(--color-text);
+  margin-bottom: 1rem;
+  font-weight: 600;
+  padding: 0.5rem 0;
+  border-bottom: 2px solid color-mix(in srgb, var(--color-learn) 40%, transparent);
+  display: inline-block;
+}
+
+.bible-testament-arabic {
+  font-family: var(--font-arabic);
+}
+
+/* Books Grid — matching hadith-book-grid */
+.bible-book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.bible-book-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 1rem;
+  min-height: 90px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-learn) 6%, transparent) 0%, transparent 100%);
+  border: 1px solid color-mix(in srgb, var(--color-learn) 30%, transparent);
+  text-decoration: none;
+  transition: all var(--transition-base);
+}
+
+.bible-book-card:hover {
+  border-color: var(--color-learn);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--color-learn) 15%, transparent);
+  transform: translateY(-2px);
+}
+
+.bible-book-name {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  text-align: center;
+  font-weight: 500;
+  word-wrap: break-word;
+}
+
+.bible-book-chapters {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 600px) {
+  .bible-book-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Book detail */
+.bible-book-header {
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-learn) 6%, transparent) 0%, transparent 100%);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg) var(--spacing-md);
+}
+
+.bible-book-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-xs);
+}
+
+.bible-book-arabic {
+  font-family: var(--font-arabic);
+  font-size: var(--font-size-lg);
+  color: var(--color-learn);
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+}
+
+.bible-book-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Chapter input — matching hadith-search-box */
+.bible-chapter-input-box {
+  background: var(--color-bg-secondary);
+  border-radius: 16px;
+  padding: var(--spacing-xl);
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto var(--spacing-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.bible-chapter-label {
+  font-size: var(--font-size-md);
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-md);
+}
+
+.bible-chapter-row {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.bible-chapter-input {
+  flex: 1;
+  min-width: 150px;
+  max-width: 200px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-size-md);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.bible-chapter-input:focus {
+  outline: none;
+  border-color: var(--color-learn);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-learn) 15%, transparent);
+}
+
+.bible-chapter-input::placeholder {
+  color: var(--color-text-lighter);
+}
+
+@media (max-width: 600px) {
+  .bible-chapter-input-box {
+    padding: var(--spacing-lg);
+  }
+
+  .bible-chapter-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .bible-chapter-input {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+/* Quick jump dropdowns */
+.bible-jump {
+  margin-bottom: var(--spacing-lg);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-learn) 5%, transparent) 0%, transparent 100%);
+  border: 1px solid color-mix(in srgb, var(--color-learn) 15%, transparent);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+}
+
+.bible-jump-title {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-sm);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bible-jump-row {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.bible-jump-select {
+  min-width: 140px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.bible-jump-select:focus,
+.bible-jump-input:focus {
+  outline: none;
+  border-color: var(--color-learn);
+}
+
+.bible-jump-input {
+  min-width: 100px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.bible-jump-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 600px) {
+  .bible-jump-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .bible-jump-select,
+  .bible-jump-input {
+    min-width: unset;
+    width: 100%;
+  }
+
+}
+
+/* Chapter reading — matching quran-ayah-card */
+.bible-chapter-header {
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.bible-chapter-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-xs);
+  background: linear-gradient(135deg, var(--color-learn), var(--color-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bible-chapter-translation {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.bible-verse-card {
+  padding: 1.5rem var(--spacing-md);
+  margin: 0 0 1rem 0;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid transparent;
+  transition: all var(--transition-base);
+  border-left: 3px solid transparent;
+}
+
+.bible-verse-card:hover {
+  border-color: color-mix(in srgb, var(--color-learn) 35%, transparent);
+  border-left-color: var(--color-learn);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--color-learn) 15%, transparent);
+}
+
+.bible-verse-card:last-child {
+  margin-bottom: 0;
+}
+
+.bible-verse-card--highlight {
+  border-color: color-mix(in srgb, var(--color-learn) 50%, transparent) !important;
+  border-left-color: var(--color-learn) !important;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--color-learn) 25%, transparent), inset 0 0 20px color-mix(in srgb, var(--color-learn) 5%, transparent);
+}
+
+.bible-verse-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.bible-verse-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bible-verse-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 0.7rem;
+  color: var(--color-learn);
+  background: color-mix(in srgb, var(--color-learn) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-learn) 30%, transparent);
+  border-radius: 50%;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.bible-verse-ref {
+  font-size: var(--font-size-sm);
+  color: var(--color-learn);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.bible-verse-text {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  font-weight: 500;
+}
+
+/* Verse actions */
+.bible-verse-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-sm);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.bible-action-btn {
+  padding: var(--spacing-xs);
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.bible-action-btn:hover {
+  color: var(--color-learn);
+}
+
+.bible-action-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 600px) {
+  .bible-verse-actions {
+    display: flex;
+    justify-content: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .bible-action-btn {
+    padding: var(--spacing-sm);
+  }
+}
+
+.bible-capturing .bible-card-exclude {
+  display: none !important;
+}
+
+.bible-capturing,
+.bible-capturing * {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.bible-capturing .bible-verse-card {
+  background: var(--color-surface) !important;
+  border-color: transparent !important;
+}
+
+.bible-chapter-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+.bible-chapter-nav a {
+  transition: color var(--transition-fast);
+}
+
+.bible-chapter-nav a:hover {
+  color: var(--color-learn);
+}
+
+.bible-loading {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--color-text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.bible-loading::before {
+  content: '';
+  width: 24px;
+  height: 24px;
+  border: 2px solid color-mix(in srgb, var(--color-learn) 25%, transparent);
+  border-top-color: var(--color-learn);
+  border-radius: 50%;
+  animation: bible-spin 0.8s linear infinite;
+}
+
+@keyframes bible-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Other religions dashboard */
+.other-header {
+  text-align: center;
+  padding: var(--spacing-lg) var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.other-title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 0.25rem;
+}
+
+.other-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.other-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-md);
+  padding: 0 var(--spacing-md);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .other-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 800px;
+  }
+}
+
+.other-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.other-card:hover {
+  transform: translateY(-2px);
+}
+
+.other-card--disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.other-card--disabled:hover {
+  transform: none;
+}
+
+.other-card-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--spacing-md);
+}
+
+.other-card--bible .other-card-icon {
+  color: var(--color-primary);
+  background: var(--color-primary-subtle);
+}
+
+.other-card-name {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: center;
+  margin-bottom: var(--spacing-xs);
+}
+
+.other-card-arabic {
+  font-family: var(--font-arabic);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-bottom: var(--spacing-xs);
+}
+
+.other-card-desc {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.other-card-badge {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  margin-top: auto;
+}

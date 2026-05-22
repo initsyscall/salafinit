@@ -49,8 +49,8 @@ const LearnView = (() => {
     }, [
       Utils.createElement('div', { className: 'learn-card-arabic' }, 'أَدْيَانٌ أُخْرَى'),
       Utils.createElement('div', { className: 'learn-card-title' }, 'Other Religions'),
-      Utils.createElement('div', { className: 'learn-card-desc' }, 'Bible, Hinduism, Old Testament'),
-      Utils.createElement('div', { className: 'learn-card-badge' }, 'Coming Soon')
+      Utils.createElement('div', { className: 'learn-card-desc' }, 'Bible, Hinduism, Judaism — comparative study'),
+      Utils.createElement('div', { className: 'learn-card-badge' }, 'Read')
     ]);
     return card;
   }
