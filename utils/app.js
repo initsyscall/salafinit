@@ -7,30 +7,30 @@ const App = (() => {
     registerServiceWorker();
   }
 
+  function initHamburger() {
+    const toggle = document.getElementById('nav-toggle');
+    const slider = document.getElementById('nav-slider');
+    if (!toggle || !slider) return;
+
+    toggle.addEventListener('click', () => {
+      slider.classList.toggle('open');
+      toggle.classList.toggle('open');
+    });
+
+    document.querySelectorAll('.header__nav-link, .theme-toggle').forEach(el => {
+      el.addEventListener('click', () => {
+        slider.classList.remove('open');
+        toggle.classList.remove('open');
+      });
+    });
+  }
+
   function lockPortrait() {
     if (!screen.orientation?.lock) return;
     screen.orientation.lock('portrait').catch(() => {});
     const unlock = () => { try { screen.orientation?.unlock?.(); } catch(e) {} };
     document.addEventListener('click', unlock, { once: true });
     document.addEventListener('touchstart', unlock, { once: true });
-  }
-
-  function initHamburger() {
-    const hamburger = document.getElementById('header-hamburger');
-    const nav = document.getElementById('header-nav');
-    if (!hamburger || !nav) return;
-
-    hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('open');
-      nav.classList.toggle('open');
-    });
-
-    document.querySelectorAll('.header__nav-link').forEach(link => {
-      link.addEventListener('click', () => {
-        hamburger.classList.remove('open');
-        nav.classList.remove('open');
-      });
-    });
   }
 
   function registerRoutes() {

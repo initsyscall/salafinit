@@ -119,25 +119,14 @@ const Theme = (() => {
   }
 
   function addToggleButtons() {
-    const nav = document.getElementById('header-nav');
-    if (!nav) return;
+    const slider = document.getElementById('nav-slider');
+    if (!slider) return;
 
-    const desktopBtn = document.createElement('button');
-    desktopBtn.className = 'theme-toggle theme-toggle--desktop';
-    desktopBtn.title = 'Toggle theme';
-    desktopBtn.addEventListener('click', toggle);
-    nav?.prepend(desktopBtn);
-
-    if (nav) {
-      const mobileBtn = document.createElement('button');
-      mobileBtn.className = 'theme-toggle theme-toggle--mobile';
-      mobileBtn.title = 'Toggle theme';
-      mobileBtn.addEventListener('click', (e) => {
-        toggle();
-        e.stopPropagation();
-      });
-      nav.prepend(mobileBtn);
-    }
+    const btn = document.createElement('button');
+    btn.className = 'theme-toggle';
+    btn.title = 'Toggle theme';
+    btn.addEventListener('click', toggle);
+    slider.prepend(btn);
 
     updateToggleIcons();
   }
