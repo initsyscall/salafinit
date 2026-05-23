@@ -1,5 +1,6 @@
 const SalahView = (() => {
   let timerInterval = null;
+  let lastLocation = null;
 
   const arabicPrayerNames = {
     Fajr: 'الفجر',
@@ -50,6 +51,7 @@ const SalahView = (() => {
     }
 
     try {
+      lastLocation = { lat, lng };
       const data = await SalahApi.getTimingsByCoords(lat, lng);
       loader.remove();
       renderTimings(container, data.data, locationName);
@@ -119,8 +121,84 @@ const SalahView = (() => {
 
     container.appendChild(renderCountdown(prayers, now, nextPrayer));
     
-    const locationBar = Utils.createElement('div', { className: 'salah-location', style: 'justify-content: center;' });
+    const locationBar = Utils.createElement('div', { className: 'salah-location', style: 'justify-content: center; gap: var(--spacing-sm);' });
     locationBar.innerHTML = `<span>${locationName}</span>`;
+    const refreshBtn = Utils.createElement('button', {
+      className: 'salah-refresh-btn',
+      title: 'Re-detect location',
+      innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>'
+    });
+    refreshBtn.addEventListener('click', async () => {
+      refreshBtn.classList.add('spinning');
+      container.innerHTML = '';
+      const newContent = Utils.createElement('div', { className: 'salah-page salah-has-bg' });
+      container.appendChild(newContent);
+
+      const loader = Utils.createElement('div', { className: 'loader' }, [
+        Utils.createElement('div', { className: 'loader__spinner' }),
+        Utils.createElement('span', { className: 'loader__text' }, 'Refreshing location...')
+      ]);
+      newContent.appendChild(loader);
+
+      let newLat, newLng, newLocationName;
+      let retries = 0;
+      const maxRetries = 5;
+
+      while (retries < maxRetries) {
+        try {
+          const ipLocation = await Utils.getLocationByIP();
+          newLat = ipLocation.lat;
+          newLng = ipLocation.lng;
+          const city = ipLocation.city || '';
+          newLocationName = city ? `${city}, ${ipLocation.country}` : ipLocation.country;
+
+          if (!lastLocation ||
+              Math.abs(newLat - lastLocation.lat) > 0.01 ||
+              Math.abs(newLng - lastLocation.lng) > 0.01) {
+            break;
+          }
+
+          retries++;
+          if (retries < maxRetries) {
+            loader.querySelector('.loader__text').textContent = `Same location, retrying... (${retries}/${maxRetries})`;
+            await new Promise(r => setTimeout(r, 2000));
+          }
+        } catch (err) {
+          retries++;
+          if (retries >= maxRetries) break;
+          await new Promise(r => setTimeout(r, 2000));
+        }
+      }
+
+      if (retries >= maxRetries && newLat == null) {
+        Utils.showToast('Could not detect location. Try GPS below.', 'error');
+        loader.remove();
+        newContent.appendChild(Utils.createElement('div', { className: 'empty-state' }, [
+          Utils.createElement('div', { className: 'empty-state__title' }, 'Location Failed'),
+          Utils.createElement('div', { className: 'empty-state__description' }, 'Could not detect your location. Use the GPS button below.')
+        ]));
+        refreshBtn.classList.remove('spinning');
+        return;
+      }
+
+      if (retries >= maxRetries) {
+        Utils.showToast('Could not get a different location. Try GPS below.', 'error');
+      }
+
+      try {
+        lastLocation = { lat: newLat, lng: newLng };
+        const data = await SalahApi.getTimingsByCoords(newLat, newLng);
+        loader.remove();
+        renderTimings(newContent, data.data, newLocationName);
+      } catch (err) {
+        loader.remove();
+        newContent.appendChild(Utils.createElement('div', { className: 'empty-state' }, [
+          Utils.createElement('div', { className: 'empty-state__title' }, 'Failed to Load'),
+          Utils.createElement('div', { className: 'empty-state__description' }, 'Could not fetch prayer times. Please try again.')
+        ]));
+      }
+    });
+    locationBar.appendChild(refreshBtn);
     container.appendChild(locationBar);
     
     const gpsBtn = Utils.createElement('button', {

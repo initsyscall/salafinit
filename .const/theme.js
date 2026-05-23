@@ -126,7 +126,7 @@ const Theme = (() => {
     btn.className = 'theme-toggle';
     btn.title = 'Toggle theme';
     btn.addEventListener('click', toggle);
-    slider.prepend(btn);
+    slider.after(btn);
 
     updateToggleIcons();
   }

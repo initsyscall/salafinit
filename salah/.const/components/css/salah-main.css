@@ -65,6 +65,31 @@
   font-size: var(--font-size-sm);
 }
 
+.salah-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  transition: color 0.2s;
+}
+
+.salah-refresh-btn:hover {
+  color: var(--color-primary);
+}
+
+.salah-refresh-btn.spinning svg {
+  animation: salah-spin 0.6s linear infinite;
+}
+
+@keyframes salah-spin {
+  to { transform: rotate(360deg); }
+}
+
 /* === CURRENT PRAYER === */
 .salah-current {
   background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 15%, transparent) 0%, color-mix(in srgb, var(--color-bg) 90%, transparent) 100%);
