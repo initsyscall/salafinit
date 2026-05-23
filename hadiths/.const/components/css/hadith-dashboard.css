@@ -52,20 +52,6 @@
   align-items: center;
 }
 
-.hadith-book-select {
-  min-width: 260px;
-  padding: 0.6rem 1rem;
-  font-size: var(--font-size-sm);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-}
-
-.hadith-book-select:focus {
-  border-color: #22C55E;
-  outline: none;
-}
-
 .hadith-search-btn.hadith-search-btn {
   padding: 0.5rem 0.75rem !important;
   font-size: var(--font-size-xs) !important;

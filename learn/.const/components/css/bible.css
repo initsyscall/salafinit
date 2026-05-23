@@ -256,6 +256,65 @@
   color: var(--color-text-muted);
 }
 
+.bible-book-search {
+  position: relative;
+  flex: 1;
+  min-width: 160px;
+}
+
+.bible-book-search-input {
+  width: 100%;
+}
+
+.bible-book-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-top: 2px;
+  z-index: 100;
+  box-shadow: var(--shadow-md);
+}
+
+.bible-book-dropdown.visible {
+  display: block;
+}
+
+.bible-book-dropdown-item {
+  padding: var(--spacing-sm) var(--spacing-md);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  transition: background var(--transition-fast);
+}
+
+.bible-book-dropdown-item:hover,
+.bible-book-dropdown-item.active {
+  background: color-mix(in srgb, var(--color-learn) 15%, transparent);
+  color: var(--color-learn);
+}
+
+.bible-book-dropdown-item:first-child {
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.bible-book-dropdown-item:last-child {
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.bible-book-dropdown-empty {
+  padding: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
 @media (max-width: 600px) {
   .bible-jump-row {
     flex-direction: column;
@@ -268,6 +327,9 @@
     width: 100%;
   }
 
+  .bible-book-search {
+    min-width: unset;
+  }
 }
 
 /* Chapter reading — matching quran-ayah-card */
@@ -513,21 +575,6 @@
 
 .other-card--disabled:hover {
   transform: none;
-}
-
-.other-card-icon {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-full);
-  margin-bottom: var(--spacing-md);
-}
-
-.other-card--bible .other-card-icon {
-  color: var(--color-primary);
-  background: var(--color-primary-subtle);
 }
 
 .other-card-name {
