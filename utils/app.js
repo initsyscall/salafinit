@@ -78,6 +78,8 @@ const App = (() => {
       HadithView.render(main, { collection: 'shia' });
     });
 
+    Router.on('learn/salafiyyah/duas/:id', (container, params) => SalafiyyahView.renderDuas(container, params));
+    Router.on('learn/salafiyyah/duas', (container) => SalafiyyahView.renderDuas(container, {}));
     Router.on('learn/salafiyyah/asmaulhusna/:name', (container, params) => SalafiyyahView.renderAsma(container, params));
     Router.on('learn/salafiyyah/asmaulhusna', (container) => SalafiyyahView.renderAsma(container, {}));
     Router.on('learn/salafiyyah', () => {

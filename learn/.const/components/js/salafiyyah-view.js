@@ -18,6 +18,12 @@ const SalafiyyahView = (() => {
       'The 99 Beautiful Names of Allah',
       '#learn/salafiyyah/asmaulhusna'
     ));
+    cards.appendChild(createCard(
+      'الأَدْعِيَةُ',
+      'Duas',
+      'Authentic supplications from the Qur\'an and Sunnah',
+      '#learn/salafiyyah/duas'
+    ));
     page.appendChild(cards);
   }
 
@@ -44,14 +50,6 @@ const SalafiyyahView = (() => {
     `;
     page.appendChild(top);
 
-    const searchInput = Utils.createElement('input', {
-      className: 'asma-search',
-      type: 'text',
-      placeholder: 'Search a name…',
-      autocomplete: 'off'
-    });
-    page.appendChild(searchInput);
-
     const wrapper = Utils.createElement('div', { className: 'asma-wrapper' });
     page.appendChild(wrapper);
 
@@ -65,6 +63,19 @@ const SalafiyyahView = (() => {
       const data = await ApiClient.fetchApi('https://ummahapi.com/api/asma-ul-husna');
       const names = data.data.names;
       if (!names || names.length !== 99) throw new Error('Invalid data');
+
+      // FZF search
+      const fzfWrapper = Utils.createElement('div', { className: 'salf-fzf' });
+      const fzfHidden = Utils.createElement('input', { type: 'hidden', id: 'asma-fzf-id' });
+      const fzfInput = Utils.createElement('input', {
+        type: 'text',
+        className: 'salf-fzf-input',
+        placeholder: 'Search a name…',
+        autocomplete: 'off'
+      });
+      const fzfDropdown = Utils.createElement('div', { className: 'salf-fzf-dropdown' });
+      fzfWrapper.append(fzfInput, fzfDropdown, fzfHidden);
+      page.insertBefore(fzfWrapper, wrapper);
 
       const scrollContainer = Utils.createElement('div', { className: 'asma-scroll' });
 
@@ -103,23 +114,64 @@ const SalafiyyahView = (() => {
         scrollContainer.appendChild(card);
       });
 
-      // Search filter
-      searchInput.addEventListener('input', () => {
-        const q = searchInput.value.toLowerCase().trim();
-        if (!q) {
-          scrollContainer.querySelectorAll('.asma-card').forEach(c => c.style.display = '');
+      // FZF event handlers
+      fzfInput.addEventListener('input', () => {
+        const q = fzfInput.value.toLowerCase().trim();
+        fzfHidden.value = '';
+        if (!q) { fzfDropdown.classList.remove('visible'); return; }
+        const matches = names.filter(n =>
+          n.arabic.includes(q) ||
+          n.transliteration.toLowerCase().includes(q) ||
+          n.meaning.toLowerCase().includes(q) ||
+          String(n.number).includes(q)
+        );
+        fzfDropdown.innerHTML = '';
+        if (!matches.length) {
+          fzfDropdown.innerHTML = '<div class="salf-fzf-empty">No names found</div>';
+          fzfDropdown.classList.add('visible');
           return;
         }
-        let firstMatch = null;
-        scrollContainer.querySelectorAll('.asma-card').forEach(c => {
-          const id = c.id;
-          const text = c.textContent.toLowerCase();
-          const match = id.includes(q) || text.includes(q);
-          c.style.display = match ? '' : 'none';
-          if (match && !firstMatch) firstMatch = c;
+        matches.slice(0, 12).forEach(n => {
+          const item = document.createElement('div');
+          item.className = 'salf-fzf-item';
+          item.dataset.id = n.transliteration.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+          item.innerHTML = `<span class="salf-fzf-arabic">${n.arabic}</span> <span class="salf-fzf-name">${n.transliteration}</span>`;
+          item.addEventListener('mousedown', e => { e.preventDefault(); selectName(item.dataset.id); });
+          fzfDropdown.appendChild(item);
         });
-        if (firstMatch) firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        fzfDropdown.classList.add('visible');
       });
+
+      fzfInput.addEventListener('keydown', e => {
+        const items = [...fzfDropdown.querySelectorAll('.salf-fzf-item')];
+        if (!items.length) return;
+        const active = fzfDropdown.querySelector('.active');
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          const idx = active ? items.indexOf(active) + 1 : 0;
+          if (idx < items.length) { active?.classList.remove('active'); items[idx].classList.add('active'); }
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          const idx = active ? items.indexOf(active) - 1 : items.length - 1;
+          if (idx >= 0) { active?.classList.remove('active'); items[idx].classList.add('active'); }
+        } else if (e.key === 'Enter') {
+          const target = active || (items.length === 1 ? items[0] : null);
+          if (target) { e.preventDefault(); selectName(target.dataset.id); }
+        } else if (e.key === 'Escape') {
+          fzfDropdown.classList.remove('visible');
+        }
+      });
+
+      fzfInput.addEventListener('blur', () => setTimeout(() => fzfDropdown.classList.remove('visible'), 200));
+
+      function selectName(id) {
+        const n = names.find(x => x.transliteration.toLowerCase().replace(/[^a-z0-9-]/g, '-') === id);
+        if (!n) return;
+        fzfInput.value = n.transliteration;
+        fzfHidden.value = id;
+        fzfDropdown.classList.remove('visible');
+        scrollToName(scrollContainer, n.transliteration);
+      }
 
       // Action button delegation
       scrollContainer.addEventListener('click', (e) => {
@@ -147,6 +199,148 @@ const SalafiyyahView = (() => {
         Utils.createElement('div', { className: 'empty-state__title' }, 'Unable to Load'),
         Utils.createElement('div', { className: 'empty-state__description' }, 'Could not fetch the 99 Names. Please try again.')
       ]));
+    }
+  }
+
+  // ── Dua data ──
+  const DUAS = [
+    { id: 'before-sleep', cat: 'Sleep', arabic: 'بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا', trans: 'Bismika Allāhumma amūtu wa aḥyā', meaning: 'In Your name, O Allah, I die and I live.', source: 'Sahih al-Bukhari 6312' },
+    { id: 'upon-waking', cat: 'Sleep', arabic: 'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ', trans: 'Al-ḥamdu lillāhi lladhī aḥyānā ba‘da mā amātanā wa-ilayhi n-nushūr', meaning: 'All praise is for Allah who gave us life after causing us to die, and to Him is the resurrection.', source: 'Sahih al-Bukhari 6312' },
+    { id: 'before-eating', cat: 'Food', arabic: 'بِسْمِ اللَّهِ', trans: 'Bismillāh', meaning: 'In the name of Allah.', source: 'Sahih al-Bukhari 5376' },
+    { id: 'after-eating', cat: 'Food', arabic: 'الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ', trans: 'Al-ḥamdu lillāhi lladhī aṭ‘amanā wa saqānā wa ja‘alanā muslimīn', meaning: 'All praise is for Allah who fed us, gave us drink, and made us Muslims.', source: 'Sunan Abi Dawud 3850' },
+    { id: 'iftaar', cat: 'Food', arabic: 'ذَهَبَ الظَّمَأُ وَابْتَلَّتِ الْعُرُوقُ وَثَبَتَ الْأَجْرُ إِنْ شَاءَ اللَّهُ', trans: 'Dhahabaẓ-ẓama’u wabtallati l-‘urūqu wa thabata l-ajru in shā’ Allāh', meaning: 'The thirst is gone, the veins are moistened, and the reward is confirmed, if Allah wills.', source: 'Sunan Abi Dawud 2357' },
+    { id: 'leaving-home', cat: 'Home', arabic: 'بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ', trans: 'Bismillāh, tawakkaltu ‘alallāh, wa lā ḥawla wa lā quwwata illā billāh', meaning: 'In the name of Allah, I rely upon Allah, and there is no power nor strength except with Allah.', source: 'Sunan Abi Dawud 5095' },
+    { id: 'entering-home', cat: 'Home', arabic: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ الْمَوْلَجِ وَخَيْرَ الْمَخْرَجِ، بِسْمِ اللَّهِ وَلَجْنَا، وَبِسْمِ اللَّهِ خَرَجْنَا، وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا', trans: 'Allāhumma innī as’aluka khayra l-mawlaji wa khayra l-makhraj, bismillāhi walajnā, wa bismillāhi kharajnā, wa ‘alallāhi rabbinā tawakkalnā', meaning: 'O Allah, I ask You for the best of entering and the best of leaving; in the name of Allah we enter, in the name of Allah we leave, and upon our Lord we rely.', source: 'Sunan Abi Dawud 5096' },
+    { id: 'entering-mosque', cat: 'Mosque', arabic: 'اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ', trans: 'Allāhumma iftaḥ lī abwāba raḥmatik', meaning: 'O Allah, open for me the doors of Your mercy.', source: 'Sahih Muslim 713' },
+    { id: 'leaving-mosque', cat: 'Mosque', arabic: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ', trans: 'Allāhumma innī as’aluka min faḍlik', meaning: 'O Allah, I ask You of Your bounty.', source: 'Sahih Muslim 713' },
+    { id: 'after-wudu', cat: 'Worship', arabic: 'أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ', trans: 'Ashhadu an lā ilāha illallāh waḥdahu lā sharīka lah, wa ashhadu anna Muḥammadan ‘abduhu wa rasūluh', meaning: 'I bear witness that there is no god worthy of worship except Allah alone, with no partner, and I bear witness that Muhammad is His servant and Messenger.', source: 'Sahih Muslim 234' },
+    { id: 'before-prayer', cat: 'Worship', arabic: 'سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ، وَتَبَارَكَ اسْمُكَ، وَتَعَالَى جَدُّكَ، وَلَا إِلَهَ غَيْرُكَ', trans: 'Subḥānaka Allāhumma wa biḥamdik, wa tabāraka smuk, wa ta‘ālā jadduk, wa lā ilāha ghayruk', meaning: 'Glory and praise be to You, O Allah; blessed is Your name and exalted is Your majesty; there is no god worthy of worship except You.', source: 'Sunan Abi Dawud 775' },
+    { id: 'travel', cat: 'Travel', arabic: 'اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ، وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ', trans: 'Allāhu akbar, Allāhu akbar, Allāhu akbar, subḥāna lladhī sakhkhara lanā hādhā wa mā kunnā lah muqrinīn, wa innā ilā rabbinā lamunqalibūn', meaning: 'Allah is the Greatest; glory to Him who has subjected this to us, for we could never have done it by ourselves; and to our Lord we will surely return.', source: 'Sahih Muslim 1342' },
+    { id: 'sneezing', cat: 'Daily', arabic: 'الْحَمْدُ لِلَّهِ', trans: 'Al-ḥamdu lillāh', meaning: 'All praise is for Allah.', source: 'Sahih al-Bukhari 6224' },
+    { id: 'reply-sneeze', cat: 'Daily', arabic: 'يَرْحَمُكَ اللَّهُ', trans: 'Yarḥamukallāh', meaning: 'May Allah have mercy upon you.', source: 'Sahih al-Bukhari 6224' },
+    { id: 'when-raining', cat: 'Daily', arabic: 'اللَّهُمَّ صَيِّبًا نَافِعًا', trans: 'Allāhumma ṣayyiban nāfi‘ā', meaning: 'O Allah, beneficial rain.', source: 'Sahih al-Bukhari 1032' },
+    { id: 'distress', cat: 'Protection', arabic: 'لَا إِلَهَ إِلَّا اللَّهُ الْعَظِيمُ الْحَلِيمُ، لَا إِلَهَ إِلَّا اللَّهُ رَبُّ الْعَرْشِ الْعَظِيمِ، لَا إِلَهَ إِلَّا اللَّهُ رَبُّ السَّمَاوَاتِ وَرَبُّ الْأَرْضِ وَرَبُّ الْعَرْشِ الْكَرِيمِ', trans: 'Lā ilāha illallāhu l-‘aẓīmu l-ḥalīm, lā ilāha illallāhu rabbu l-‘arshi l-‘aẓīm, lā ilāha illallāhu rabbu s-samāwāti wa rabbu l-arḍi wa rabbu l-‘arshi l-karīm', meaning: 'There is no god worthy of worship except Allah, the Mighty, the Forbearing; Lord of the Mighty Throne; Lord of the heavens and the earth and the Noble Throne.', source: 'Sahih al-Bukhari 6346' },
+    { id: 'morning', cat: 'Protection', arabic: 'اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ', trans: 'Allāhumma bika aṣbaḥnā, wa bika amsaynā, wa bika naḥyā, wa bika namūt, wa ilayka n-nushūr', meaning: 'O Allah, by You we enter the morning, by You we enter the evening, by You we live, by You we die, and to You is the resurrection.', source: 'Sunan Abi Dawud 5068' },
+    { id: 'evening', cat: 'Protection', arabic: 'اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ', trans: 'Allāhumma bika amsaynā, wa bika aṣbaḥnā, wa bika naḥyā, wa bika namūt, wa ilayka l-maṣīr', meaning: 'O Allah, by You we enter the evening, by You we enter the morning, by You we live, by You we die, and to You is the final return.', source: 'Sunan Abi Dawud 5068' },
+    { id: 'when-angry', cat: 'Protection', arabic: 'أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ', trans: 'A‘ūdhu billāhi mina sh-shayṭāni r-rajīm', meaning: 'I seek refuge with Allah from the accursed Shaytan.', source: 'Sahih al-Bukhari 6115' },
+    { id: 'visiting-sick', cat: 'Social', arabic: 'لَا بَأْسَ، طَهُورٌ إِنْ شَاءَ اللَّهُ', trans: 'Lā ba’s, ṭahūrun in shā’ Allāh', meaning: 'No worry, it will be purification if Allah wills.', source: 'Sahih al-Bukhari 3616' },
+    { id: 'new-clothes', cat: 'Daily', arabic: 'اللَّهُمَّ لَكَ الْحَمْدُ، أَنْتَ كَسَوْتَنِيهِ، أَسْأَلُكَ خَيْرَهُ وَخَيْرَ مَا صُنِعَ لَهُ، وَأَعُوذُ بِكَ مِنْ شَرِّهِ وَشَرِّ مَا صُنِعَ لَهُ', trans: 'Allāhumma laka l-ḥamd, anta kasawtanīh, as’aluka khayrahū wa khayra mā ṣuni‘a lah, wa a‘ūdhu bika min sharrihī wa sharri mā ṣuni‘a lah', meaning: 'O Allah, praise is Yours; You have clothed me with it; I ask You for its goodness and the purpose for which it was made, and I seek Your refuge from its evil and the evil of the purpose for which it was made.', source: 'Sunan Abi Dawud 4020' },
+    { id: 'calamity', cat: 'Protection', arabic: 'إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ، اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي، وَأَخْلِفْ لِي خَيْرًا مِنْهَا', trans: 'Innā lillāhi wa innā ilayhi rāji‘ūn, Allāhumma’jurnī fī muṣībatī wa akhlif lī khayran minhā', meaning: 'To Allah we belong and to Him we return; O Allah, reward me in my affliction and replace it with something better.', source: 'Sahih Muslim 918' },
+    { id: 'looking-mirror', cat: 'Daily', arabic: 'اللَّهُمَّ أَنْتَ حَسَّنْتَ خَلْقِي فَحَسِّنْ خُلُقِي', trans: 'Allāhumma anta ḥassanta khalqī faḥassin khuluqī', meaning: 'O Allah, just as You have made my form beautiful, make my character beautiful.', source: 'Musnad Ahmad 2567' },
+    { id: 'gratitude', cat: 'Worship', arabic: 'رَبِّ أَوْزِعْنِي أَنْ أَشْكُرَ نِعْمَتَكَ الَّتِي أَنْعَمْتَ عَلَيَّ وَعَلَى وَالِدَيَّ وَأَنْ أَعْمَلَ صَالِحًا تَرْضَاهُ', trans: 'Rabbi awzi‘nī an ashkura ni‘mataka llatī an‘amta ‘alayya wa ‘alā wālidayya wa an a‘mala ṣāliḥan tarḍāh', meaning: 'My Lord, enable me to be grateful for Your favor which You have bestowed upon me and upon my parents, and to do righteous deeds that please You.', source: 'Qur\'an 46:15' },
+    { id: 'guidance', cat: 'Worship', arabic: 'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ', trans: 'Rabbanā ātinā fī d-dunyā ḥasanatan wa fī l-ākhirati ḥasanatan wa qinā ‘adhāba n-nār', meaning: 'Our Lord, give us good in this world and good in the Hereafter, and protect us from the torment of the Fire.', source: 'Qur\'an 2:201' },
+    { id: 'knowledge', cat: 'Worship', arabic: 'رَبِّ زِدْنِي عِلْمًا', trans: 'Rabbi zidnī ‘ilmā', meaning: 'My Lord, increase me in knowledge.', source: 'Qur\'an 20:114' }
+  ];
+
+  function getSourceUrl(source) {
+    const m1 = source.match(/^Sahih al-Bukhari (\d+)/);
+    if (m1) return `#hadiths/bukhari/${m1[1]}`;
+    const m2 = source.match(/^Sahih Muslim (\d+)/);
+    if (m2) return `#hadiths/muslim/${m2[1]}`;
+    const m3 = source.match(/^Sunan Abi Dawud (\d+)/);
+    if (m3) return `#hadiths/abudawud/${m3[1]}`;
+    const m4 = source.match(/^Musnad Ahmad (\d+)/);
+    if (m4) return `#hadiths/ahmed/${m4[1]}`;
+    const m5 = source.match(/^Qur'an (\d+):(\d+)/);
+    if (m5) return `#quran/${m5[1]}/${m5[2]}`;
+    return '#';
+  }
+
+  function renderDuas(container, params) {
+    container.innerHTML = '';
+
+    const page = Utils.createElement('div', { className: 'dua-page' });
+    container.appendChild(page);
+
+    const catNames = [...new Set(DUAS.map(d => d.cat))];
+    const isCatParam = params && params.id && catNames.some(c => c.toLowerCase() === params.id.toLowerCase());
+    const isDuaParam = params && params.id && !isCatParam;
+    const scrollToDua = isDuaParam ? DUAS.find(d => d.id === params.id) : null;
+    const activeCat = isCatParam ? catNames.find(c => c.toLowerCase() === params.id.toLowerCase()) : (scrollToDua ? scrollToDua.cat : null);
+
+    const top = Utils.createElement('div', { className: 'asma-top' });
+    const showHeading = !activeCat && !isDuaParam;
+    const backSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>';
+    top.innerHTML = showHeading ? `
+      <a class="asma-top__back" href="#learn/salafiyyah">
+        ${backSvg}
+        Salafiyyah
+      </a>
+      <h2 class="dua-page__heading">Choose a category</h2>
+    ` : `
+      <a class="asma-top__back" href="#learn/salafiyyah">
+        ${backSvg}
+        Salafiyyah
+      </a>
+    `;
+    page.appendChild(top);
+
+    const catGrid = Utils.createElement('div', { className: 'dua-cat-grid' });
+    catNames.forEach(cat => {
+      const count = DUAS.filter(d => d.cat === cat).length;
+      const href = `#learn/salafiyyah/duas/${cat}`;
+      const card = Utils.createElement('a', {
+        className: `dua-cat-card${activeCat === cat ? ' active' : ''}`,
+        href
+      }, [
+        Utils.createElement('span', { className: 'dua-cat-card__title' }, cat),
+        Utils.createElement('span', { className: 'dua-cat-card__count' }, `${count} duas`)
+      ]);
+      catGrid.appendChild(card);
+    });
+    page.appendChild(catGrid);
+
+    if (!activeCat && !isDuaParam) return;
+
+    const list = Utils.createElement('div', { className: 'dua-list' });
+    page.appendChild(list);
+
+    function duaPurpose(id) {
+      return id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
+
+    function createDuaCard(d) {
+      const card = Utils.createElement('div', { className: 'dua-card', id: d.id });
+      const srcUrl = getSourceUrl(d.source);
+      card.innerHTML = `
+        <span class="dua-card__purpose">${duaPurpose(d.id)}</span>
+        <h2 class="dua-card__arabic">${d.arabic}</h2>
+        <p class="dua-card__trans">${d.trans}</p>
+        <p class="dua-card__meaning">${d.meaning}</p>
+        <a class="dua-card__source" href="${srcUrl}" target="_blank" rel="noopener">${d.source}</a>
+      `;
+      const actions = Utils.createElement('div', { className: 'dua-actions' });
+      const linkBtn = Utils.createElement('button', {
+        className: 'dua-link-btn',
+        title: 'Copy Link',
+        'data-action': 'copy-dua-link',
+        'data-id': d.id
+      });
+      linkBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>';
+      actions.appendChild(linkBtn);
+      card.appendChild(actions);
+      return card;
+    }
+
+    const filtered = activeCat ? DUAS.filter(d => d.cat === activeCat) : DUAS;
+    filtered.forEach(d => list.appendChild(createDuaCard(d)));
+
+    list.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-action="copy-dua-link"]');
+      if (!btn) return;
+      const url = `${window.location.origin}${window.location.pathname}#learn/salafiyyah/duas/${btn.dataset.id}`;
+      navigator.clipboard.writeText(url).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+      });
+    });
+
+    if (isDuaParam) {
+      setTimeout(() => {
+        const target = list.querySelector(`#${CSS.escape(params.id)}`);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
     }
   }
 
@@ -198,7 +392,7 @@ const SalafiyyahView = (() => {
     navigator.clipboard.writeText(url).then(() => Utils.showToast('Link copied!'));
   }
 
-  return { render, renderAsma };
+  return { render, renderAsma, renderDuas };
 })();
 
 window.SalafiyyahView = SalafiyyahView;
