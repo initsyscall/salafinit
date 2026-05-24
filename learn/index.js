@@ -36,8 +36,8 @@ const LearnView = (() => {
     }, [
       Utils.createElement('div', { className: 'learn-card-arabic' }, 'السَّلَفِيَّةُ'),
       Utils.createElement('div', { className: 'learn-card-title' }, 'Salafiyyah'),
-      Utils.createElement('div', { className: 'learn-card-desc' }, 'Salafi books and resources'),
-      Utils.createElement('div', { className: 'learn-card-badge' }, 'Coming Soon')
+      Utils.createElement('div', { className: 'learn-card-desc' }, 'Asma ul Husna — the 99 Names of Allah'),
+      Utils.createElement('div', { className: 'learn-card-badge' }, 'Read')
     ]);
     return card;
   }

@@ -78,19 +78,10 @@ const App = (() => {
       HadithView.render(main, { collection: 'shia' });
     });
 
+    Router.on('learn/salafiyyah/asmaulhusna/:name', (container, params) => SalafiyyahView.renderAsma(container, params));
+    Router.on('learn/salafiyyah/asmaulhusna', (container) => SalafiyyahView.renderAsma(container, {}));
     Router.on('learn/salafiyyah', () => {
-      const main = document.getElementById('app-main');
-      main.innerHTML = `
-        <div class="empty-state" style="min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.5" style="margin-bottom: var(--spacing-lg); opacity: 0.8;">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-          </svg>
-          <h2 class="empty-state__title" style="color: var(--color-text);">Coming Soon</h2>
-          <p class="empty-state__description" style="max-width: 400px; text-align: center;">
-            Salafiyyah books and resources will be available soon. Download Salafi books and study materials.
-          </p>
-        </div>
-      `;
+      SalafiyyahView.render(document.getElementById('app-main'));
     });
 
     Router.on('learn/other/bible/:book/:chapter/:verse', (container, params) => BibleView.renderChapter(container, params));
