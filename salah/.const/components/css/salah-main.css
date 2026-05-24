@@ -1,71 +1,432 @@
-/* === SALAH PRAYER TIMES === */
+/* === SALAH — LUXURY MINIMALISTIC === */
 .salah-page {
   max-width: 600px;
   margin: 0 auto;
-  min-height: 100vh;
-  position: relative;
   padding: var(--spacing-lg);
-  box-sizing: border-box;
-  background: var(--color-bg);
 }
 
-.salah-page::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(ellipse at top, color-mix(in srgb, var(--color-primary) 5%, transparent) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.salah-page > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* === HEADER === */
-.salah-header {
+/* ── Header ── */
+.sh-header {
   text-align: center;
-  margin-bottom: var(--spacing-lg);
-  padding-bottom: var(--spacing-md);
-  border-bottom: 2px solid var(--color-primary);
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-salah) 25%, transparent);
 }
 
-.salah-header__title {
+.sh-header__title {
   font-family: var(--font-arabic);
-  font-size: 2.2rem;
-  color: var(--color-primary);
-  margin: 0 0 var(--spacing-xs) 0;
-}
-
-.salah-header__subtitle {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
+  font-size: 2.4rem;
+  color: var(--color-salah);
+  margin: 0 0 var(--spacing-xs);
+  font-weight: 700;
   letter-spacing: 1px;
 }
 
-/* === LOCATION BAR === */
-.salah-location {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.sh-header__hijri {
+  font-family: var(--font-arabic);
+  font-size: 1rem;
+  color: var(--color-quran);
+  margin: 0 0 2px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.sh-header__date {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* ── Current Prayer ── */
+.sh-current {
+  text-align: center;
+  padding: var(--spacing-xl) var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--color-salah) 8%, transparent) 0%, transparent 60%);
+  border: 1px solid color-mix(in srgb, var(--color-salah) 20%, transparent);
+  border-radius: var(--radius-xl);
+  position: relative;
+}
+
+.sh-current::after {
+  content: '';
+  position: absolute;
+  top: -1px; left: 20%; right: 20%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-salah), transparent);
+  border-radius: 1px;
+}
+
+.sh-current__label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0 0 var(--spacing-sm);
+}
+
+.sh-current__name {
+  font-family: var(--font-arabic);
+  font-size: 3.2rem;
+  color: var(--color-salah);
+  margin: 0 0 var(--spacing-xs);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.sh-current__time {
+  font-family: var(--font-mono);
+  font-size: 2.2rem;
+  color: var(--color-text);
+  font-weight: 700;
+  margin: 0 0 var(--spacing-sm);
+  letter-spacing: 2px;
+}
+
+.sh-current__next {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.sh-current__next strong {
+  color: var(--color-salah);
+  font-weight: 600;
+}
+
+/* ── Prayer Grid ── */
+.sh-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--spacing-sm);
-  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-  border: 1px solid var(--color-primary);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-sm) var(--spacing-md);
   margin-bottom: var(--spacing-lg);
 }
 
-.salah-location__text {
-  color: var(--color-text);
-  font-size: var(--font-size-sm);
+.sh-grid__card {
+  text-align: center;
+  padding: var(--spacing-md) var(--spacing-xs);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-fast);
 }
 
-.salah-refresh-btn {
+.sh-grid__card:hover {
+  border-color: color-mix(in srgb, var(--color-salah) 40%, transparent);
+}
+
+.sh-grid__card--current {
+  background: color-mix(in srgb, var(--color-salah) 10%, transparent);
+  border-color: color-mix(in srgb, var(--color-salah) 40%, transparent);
+}
+
+.sh-grid__name {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: var(--spacing-xs);
+}
+
+.sh-grid__card--current .sh-grid__name {
+  color: var(--color-salah);
+  font-weight: 600;
+}
+
+.sh-grid__time {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.sh-grid__arabic {
+  display: block;
+  font-family: var(--font-arabic);
+  font-size: 0.65rem;
+  color: var(--color-text-muted);
+  opacity: 0.6;
+}
+
+/* ── Countdown ── */
+.sh-countdown {
+  text-align: center;
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-salah) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-salah) 15%, transparent);
+}
+
+.sh-countdown__label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 var(--spacing-xs);
+}
+
+.sh-countdown__time {
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  color: var(--color-salah);
+  font-weight: 700;
+  margin: 0 0 var(--spacing-xs);
+  letter-spacing: 3px;
+}
+
+.sh-countdown__next {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* ── Extras ── */
+.sh-extras {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-bottom: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+  background: var(--color-border);
+}
+
+.sh-extras::before {
+  content: 'Key Times';
+  display: block;
+  font-size: 0.6rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sh-extras__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: color-mix(in srgb, var(--color-primary) 2%, var(--color-surface));
+}
+
+.sh-extras__item:last-child {
+  border-top: 1px dashed color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.sh-extras__label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.sh-extras__value {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.sh-extras__value--muted {
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.sh-extras__value--gold {
+  color: var(--color-quran);
+  font-weight: 700;
+}
+
+/* ── Forbidden ── */
+.sh-forbidden {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-bottom: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-quran) 15%, transparent);
+  background: var(--color-border);
+}
+
+.sh-forbidden::before {
+  content: 'No Nafl';
+  display: block;
+  font-size: 0.6rem;
+  color: color-mix(in srgb, var(--color-quran) 60%, var(--color-text-muted));
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: color-mix(in srgb, var(--color-quran) 4%, var(--color-surface));
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sh-forbidden__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: color-mix(in srgb, var(--color-quran) 2%, var(--color-surface));
+}
+
+.sh-forbidden__period {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.sh-forbidden__range {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  letter-spacing: 0.5px;
+}
+
+/* ── Islamic Events ── */
+.sh-event {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-quran) 5%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-quran) 15%, transparent);
+}
+
+.sh-event__label {
+  font-size: 0.6rem;
+  color: var(--color-quran);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+}
+
+.sh-event__name {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.sh-event__date {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-left: auto;
+}
+
+/* ── Tahajjud ── */
+.sh-tahajjud {
+  margin-bottom: var(--spacing-lg);
+}
+
+.sh-tahajjud__card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid color-mix(in srgb, var(--color-quran) 40%, transparent);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.sh-tahajjud__card:hover {
+  border-color: var(--color-quran);
+  box-shadow: 0 4px 15px color-mix(in srgb, var(--color-quran) 20%, transparent);
+}
+
+.sh-tahajjud__card--expanded {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.sh-tahajjud__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sh-tahajjud__label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.sh-tahajjud__time {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.sh-tahajjud__chevron {
+  color: var(--color-text-muted);
+  transition: transform var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.sh-tahajjud--open .sh-tahajjud__chevron {
+  transform: rotate(180deg);
+  color: var(--color-quran);
+}
+
+.sh-tahajjud__hadith {
+  display: none;
+  padding: var(--spacing-lg);
+  border: 1px solid transparent;
+  border-left: 3px solid var(--color-quran);
+  border-top: none;
+  border-bottom: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+  background: var(--color-surface);
+  transition: all 0.3s ease;
+}
+
+.sh-tahajjud--open .sh-tahajjud__hadith {
+  display: block;
+}
+
+.sh-tahajjud__hadith:hover {
+  border-color: color-mix(in srgb, var(--color-quran) 15%, transparent);
+  border-left-color: var(--grade-sahih);
+}
+
+/* ── Bottom Bar ── */
+.sh-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) 0;
+  margin-bottom: var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+  flex-wrap: wrap;
+}
+
+.sh-bottom__loc {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.sh-bottom__loc-text {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.sh-refresh-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -78,236 +439,37 @@
   transition: color 0.2s;
 }
 
-.salah-refresh-btn:hover {
-  color: var(--color-primary);
+.sh-refresh-btn:hover {
+  color: var(--color-salah);
 }
 
-.salah-refresh-btn.spinning svg {
-  animation: salah-spin 0.6s linear infinite;
+.sh-refresh-btn.spinning svg {
+  animation: sh-spin 0.6s linear infinite;
 }
 
-@keyframes salah-spin {
+@keyframes sh-spin {
   to { transform: rotate(360deg); }
 }
 
-/* === CURRENT PRAYER === */
-.salah-current {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 15%, transparent) 0%, color-mix(in srgb, var(--color-bg) 90%, transparent) 100%);
-  border: 1px solid var(--color-primary);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  text-align: center;
-  margin-bottom: var(--spacing-lg);
-}
-
-.salah-current__label {
+.sh-bottom__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
   font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: var(--spacing-sm);
+  color: var(--color-text-muted);
 }
 
-.salah-current__name {
-  font-family: var(--font-arabic);
-  font-size: 3rem;
-  color: var(--color-primary);
-  margin: 0;
-  line-height: 1.3;
+.sh-bottom__sep {
+  opacity: 0.4;
 }
 
-.salah-current__time {
-  font-size: 2rem;
-  color: var(--color-salah);
-  font-weight: 700;
-  font-family: var(--font-mono);
-  margin: var(--spacing-md) 0;
-  text-shadow: 0 0 20px color-mix(in srgb, var(--color-salah) 30%, transparent);
-}
-
-.salah-current__next {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-}
-
-.salah-current__next strong {
-  color: var(--color-quran);
-}
-
-/* === PRAYER GRID === */
-.salah-grid {
-  margin-bottom: var(--spacing-lg);
-}
-
-.salah-grid__title {
-  display: none;
-}
-
-.prayer-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-lg);
-}
-
-.prayer-card {
-  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-md) var(--spacing-xs);
-  text-align: center;
-  transition: all var(--transition-fast);
-}
-
-.prayer-card:hover {
-  background: color-mix(in srgb, var(--color-primary) 15%, transparent);
-  border-color: var(--color-primary);
-}
-
-.prayer-card.current {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--color-shia) 20%, transparent) 0%, var(--color-primary-subtle) 100%);
-  border-color: var(--color-shia);
-}
-
-.prayer-card__name {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-xs);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.prayer-card.current .prayer-card__name {
-  color: var(--color-shia);
-}
-
-.prayer-card__time {
-  font-size: var(--font-size-base);
-  color: var(--color-text);
-  font-weight: 600;
-  font-family: var(--font-mono);
-}
-
-/* === QIYAM SECTION === */
-.qiyam-section {
-  background: color-mix(in srgb, var(--color-quran) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-quran) 30%, transparent);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-}
-
-.qiyam-section .section-title {
-  font-size: var(--font-size-sm);
-  color: var(--color-quran);
-  margin-bottom: var(--spacing-sm);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.qiyam-section .qiyam-time {
-  font-size: var(--font-size-base);
-  color: var(--color-text);
-  font-weight: 600;
-  font-family: var(--font-mono);
-}
-
-/* === FORBIDDEN TIMES === */
-.forbidden-section {
-  background: color-mix(in srgb, var(--color-shia) 8%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-shia) 25%, transparent);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-}
-
-.forbidden-section .section-title {
-  font-size: var(--font-size-sm);
-  color: var(--color-shia);
-  margin-bottom: var(--spacing-sm);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.forbidden-section .forbidden-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.forbidden-section .forbidden-list li {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  padding: var(--spacing-xs) 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-shia) 15%, transparent);
-}
-
-.forbidden-section .forbidden-list li:last-child {
-  border-bottom: none;
-}
-
-/* === COUNTDOWN === */
-.salah-countdown {
-  background: color-mix(in srgb, var(--color-salah) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-salah) 30%, transparent);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-md);
-  text-align: center;
-  margin-bottom: var(--spacing-lg);
-}
-
-.salah-countdown__label {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: var(--spacing-xs);
-}
-
-.salah-countdown__time {
-  font-size: 1.5rem;
-  color: var(--color-salah);
-  font-weight: 700;
-  font-family: var(--font-mono);
-}
-
-/* === FOOTER === */
-.salah-footer {
-  text-align: center;
-  padding-top: var(--spacing-md);
-  border-top: 1px solid var(--color-border);
-}
-
-.salah-footer__method {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-}
-
-.salah-footer__method select {
-  background: var(--color-surface);
-  border: 1px solid var(--color-primary);
-  color: var(--color-text);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--radius-sm);
-  font-size: var(--font-size-xs);
-  cursor: pointer;
-}
-
-.salah-footer__method select option {
-  background: var(--color-bg);
-}
-
-/* === RESPONSIVE === */
+/* ── Responsive ── */
 @media (max-width: 500px) {
-  .prayer-grid {
+  .sh-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  
-  .salah-current__name {
-    font-size: 2.5rem;
-  }
-  
-  .salah-current__time {
-    font-size: 1.5rem;
-  }
+  .sh-current__name { font-size: 2.6rem; }
+  .sh-current__time { font-size: 1.8rem; }
+  .sh-countdown__time { font-size: 1.4rem; }
+  .sh-bottom { flex-direction: column; align-items: flex-start; }
 }

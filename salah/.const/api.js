@@ -1,87 +1,97 @@
 const SalahApi = (() => {
   const ALADHAN_BASE = 'https://api.aladhan.com/v1';
   const FALLBACK_BASE = 'https://api.prayertimes.date';
+  const DEFAULT_METHOD = 1;
 
-  async function getTimingsByCoords(lat, lng, date = null, method = null) {
-    const dateStr = date || formatDateParam(new Date());
-    
+  async function getTimingsByCoords(lat, lng) {
     try {
-      let url = `${ALADHAN_BASE}/timings/${dateStr}?latitude=${lat}&longitude=${lng}`;
-      if (method !== null) {
-        url += `&method=${method}`;
-      }
-      return await ApiClient.fetchApi(url);
+      const data = await ApiClient.fetchApi(`${ALADHAN_BASE}/timings?latitude=${lat}&longitude=${lng}&method=${DEFAULT_METHOD}`);
+      if (data.code !== 200) throw new Error('Aladhan API returned unsuccessful');
+      const d = data.data;
+      const t = d.timings;
+      const meta = d.meta;
+      return {
+        date: d.date.readable,
+        timezone: meta.timezone,
+        calculation_method: meta.method.name,
+        madhab: 'Standard',
+        prayer_times: {
+          imsak: t.Imsak,
+          fajr: t.Fajr,
+          sunrise: t.Sunrise,
+          dhuhr: t.Dhuhr,
+          asr: t.Asr,
+          maghrib: t.Maghrib,
+          isha: t.Isha,
+          midnight: t.Midnight
+        },
+        current_status: { current_prayer: null, next_prayer: null }
+      };
     } catch (err) {
       console.warn('Aladhan API failed, trying fallback:', err.message);
-      
-      const year = new Date().getFullYear();
-      const month = new Date().getMonth() + 1;
-      const day = new Date().getDate();
-      const fallbackUrl = `${FALLBACK_BASE}/timings/${year}/${month}/${day}?lat=${lat}&lon=${lng}&method=2`;
-      const fallbackData = await ApiClient.fetchApi(fallbackUrl);
-      
+      return fallbackTimings(lat, lng);
+    }
+  }
+
+  async function fallbackTimings(lat, lng) {
+    const year = new Date().getFullYear();
+    const month = new Date().getMonth() + 1;
+    const day = new Date().getDate();
+    const fallbackData = await ApiClient.fetchApi(
+      `${FALLBACK_BASE}/timings/${year}/${month}/${day}?lat=${lat}&lon=${lng}&method=2`
+    );
+    const t = fallbackData.results.timings;
+    return {
+      date: `${day}/${month}/${year}`,
+      timezone: fallbackData.results.timezone,
+      calculation_method: 'ISNA',
+      madhab: 'Standard',
+        prayer_times: {
+          imsak: t.Imsak,
+          fajr: t.Fajr,
+          sunrise: t.Sunrise,
+          dhuhr: t.Dhuhr,
+          asr: t.Asr,
+          maghrib: t.Maghrib,
+          isha: t.Isha,
+          midnight: t.Midnight
+        },
+        current_status: { current_prayer: null, next_prayer: null }
+      };
+  }
+
+  async function getHijriDate() {
+    try {
+      const now = new Date();
+      const dd = String(now.getDate()).padStart(2, '0');
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const yyyy = now.getFullYear();
+      const data = await ApiClient.fetchApi(`${ALADHAN_BASE}/gToH?date=${dd}-${mm}-${yyyy}`);
+      if (data.code !== 200) throw new Error('Aladhan hijri API failed');
+      const d = data.data;
       return {
-        data: {
-          timings: {
-            Fajr: fallbackData.results.timings.Fajr,
-            Sunrise: fallbackData.results.timings.Sunrise,
-            Dhuhr: fallbackData.results.timings.Dhuhr,
-            Asr: fallbackData.results.timings.Asr,
-            Maghrib: fallbackData.results.timings.Maghrib,
-            Isha: fallbackData.results.timings.Isha
-          },
-          date: {
-            readable: fallbackData.results.date,
-            hijri: fallbackData.results.hijri,
-            gregorian: fallbackData.results.gregorian
-          },
-          meta: { timezone: fallbackData.results.timezone }
+        hijri: {
+          formatted: `${d.hijri.day} ${d.hijri.month.en} ${d.hijri.year} AH`
+        },
+        gregorian: {
+          formatted: `${d.gregorian.day} ${d.gregorian.month.en} ${d.gregorian.year}`
         }
       };
+    } catch (err) {
+      console.warn('Hijri API failed:', err.message);
+      return null;
     }
   }
 
-  async function getTimingsByAddress(address, date = null, method = null) {
-    const dateStr = date || formatDateParam(new Date());
-    let url = `${BASE}/timingsByAddress/${dateStr}?address=${encodeURIComponent(address)}`;
-    if (method !== null) {
-      url += `&method=${method}`;
+  async function getIslamicEvents() {
+    try {
+      const data = await ApiClient.fetchApi('https://ummahapi.com/api/islamic-events');
+      return data.data;
+    } catch (err) {
+      console.warn('Islamic events API failed:', err.message);
+      return null;
     }
-    return ApiClient.fetchApi(url);
   }
 
-  async function getTimingsByCity(city, country, date = null, method = null) {
-    const dateStr = date || formatDateParam(new Date());
-    let url = `${BASE}/timingsByCity/${dateStr}?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`;
-    if (method !== null) {
-      url += `&method=${method}`;
-    }
-    return ApiClient.fetchApi(url);
-  }
-
-  async function getCalendarByCoords(lat, lng, year, month, method = null) {
-    let url = `${BASE}/calendar/${year}/${month}?latitude=${lat}&longitude=${lng}`;
-    if (method !== null) {
-      url += `&method=${method}`;
-    }
-    return ApiClient.fetchApi(url);
-  }
-  async function getMethods() {
-    return ApiClient.fetchApi(`${BASE}/methods`);
-  }
-
-  function formatDateParam(date) {
-    const dd = String(date.getDate()).padStart(2, '0');
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
-    const yyyy = date.getFullYear();
-    return `${dd}-${mm}-${yyyy}`;
-  }
-
-  return {
-    getTimingsByCoords,
-    getTimingsByAddress,
-    getTimingsByCity,
-    getCalendarByCoords,
-    getMethods
-  };
+  return { getTimingsByCoords, getHijriDate, getIslamicEvents };
 })();
