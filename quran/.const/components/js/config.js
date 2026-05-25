@@ -19,12 +19,12 @@ const QuranConfig = {
     BACK_TO_SURAH_LIST: 'Back to Surah List',
     NO_RESULTS: 'No results found for "',
     TRY_DIFFERENT_SEARCH: '". Try a different search.',
-    RESET_CONFIRM: 'Reset to Al-Hilali! Reloading...',
+    RESET_CONFIRM: 'Reset to defaults! Reloading...',
     TRANSLATIONS_SAVED: 'Translations saved! Reloading...',
   },
 
   SETTINGS: {
-    MODAL_TITLE: 'Quran Translation Settings',
+    MODAL_TITLE: 'Quran Settings',
     PRIMARY_LABEL: 'Primary Translation (e.g., en.hilali)',
     SECONDARY_LABEL: 'Secondary Translation (optional)',
     TERTIARY_LABEL: 'Tertiary Translation (optional)',
@@ -38,6 +38,13 @@ const QuranConfig = {
     HELP_YUSUFALI: '• en.yusufali - Yusuf Ali',
     HELP_HALEEM: '• en.haleem - Haleem',
     HELP_LINK: 'Find more at api.alquran.cloud/v1/edition?type=translation',
+    TAFSIR_LABEL: 'Tafsir Source:',
+    RESET_DEFAULT: 'Reset to Default',
+  },
+
+  TAFSIR_SOURCES: {
+    ibnkathir: { name: 'Tafsir Ibn Kathir', label: 'Ibn Kathir (English)' },
+    muyassar: { name: 'Tafsir Muyassar', label: 'Muyassar (Arabic)' },
   },
 
   TOAST: {
@@ -64,12 +71,14 @@ const QuranConfig = {
     TRANSLATION1: 'quranTranslation1',
     TRANSLATION2: 'quranTranslation2',
     TRANSLATION3: 'quranTranslation3',
+    TAFSIR_SOURCE: 'quranTafsirSource',
   },
 
   DEFAULTS: {
     TRANSLATION1: 'en.hilali',
     TRANSLATION2: '',
     TRANSLATION3: '',
+    TAFSIR_SOURCE: 'ibnkathir',
   },
 
   BISMILLAH: 'بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ',

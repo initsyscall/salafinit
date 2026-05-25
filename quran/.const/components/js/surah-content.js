@@ -91,10 +91,11 @@ function createAyahCard(ayah, primaryTrans, isHighlighted, uthmani, allTranslati
   leftSide.appendChild(ayahNumber);
   leftSide.appendChild(surahName);
   
+  const tSrc = Store.get(QuranConfig.STORAGE_KEYS.TAFSIR_SOURCE) || QuranConfig.DEFAULTS.TAFSIR_SOURCE;
   const tafsirLink = Utils.createElement('a', {
     className: 'quran-tafsir-link quran-card-exclude',
-    href: `#quran/tafsir/${uthmani.number}/${ayah.numberInSurah}`
-  }, 'Tafsir Ibn Kathir');
+    href: `#quran/tafsir/${tSrc}/${uthmani.number}/${ayah.numberInSurah}`
+  }, QuranConfig.TAFSIR_SOURCES[tSrc]?.name || 'Tafsir');
   
   headerRow.appendChild(leftSide);
   headerRow.appendChild(tafsirLink);
@@ -199,13 +200,14 @@ export function renderSurahContent(container, uthmani, primaryTranslation, highl
         }
       };
       
+      const tSrc = Store.get(QuranConfig.STORAGE_KEYS.TAFSIR_SOURCE) || QuranConfig.DEFAULTS.TAFSIR_SOURCE;
       const ayahCard = createAyahCard(
         ayah,
         primaryTrans,
         isHighlighted,
         uthmani,
         allTranslations,
-        () => window.location.hash = `#quran/tafsir/${uthmani.number}/${ayah.numberInSurah}`,
+        () => window.location.hash = `#quran/tafsir/${tSrc}/${uthmani.number}/${ayah.numberInSurah}`,
         copyAyahHandler,
         shareAyahHandler
       );
@@ -288,6 +290,7 @@ export async function loadSurah(container, params) {
 
 export async function loadSurahForTafsir(container, params) {
   const translations = getTranslations();
+  const tafsirSource = params.tafsirSource || Store.get(QuranConfig.STORAGE_KEYS.TAFSIR_SOURCE) || QuranConfig.DEFAULTS.TAFSIR_SOURCE;
 
   try {
     const [uthmaniData, ...translationData] = await Promise.all([
@@ -298,7 +301,7 @@ export async function loadSurahForTafsir(container, params) {
     currentHilaliData = translationData[0]?.data || null;
     renderSurahContent(container, uthmaniData.data, currentHilaliData, params.ayah, translationData);
     
-    setTimeout(() => import('./tafsir.js').then(m => m.openTafsirModal(params.surah, params.ayah, uthmaniData.data, currentHilaliData)), 300);
+    setTimeout(() => import('./tafsir.js').then(m => m.openTafsirModal(params.surah, params.ayah, uthmaniData.data, currentHilaliData, tafsirSource)), 300);
   } catch (error) {
     container.appendChild(createErrorState(QuranConfig.LABELS.COULD_NOT_LOAD_SURAH));
   }

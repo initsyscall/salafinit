@@ -10,8 +10,10 @@ export function closeTafsirModal() {
   }
 }
 
-export function openTafsirModal(surahNumber, ayahNumber, surahData, hilaliData) {
+export function openTafsirModal(surahNumber, ayahNumber, surahData, hilaliData, source) {
   closeTafsirModal();
+  source = source || Store.get(QuranConfig.STORAGE_KEYS.TAFSIR_SOURCE) || QuranConfig.DEFAULTS.TAFSIR_SOURCE;
+  const tafsirName = TafsirApi.getSourceLabel(source);
 
   const ayah = surahData.ayahs?.find(a => a.numberInSurah == ayahNumber);
   const translation = hilaliData?.ayahs?.find(a => a.numberInSurah == ayahNumber);
@@ -29,7 +31,7 @@ export function openTafsirModal(surahNumber, ayahNumber, surahData, hilaliData) 
   const modal = Utils.createElement('div', { className: 'quran-tafsir-modal' }, [
     Utils.createElement('div', { className: 'quran-tafsir-modal-header' }, [
       Utils.createElement('div', { className: 'quran-tafsir-modal-title' }, [
-        Utils.createElement('span', {}, QuranConfig.LABELS.TAFSIR_IBN_KATHIR),
+        Utils.createElement('span', {}, tafsirName),
         Utils.createElement('span', { className: 'quran-tafsir-modal-subtitle' }, `${surahData.englishName} - Ayah ${ayahNumber}`)
       ]),
       Utils.createElement('button', {
@@ -58,11 +60,11 @@ export function openTafsirModal(surahNumber, ayahNumber, surahData, hilaliData) 
     Utils.createElement('div', { className: 'quran-tafsir-modal-footer' }, [
       Utils.createElement('button', {
         className: 'btn btn--ghost btn--sm',
-        onClick: () => copyTafsir(surahData, ayahNumber, translation)
+        onClick: () => copyTafsir(surahData, ayahNumber, translation, source)
       }, 'Copy'),
       Utils.createElement('button', {
         className: 'btn btn--ghost btn--sm',
-        onClick: () => shareTafsirLink(surahNumber, ayahNumber)
+        onClick: () => shareTafsirLink(surahNumber, ayahNumber, source)
       }, 'Share Link'),
       Utils.createElement('button', {
         className: 'btn btn--primary btn--sm',
@@ -78,10 +80,10 @@ export function openTafsirModal(surahNumber, ayahNumber, surahData, hilaliData) 
   document.body.appendChild(overlay);
   currentTafsirModal = overlay;
 
-  loadTafsirContent(surahNumber, ayahNumber);
+  loadTafsirContent(surahNumber, ayahNumber, source);
 }
 
-export async function loadTafsirContent(surahNumber, ayahNumber) {
+export async function loadTafsirContent(surahNumber, ayahNumber, source) {
   const contentDiv = document.getElementById('tafsir-content');
   if (!contentDiv) {
     console.error('tafsir-content element not found');
@@ -95,7 +97,7 @@ export async function loadTafsirContent(surahNumber, ayahNumber) {
   ]));
 
   try {
-    const tafsir = await TafsirApi.getVerseTafsir(surahNumber, ayahNumber);
+    const tafsir = await TafsirApi.getVerseTafsir(surahNumber, ayahNumber, source);
     contentDiv.innerHTML = '';
 
     if (tafsir?.text) {
@@ -111,11 +113,12 @@ export async function loadTafsirContent(surahNumber, ayahNumber) {
   }
 }
 
-export function copyTafsir(surahData, ayahNumber, translation) {
+export function copyTafsir(surahData, ayahNumber, translation, source) {
   const contentDiv = document.getElementById('tafsir-content');
   if (!contentDiv) return;
+  const tafsirName = TafsirApi.getSourceLabel(source);
 
-  const textToCopy = `Tafsir Ibn Kathir - ${surahData.englishName} Ayah ${ayahNumber}\n\n${translation?.text || ''}\n\n${contentDiv.textContent || ''}`;
+  const textToCopy = `${tafsirName} - ${surahData.englishName} Ayah ${ayahNumber}\n\n${translation?.text || ''}\n\n${contentDiv.textContent || ''}`;
 
   navigator.clipboard.writeText(textToCopy).then(() => {
     Utils.showToast('Tafsir' + QuranConfig.TOAST.COPIED);
@@ -124,8 +127,9 @@ export function copyTafsir(surahData, ayahNumber, translation) {
   });
 }
 
-export function shareTafsirLink(surahNumber, ayahNumber) {
-  const url = `${window.location.origin}${window.location.pathname}#quran/tafsir/${surahNumber}/${ayahNumber}`;
+export function shareTafsirLink(surahNumber, ayahNumber, source) {
+  source = source || Store.get(QuranConfig.STORAGE_KEYS.TAFSIR_SOURCE) || QuranConfig.DEFAULTS.TAFSIR_SOURCE;
+  const url = `${window.location.origin}${window.location.pathname}#quran/tafsir/${source}/${surahNumber}/${ayahNumber}`;
   navigator.clipboard.writeText(url).then(() => {
     Utils.showToast(QuranConfig.TOAST.LINK_COPIED);
   }).catch(() => {
