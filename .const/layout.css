@@ -357,6 +357,28 @@
   opacity: 0.6;
 }
 
+.home-verse {
+  max-width: 520px;
+  margin: var(--spacing-lg) auto 0;
+  text-align: center;
+}
+
+.home-verse__translation {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  margin-bottom: var(--spacing-sm);
+  font-weight: 400;
+  font-style: italic;
+}
+
+.home-verse__ref {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  opacity: 0.6;
+  letter-spacing: 0.3px;
+}
+
 .home-grid {
   position: relative;
   padding: var(--spacing-xl) 0;

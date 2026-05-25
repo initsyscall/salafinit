@@ -41,9 +41,11 @@ const App = (() => {
       const hero = Utils.createElement('div', { className: 'home-hero' }, [
         Utils.createElement('p', { className: 'home-hero__bismillah' }, 'بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ'),
         Utils.createElement('h1', { className: 'home-hero__title', innerHTML: 'salaf<span class="hero__dot">.</span><span class="hero__init">Init</span><span class="hero__parens">();</span>' }),
-        Utils.createElement('p', { className: 'home-hero__subtitle', style: 'max-width: 600px; line-height: 1.8;' }, 'Pray, "My Lord! Increase me in knowledge." - Surah taha 114')
+        Utils.createElement('div', { id: 'hero-verse', className: 'home-verse' })
       ]);
       main.appendChild(hero);
+
+      loadRandomVerse();
 
       const grid = Utils.createElement('div', { className: 'grid grid--responsive home-grid' }, [
         createFeatureCard('ٱلْقُرْآن', 'The Noble Quran - Uthmani Text with Translation and Tafsir', 'quran', '#quran'),
@@ -136,6 +138,22 @@ const App = (() => {
         navigator.serviceWorker.register('sw.js')
           .catch(() => { });
       });
+    }
+  }
+
+  async function loadRandomVerse() {
+    const el = document.getElementById('hero-verse');
+    if (!el) return;
+    try {
+      const data = await ApiClient.fetchApi('https://ummahapi.com/api/quran/random', { cache: false });
+      const verse = data.data.verse;
+      const surah = data.data.surah;
+      el.innerHTML = `
+        <div class="home-verse__translation">${verse.translations.sahih_international}</div>
+        <div class="home-verse__ref">— Qur'an ${surah.name_english} ${verse.verse_key}</div>
+      `;
+    } catch {
+      el.innerHTML = '<div class="home-verse__ref" style="opacity:0.4;">﴿ رَبِّ زِدْنِي عِلْمًا ﴾</div>';
     }
   }
 
