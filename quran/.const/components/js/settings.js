@@ -8,6 +8,7 @@ export function openSettingsModal() {
   const currentSecondary = Store.get(QuranConfig.STORAGE_KEYS.TRANSLATION2) || QuranConfig.DEFAULTS.TRANSLATION2;
   const currentTertiary = Store.get(QuranConfig.STORAGE_KEYS.TRANSLATION3) || QuranConfig.DEFAULTS.TRANSLATION3;
   const currentTafsir = Store.get(QuranConfig.STORAGE_KEYS.TAFSIR_SOURCE) || QuranConfig.DEFAULTS.TAFSIR_SOURCE;
+  const currentReciter = Store.get(QuranConfig.STORAGE_KEYS.RECITER) || QuranConfig.DEFAULTS.RECITER;
 
   const overlay = Utils.createElement('div', {
     className: 'quran-settings-overlay',
@@ -51,6 +52,17 @@ export function openSettingsModal() {
       ))
     ]),
     
+    Utils.createElement('div', { style: 'margin-bottom: var(--spacing-md);' }, [
+      Utils.createElement('label', { style: 'display: block; margin-bottom: var(--spacing-xs); font-size: var(--font-size-sm); color: var(--color-text-secondary);' }, QuranConfig.SETTINGS.RECITER_LABEL),
+      Utils.createElement('select', {
+        className: 'input',
+        id: 'reciter-source',
+        style: 'width: 100%;'
+      }, Object.entries(QuranConfig.RECITERS).map(([key, val]) =>
+        Utils.createElement('option', { value: key, selected: key === currentReciter }, val.name)
+      ))
+    ]),
+
     Utils.createElement('div', { style: 'background: var(--color-surface); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-md);' }, [
       Utils.createElement('p', { style: 'font-size: var(--font-size-sm); font-weight: 600; margin-bottom: var(--spacing-sm);' }, QuranConfig.SETTINGS.HELP_TITLE),
       Utils.createElement('p', { style: 'font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--spacing-xs);' }, QuranConfig.SETTINGS.HELP_HILALI),
@@ -68,14 +80,15 @@ export function openSettingsModal() {
           const sel2 = document.getElementById('translation-2').value.trim();
           const sel3 = document.getElementById('translation-3').value.trim();
           const tafsir = document.getElementById('tafsir-source').value;
+          const reciter = document.getElementById('reciter-source').value;
           
           Store.set(QuranConfig.STORAGE_KEYS.TRANSLATION1, sel1);
           Store.set(QuranConfig.STORAGE_KEYS.TRANSLATION2, sel2);
           Store.set(QuranConfig.STORAGE_KEYS.TRANSLATION3, sel3);
           Store.set(QuranConfig.STORAGE_KEYS.TAFSIR_SOURCE, tafsir);
-          Utils.showToast(QuranConfig.LABELS.TRANSLATIONS_SAVED);
+          Store.set(QuranConfig.STORAGE_KEYS.RECITER, reciter);
           overlay.remove();
-          window.location.reload();
+          Utils.showToast('Settings saved');
         }
       }, 'Save'),
       Utils.createElement('button', {
@@ -85,9 +98,9 @@ export function openSettingsModal() {
           Store.set(QuranConfig.STORAGE_KEYS.TRANSLATION2, QuranConfig.DEFAULTS.TRANSLATION2);
           Store.set(QuranConfig.STORAGE_KEYS.TRANSLATION3, QuranConfig.DEFAULTS.TRANSLATION3);
           Store.set(QuranConfig.STORAGE_KEYS.TAFSIR_SOURCE, QuranConfig.DEFAULTS.TAFSIR_SOURCE);
-          Utils.showToast(QuranConfig.LABELS.RESET_CONFIRM);
+          Store.set(QuranConfig.STORAGE_KEYS.RECITER, QuranConfig.DEFAULTS.RECITER);
           overlay.remove();
-          window.location.reload();
+          Utils.showToast('Settings reset to defaults');
         }
       }, QuranConfig.SETTINGS.RESET_DEFAULT),
       Utils.createElement('button', {

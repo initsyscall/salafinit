@@ -39,12 +39,26 @@ const QuranConfig = {
     HELP_HALEEM: '• en.haleem - Haleem',
     HELP_LINK: 'Find more at api.alquran.cloud/v1/edition?type=translation',
     TAFSIR_LABEL: 'Tafsir Source:',
+    RECITER_LABEL: 'Reciter (Audio):',
     RESET_DEFAULT: 'Reset to Default',
   },
 
   TAFSIR_SOURCES: {
     ibnkathir: { name: 'Tafsir Ibn Kathir', label: 'Ibn Kathir (English)' },
     muyassar: { name: 'Tafsir Muyassar', label: 'Muyassar (Arabic)' },
+  },
+
+  RECITERS: {
+    2: { name: 'Abdul Rahman Al-Sudais', path: 'Abdurrahmaan_As-Sudais_192kbps' },
+    3: { name: 'Abdul Basit Abdul Samad', path: 'Abdul_Basit_Murattal_192kbps' },
+    4: { name: 'Abdul Basit (Mujawwad)', path: 'Abdul_Basit_Mujawwad_128kbps' },
+    5: { name: 'Maher Al Muaiqly', path: 'MauroAuad-AlMuaiqly_128kbps' },
+    6: { name: 'Saad Al-Ghamdi', path: 'Saad_Al-Ghamdi_64kbps' },
+    7: { name: 'Hani Ar-Rifai', path: 'Hani_Rifai_192kbps' },
+    8: { name: 'Abu Bakr Al Shatri', path: 'Abu_Bakr_Ash-Shaatree_128kbps' },
+    9: { name: 'Yasser Al-Dosari', path: 'Yasser_Ad-Dussary_128kbps' },
+    10: { name: 'Saud Al-Shuraim', path: 'Saood_ash-Shuraym_128kbps' },
+    11: { name: 'Abdullah Al-Juhany', path: 'Abdullaah_3awwaad_Al-Juhaynee_128kbps' },
   },
 
   TOAST: {
@@ -72,6 +86,7 @@ const QuranConfig = {
     TRANSLATION2: 'quranTranslation2',
     TRANSLATION3: 'quranTranslation3',
     TAFSIR_SOURCE: 'quranTafsirSource',
+    RECITER: 'quranReciter',
   },
 
   DEFAULTS: {
@@ -79,6 +94,7 @@ const QuranConfig = {
     TRANSLATION2: '',
     TRANSLATION3: '',
     TAFSIR_SOURCE: 'ibnkathir',
+    RECITER: '9',
   },
 
   BISMILLAH: 'بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ',

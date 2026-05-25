@@ -5,6 +5,78 @@ import QuranConfig from './config.js';
 let currentSurahData = null;
 let currentHilaliData = null;
 
+let quranAudio = null;
+let currentAudioAyah = null;
+let preloadAudio = null;
+
+function getAudioUrl(surah, ayah) {
+  const reciterId = Store.get(QuranConfig.STORAGE_KEYS.RECITER) || QuranConfig.DEFAULTS.RECITER;
+  const reciter = QuranConfig.RECITERS[reciterId];
+  if (!reciter || !reciter.path) return null;
+  const s = String(surah).padStart(3, '0');
+  const a = String(ayah).padStart(3, '0');
+  return `https://everyayah.com/data/${reciter.path}/${s}${a}.mp3`;
+}
+
+function clearPlayingState() {
+  document.querySelectorAll('.quran-ayah-card--playing').forEach(c => c.classList.remove('quran-ayah-card--playing'));
+}
+
+function preloadNextAyah(surah, currentAyah) {
+  const nextCard = document.getElementById(`ayah-${currentAyah}`)?.nextElementSibling;
+  if (!nextCard?.classList.contains('quran-ayah-card')) return;
+  const match = nextCard.id.match(/ayah-(\d+)/);
+  if (!match) return;
+  const url = getAudioUrl(surah, parseInt(match[1]));
+  if (!url) return;
+  if (!preloadAudio) {
+    preloadAudio = new Audio();
+    preloadAudio.preload = 'auto';
+  }
+  preloadAudio.src = url;
+}
+
+function toggleAyahAudio(surah, ayah, btn) {
+  if (quranAudio && currentAudioAyah === `${surah}-${ayah}` && !quranAudio.paused) {
+    quranAudio.pause();
+    quranAudio.currentTime = 0;
+    currentAudioAyah = null;
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+    clearPlayingState();
+    return;
+  }
+  if (quranAudio) {
+    quranAudio.pause();
+    quranAudio.currentTime = 0;
+    document.querySelectorAll('.quran-audio-btn').forEach(b => {
+      b.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+    });
+  }
+  const url = getAudioUrl(surah, ayah);
+  if (!url) { Utils.showToast('Audio not available for this reciter', 'error'); return; }
+  if (!quranAudio) quranAudio = new Audio();
+  quranAudio.src = url;
+  quranAudio.play().catch(() => Utils.showToast('Failed to play audio', 'error'));
+  currentAudioAyah = `${surah}-${ayah}`;
+  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
+  clearPlayingState();
+  const card = document.getElementById(`ayah-${ayah}`);
+  if (card) {
+    card.classList.add('quran-ayah-card--playing');
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  preloadNextAyah(surah, ayah);
+  quranAudio.onended = () => {
+    currentAudioAyah = null;
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+    clearPlayingState();
+    const nextCard = document.getElementById(`ayah-${ayah}`)?.nextElementSibling;
+    if (nextCard?.classList.contains('quran-ayah-card')) {
+      nextCard.querySelector('.quran-audio-btn')?.click();
+    }
+  };
+}
+
 function createLoader(message) {
   return Utils.createElement('div', { className: 'loader' }, [
     Utils.createElement('div', { className: 'loader__spinner loader-spinner-gold' }),
@@ -128,6 +200,12 @@ function createAyahCard(ayah, primaryTrans, isHighlighted, uthmani, allTranslati
   }
 
   const actions = Utils.createElement('div', { className: 'quran-ayah-actions quran-card-exclude' }, [
+    Utils.createElement('button', {
+      className: 'btn btn--ghost quran-audio-btn',
+      title: 'Play',
+      innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>',
+      onClick: (e) => toggleAyahAudio(uthmani.number, ayah.numberInSurah, e.currentTarget)
+    }),
     Utils.createElement('button', {
       className: 'btn btn--ghost',
       title: 'Share',

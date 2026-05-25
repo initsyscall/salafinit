@@ -62,6 +62,11 @@
   box-shadow: 0 0 12px color-mix(in srgb, var(--color-primary) 20%, transparent);
 }
 
+.quran-ayah-card--playing {
+  border-color: var(--color-quran);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--color-quran) 30%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--color-quran) 20%, transparent);
+}
+
 .quran-ayah-card:last-child {
   margin-bottom: 0;
 }

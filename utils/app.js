@@ -149,10 +149,13 @@ const App = (() => {
       const data = await ApiClient.fetchApi('https://ummahapi.com/api/quran/random', { cache: false });
       const verse = data.data.verse;
       const surah = data.data.surah;
+      const [surahNum, ayahNum] = verse.verse_key.split(':');
       el.innerHTML = `
         <div class="home-verse__translation">${verse.translations.sahih_international}</div>
         <div class="home-verse__ref">— Qur'an ${surah.name_english} ${verse.verse_key}</div>
       `;
+      el.style.cursor = 'pointer';
+      el.onclick = () => { window.location.hash = `#quran/${surahNum}/${ayahNum}`; };
     } catch {
       el.innerHTML = '<div class="home-verse__ref" style="opacity:0.4;">﴿ رَبِّ زِدْنِي عِلْمًا ﴾</div>';
     }
