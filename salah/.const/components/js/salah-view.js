@@ -36,13 +36,9 @@ const SalahView = (() => {
 
     try {
       lastLocation = { lat, lng };
-      const [timingsData, hijriData, eventsData] = await Promise.all([
-        SalahApi.getTimingsByCoords(lat, lng),
-        SalahApi.getHijriDate(),
-        SalahApi.getIslamicEvents()
-      ]);
+      const timingsData = await SalahApi.getTimingsByCoords(lat, lng);
       loader.remove();
-      renderAll(container, timingsData, hijriData, eventsData, locationName);
+      renderAll(container, timingsData, locationName);
     } catch (err) {
       console.error('Failed to load timings:', err);
       loader.remove();
@@ -53,7 +49,7 @@ const SalahView = (() => {
     }
   }
 
-  function renderAll(container, timingsData, hijriData, eventsData, locationName) {
+  function renderAll(container, timingsData, locationName) {
     if (timerInterval) clearInterval(timerInterval);
     container.innerHTML = '';
     const pt = timingsData.prayer_times;
@@ -66,14 +62,15 @@ const SalahView = (() => {
     const next = status?.next_prayer && status.next_prayer !== 'none'
       ? status.next_prayer : getNextPrayer(prayers, now);
 
-    container.appendChild(renderHeader(hijriData, timingsData.date));
+    const h = Utils.createElement('div', { className: 'sh-header' });
+    h.innerHTML = `<h1 class="sh-header__title">ٱلصَّلَاةُ</h1><p class="sh-header__date">${timingsData.date}</p>`;
+    container.appendChild(h);
     container.appendChild(renderCurrentCard(prayers, current, next));
     container.appendChild(renderPrayerGrid(prayers, current));
     container.appendChild(renderCountdown(prayers, next));
     container.appendChild(renderTahajjudCard(pt));
     container.appendChild(renderExtras(pt));
     container.appendChild(renderForbidden(pt));
-    if (eventsData) container.appendChild(renderNextEvent(eventsData));
     container.appendChild(renderBottom(locationName, timingsData.calculation_method, timingsData.madhab));
 
     const gpsBtn = Utils.createElement('button', {
@@ -89,12 +86,8 @@ const SalahView = (() => {
         const pos = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, { enableHighAccuracy: true, timeout: 15000 }));
         const lat = Math.round(pos.coords.latitude * 10000) / 10000;
         const lng = Math.round(pos.coords.longitude * 10000) / 10000;
-        const [td, hd, ev] = await Promise.all([
-          SalahApi.getTimingsByCoords(pos.coords.latitude, pos.coords.longitude),
-          SalahApi.getHijriDate(),
-          SalahApi.getIslamicEvents()
-        ]);
-        renderAll(container, td, hd, ev, 'Your Location (GPS)');
+        const td = await SalahApi.getTimingsByCoords(pos.coords.latitude, pos.coords.longitude);
+        renderAll(container, td, 'Your Location (GPS)');
       } catch (err) {
         Utils.showToast('Could not get GPS location', 'error');
         gpsBtn.textContent = 'Use GPS';
@@ -108,18 +101,6 @@ const SalahView = (() => {
       const nxt = getNextPrayer(prayers, u);
       updateCountdown(container, prayers, nxt);
     }, 1000);
-  }
-
-  function renderHeader(hijriData, dateStr) {
-    const hijri = hijriData?.hijri;
-    const greg = hijriData?.gregorian;
-    const h = Utils.createElement('div', { className: 'sh-header' });
-    h.innerHTML = `
-      <h1 class="sh-header__title">ٱلصَّلَاةُ</h1>
-      ${hijri ? `<p class="sh-header__hijri">${hijri.formatted}</p>` : ''}
-      <p class="sh-header__date">${greg?.formatted || dateStr}</p>
-    `;
-    return h;
   }
 
   function renderCurrentCard(prayers, current, next) {
@@ -225,44 +206,6 @@ const SalahView = (() => {
     return section;
   }
 
-  const AUTHENTIC_EVENTS = new Set([
-    'Day of Ashura',
-    'Start of Ramadan',
-    'Laylat al-Qadr window begins',
-    'Eid al-Fitr',
-    'Hajj begins',
-    'Day of Arafah',
-    'Eid al-Adha'
-  ]);
-
-  function renderNextEvent(eventsData) {
-    const allEvents = eventsData.events || [];
-    const now = new Date();
-    const hijri = eventsData.current_hijri_date?.hijri;
-    const todayDay = parseInt(hijri?.day || '0');
-    const todayMonth = parseInt(hijri?.month || '0');
-
-    const upcoming = allEvents
-      .filter(e => AUTHENTIC_EVENTS.has(e.name))
-      .map(e => {
-        const d = (e.month - todayMonth) * 30 + (e.day - todayDay);
-        return { ...e, daysUntil: d < 0 ? d + 354 : d };
-      })
-      .filter(e => e.daysUntil >= 0)
-      .sort((a, b) => a.daysUntil - b.daysUntil);
-
-    const ev = upcoming[0];
-    if (!ev) return null;
-
-    const card = Utils.createElement('div', { className: 'sh-event' });
-    card.innerHTML = `
-      <span class="sh-event__label">Upcoming</span>
-      <span class="sh-event__name">${ev.name}</span>
-      <span class="sh-event__date">${ev.hijri_date}${ev.daysUntil > 0 ? ` · ${ev.daysUntil}d` : ''}</span>
-    `;
-    return card;
-  }
-
   function renderTahajjudCard(pt) {
     const wrapper = Utils.createElement('div', { className: 'sh-tahajjud' });
 
@@ -290,9 +233,9 @@ const SalahView = (() => {
     wrapper.appendChild(card);
 
     const hadith = Utils.createElement('div', { className: 'sh-tahajjud__hadith' });
-    hadith.style.borderLeft = '3px solid var(--grade-sahih)';
+    hadith.style.borderLeft = '3px solid var(--color-quran)';
     hadith.innerHTML = `
-      <span class="sh-tahajjud__hadith-grade" style="font-size:var(--font-size-xs);font-weight:500;color:var(--grade-sahih);margin-bottom:var(--spacing-xs);display:block;">Sahih</span>
+      <span class="sh-tahajjud__hadith-grade" style="font-size:var(--font-size-xs);font-weight:500;color:var(--color-quran);margin-bottom:var(--spacing-xs);display:block;">Sahih</span>
       <div class="sh-tahajjud__hadith-ref" style="font-size:var(--font-size-base);color:var(--color-text);font-weight:500;margin-bottom:var(--spacing-xs);">Sahih al-Bukhari <span style="color:var(--color-text-muted);font-weight:400;">— 1145</span></div>
       <p class="sh-tahajjud__hadith-chapter" style="font-size:var(--font-size-sm);color:var(--color-text-muted);margin:0 0 var(--spacing-md);">Chp 19: Prayer at Night (Tahajjud)</p>
       <p class="sh-tahajjud__hadith-narrator" style="font-style:italic;color:var(--color-text-secondary);margin-bottom:var(--spacing-sm);font-size:var(--font-size-sm);font-weight:600;">Narrated Abu Huraira:</p>
@@ -359,13 +302,9 @@ const SalahView = (() => {
 
       try {
         lastLocation = { lat: newLat, lng: newLng };
-        const [td, hd, ev] = await Promise.all([
-          SalahApi.getTimingsByCoords(newLat, newLng),
-          SalahApi.getHijriDate(),
-          SalahApi.getIslamicEvents()
-        ]);
+        const td = await SalahApi.getTimingsByCoords(newLat, newLng);
         loader.remove();
-        renderAll(page, td, hd, ev, newLocName);
+        renderAll(page, td, newLocName);
       } catch {
         loader.remove();
         page.innerHTML = '<div class="empty-state"><div class="empty-state__title">Failed to Load</div></div>';

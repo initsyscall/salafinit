@@ -219,7 +219,8 @@ const HadithView = (() => {
     }, [
       Utils.createElement('div', { className: 'hadith-book-arabic' }, book.arabic),
       Utils.createElement('div', { className: 'hadith-book-name' }, book.name),
-      book.totalHadiths ? Utils.createElement('div', { className: 'hadith-book-count' }, `${book.totalHadiths.toLocaleString()} hadiths`) : null
+      book.totalHadiths ? Utils.createElement('div', { className: 'hadith-book-count' }, `${book.totalHadiths.toLocaleString()} hadiths`) : null,
+      book.id === 'muslim' ? Utils.createElement('div', { className: 'hadith-book-info' }, 'Abdul Hamid Siddiqui numbering') : null
     ]);
   }
 
@@ -308,7 +309,7 @@ const HadithView = (() => {
       if (hadiths.length > 0) {
         hadiths.forEach(h => {
           const grade = h.grade || 'Unknown';
-          const gradeClass = getGradeClass(grade);
+          const gradeClass = getGradeClass(grade, bookId);
 
           const miniCard = Utils.createElement('a', {
             href: buildRoute(collection, bookId, h.idInBook || h.id),
@@ -388,7 +389,7 @@ const HadithView = (() => {
       if (collection === 'shia') {
         // Shia: use majlisiGrading if available, otherwise behdudiGrading
         grade = hadith.majlisiGrading || hadith.behdudiGrading || hadith.grade || 'Unknown';
-        gradeInfo = getGradeInfo(grade, collection);
+        gradeInfo = getGradeInfo(grade, collection, bookId);
 
         // Store all Shia gradings for display
         if (hadith.majlisiGrading || hadith.behdudiGrading) {
@@ -399,7 +400,7 @@ const HadithView = (() => {
         }
       } else {
         grade = hadith.grade || 'Unknown';
-        gradeInfo = getGradeInfo(grade, collection);
+        gradeInfo = getGradeInfo(grade, collection, bookId);
       }
 
       const chapterInfo = hadith.chapter ? hadith.chapter.name_en || hadith.chapter.name_ar : null;
@@ -473,6 +474,7 @@ const HadithView = (() => {
           Utils.createElement('span', { className: 'hadith-book-ref' }, book?.name || bookId),
           Utils.createElement('span', { className: 'hadith-number-badge' }, ` #${hadithNum}`)
         ]),
+        bookId === 'muslim' ? Utils.createElement('div', { style: 'font-size:0.6rem;color:var(--color-text-muted);opacity:0.6;margin:0 0 var(--spacing-xs);' }, 'Abdul Hamid Siddiqui numbering') : null,
         hadith.chapter?.number ? Utils.createElement('div', { className: 'hadith-chapter-name' }, `Chp ${hadith.chapter.number}${hadith.chapter.name_en ? `: ${hadith.chapter.name_en}` : ''}`) : null,
         collection === 'shia' && typeof hadith.english === 'string' ? Utils.createElement('div', { className: 'hadith-text' }, hadith.english) : (
           hadith.english?.narrator ? Utils.createElement('div', { className: 'hadith-narrator', style: 'font-style: italic; margin-bottom: var(--spacing-sm);' }, hadith.english.narrator) : null
@@ -560,13 +562,14 @@ const HadithView = (() => {
     }
   }
 
-  function getGradeInfo(grade, collection) {
+  function getGradeInfo(grade, collection, bookId) {
     if (collection === 'shia') {
       return { outline: '#EF4444', label: grade || ' Shia' };
     }
     const g = (grade || '').toLowerCase();
     if (g.includes('sahih') || g.includes('authentic')) {
-      return { outline: '#10B981', label: grade || 'Sahih' };
+      const isSahihain = bookId === 'bukhari' || bookId === 'muslim';
+      return { outline: isSahihain ? 'var(--color-quran)' : '#10B981', label: grade || 'Sahih' };
     }
     if (g.includes('hasan') || g.includes('good')) {
       return { outline: '#F97316', label: grade || 'Hasan' };
@@ -574,9 +577,12 @@ const HadithView = (() => {
     return { outline: '#EF4444', label: grade || 'Daif' };
   }
 
-  function getGradeClass(grade) {
+  function getGradeClass(grade, bookId) {
     const g = (grade || '').toLowerCase();
-    if (g.includes('sahih') || g.includes('authentic')) return 'grade-sahih';
+    if (g.includes('sahih') || g.includes('authentic')) {
+      if (bookId === 'bukhari' || bookId === 'muslim') return 'grade-gold';
+      return 'grade-sahih';
+    }
     if (g.includes('hasan') || g.includes('good')) return 'grade-hasan';
     return 'grade-daif';
   }

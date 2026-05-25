@@ -22,15 +22,6 @@
   letter-spacing: 1px;
 }
 
-.sh-header__hijri {
-  font-family: var(--font-arabic);
-  font-size: 1rem;
-  color: var(--color-quran);
-  margin: 0 0 2px;
-  font-weight: 500;
-  opacity: 0.9;
-}
-
 .sh-header__date {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
@@ -290,38 +281,6 @@
   letter-spacing: 0.5px;
 }
 
-/* ── Islamic Events ── */
-.sh-event {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-sm) var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
-  border-radius: var(--radius-lg);
-  background: color-mix(in srgb, var(--color-quran) 5%, var(--color-surface));
-  border: 1px solid color-mix(in srgb, var(--color-quran) 15%, transparent);
-}
-
-.sh-event__label {
-  font-size: 0.6rem;
-  color: var(--color-quran);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  font-weight: 600;
-}
-
-.sh-event__name {
-  font-size: var(--font-size-sm);
-  color: var(--color-text);
-  font-weight: 500;
-}
-
-.sh-event__date {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  margin-left: auto;
-}
-
 /* ── Tahajjud ── */
 .sh-tahajjud {
   margin-bottom: var(--spacing-lg);
@@ -400,7 +359,7 @@
 
 .sh-tahajjud__hadith:hover {
   border-color: color-mix(in srgb, var(--color-quran) 15%, transparent);
-  border-left-color: var(--grade-sahih);
+  border-left-color: var(--color-quran);
 }
 
 /* ── Bottom Bar ── */

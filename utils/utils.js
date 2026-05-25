@@ -87,37 +87,14 @@ const Utils = (() => {
   }
 
   async function getLocationByIP() {
-    const apis = [
-      { url: 'https://geolocation-db.com/json/', parser: (d) => ({ lat: d.latitude, lng: d.longitude, city: d.city, country: d.country_name }) },
-      { url: 'https://api.ipify.org?format=json', isIP: true, parser: (d) => d.ip },
-      { url: 'https://extreme-ip-lookup.com/json/', parser: (d) => ({ lat: parseFloat(d.lat), lng: parseFloat(d.lon), city: d.city, country: d.country }) }
-    ];
-
-    for (const api of apis) {
-      try {
-        const data = await ApiClient.fetchApi(api.url);
-        
-        if (api.isIP) {
-          const ip = data.ip;
-          const locData = await ApiClient.fetchApi(`https://ipapi.co/${ip}/json/`);
-          if (locData.latitude) {
-            return {
-              lat: locData.latitude,
-              lng: locData.longitude,
-              city: locData.city,
-              country: locData.country_name
-            };
-          }
-        } else if (api.parser(data) && api.parser(data).lat) {
-          return api.parser(data);
-        }
-      } catch (err) {
-        console.error(`IP API ${api.url} failed:`, err.message);
-        continue;
-      }
-    }
-    
-    throw new Error('Could not detect location from IP. Please enter your city manually.');
+    const data = await ApiClient.fetchApi('http://ip-api.com/json/');
+    if (data.status !== 'success') throw new Error('IP location failed');
+    return {
+      lat: data.lat,
+      lng: data.lon,
+      city: data.city,
+      country: data.country
+    };
   }
 
   return {

@@ -60,38 +60,5 @@ const SalahApi = (() => {
       };
   }
 
-  async function getHijriDate() {
-    try {
-      const now = new Date();
-      const dd = String(now.getDate()).padStart(2, '0');
-      const mm = String(now.getMonth() + 1).padStart(2, '0');
-      const yyyy = now.getFullYear();
-      const data = await ApiClient.fetchApi(`${ALADHAN_BASE}/gToH?date=${dd}-${mm}-${yyyy}`);
-      if (data.code !== 200) throw new Error('Aladhan hijri API failed');
-      const d = data.data;
-      return {
-        hijri: {
-          formatted: `${d.hijri.day} ${d.hijri.month.en} ${d.hijri.year} AH`
-        },
-        gregorian: {
-          formatted: `${d.gregorian.day} ${d.gregorian.month.en} ${d.gregorian.year}`
-        }
-      };
-    } catch (err) {
-      console.warn('Hijri API failed:', err.message);
-      return null;
-    }
-  }
-
-  async function getIslamicEvents() {
-    try {
-      const data = await ApiClient.fetchApi('https://ummahapi.com/api/islamic-events');
-      return data.data;
-    } catch (err) {
-      console.warn('Islamic events API failed:', err.message);
-      return null;
-    }
-  }
-
-  return { getTimingsByCoords, getHijriDate, getIslamicEvents };
+  return { getTimingsByCoords };
 })();
