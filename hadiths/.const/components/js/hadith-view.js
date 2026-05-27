@@ -443,25 +443,6 @@ const HadithView = (() => {
         });
       }
 
-      if (hadith.arabic) {
-        toggleArabicBtn = document.createElement('button');
-        toggleArabicBtn.className = 'arabic-toggle-btn';
-
-        let arabicElement = null;
-
-        toggleArabicBtn.addEventListener('click', () => {
-          const newState = localStorage.getItem('hadithShowArabic') !== 'true';
-          localStorage.setItem('hadithShowArabic', newState.toString());
-          toggleArabicBtn.innerHTML = newState ? 'Hide Arabic' : 'Show Arabic';
-          if (!arabicElement) {
-            arabicElement = hadithCard.querySelector('.hadith-arabic');
-          }
-          if (arabicElement) {
-            arabicElement.style.display = newState ? 'block' : 'none';
-          }
-        });
-      }
-
       const hadithCard = Utils.createElement('div', {
         className: 'hadith-detail-card',
         style: `border-left: 3px solid ${gradeInfo.outline};`
@@ -484,7 +465,6 @@ const HadithView = (() => {
           className: 'hadith-arabic rtl',
           style: `font-family: var(--font-arabic); margin-top: var(--spacing-md); font-size: var(--font-size-lg); display: ${(hadith.english?.text || typeof hadith.english === 'string') ? (showArabic ? 'block' : 'none') : 'block'};`
         }, hadith.arabic) : null,
-        toggleArabicBtn,
         collection === 'shia' && shiaGrading ? Utils.createElement('div', { className: 'shia-grading' }, [
           shiaGrading.majlisi ? Utils.createElement('div', { className: 'shia-grading-item' }, [
             Utils.createElement('span', { className: 'shia-grading-label' }, 'Allamah Majlisi: '),
@@ -537,9 +517,17 @@ const HadithView = (() => {
         }
         
       if (hadith.arabic) {
-          toggleArabicBtn.style.cssText = `background: none; border: none; color: var(--color-text-secondary); cursor: pointer; font-size: 11px; font-weight: 400; padding: 4px 8px;`;
-          toggleArabicBtn.innerHTML = showArabic ? 'Hide Arabic' : 'Show Arabic';
-          navItems.push(toggleArabicBtn);
+          const toggleBtn = document.createElement('button');
+          toggleBtn.style.cssText = 'background:none;border:none;color:var(--color-text-secondary);cursor:pointer;font-size:11px;font-weight:400;padding:4px 8px;';
+          toggleBtn.innerHTML = showArabic ? 'Hide Arabic' : 'Show Arabic';
+          toggleBtn.addEventListener('click', () => {
+            const newState = localStorage.getItem('hadithShowArabic') !== 'true';
+            localStorage.setItem('hadithShowArabic', newState.toString());
+            toggleBtn.innerHTML = newState ? 'Hide Arabic' : 'Show Arabic';
+            const ae = hadithCard.querySelector('.hadith-arabic');
+            if (ae) ae.style.display = newState ? 'block' : 'none';
+          });
+          navItems.push(toggleBtn);
         }
         
         navItems.push(Utils.createElement('a', {
@@ -552,7 +540,6 @@ const HadithView = (() => {
         }, navItems);
         container.appendChild(toggleWrapper);
 
-      // Navigation removed - consistent with Quran (users can use keyboard arrows or scroll)
     } catch (err) {
       loader.remove();
       container.appendChild(Utils.createElement('div', { className: 'empty-state' }, [
@@ -602,11 +589,6 @@ const HadithView = (() => {
       else if (hadith.behdudiGrading) text += `Grade: ${hadith.behdudiGrading}\n`;
     } else {
       text += `Grade: ${gradeInfo.label}\n`;
-    }
-    if (hadith.allGrades?.length > 1) {
-      hadith.allGrades.forEach(s => {
-        text += `  ${s.name}: ${s.grade}\n`;
-      });
     }
     text += '\n';
 

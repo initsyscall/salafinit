@@ -53,7 +53,6 @@ const QuranApi = (() => {
       if (alquranCloudSearch?.data?.matches) {
         return {
           data: {
-            matches: alquranCloudSearch.data.matches.length,
             matches: alquranCloudSearch.data.matches,
             total: alquranCloudSearch.data.matches.length,
             hasMore: false

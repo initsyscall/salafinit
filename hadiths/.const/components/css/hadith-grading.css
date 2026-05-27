@@ -1,11 +1,7 @@
-.grade-sahih { border-color: var(--grade-sahih, #22C55E) !important; }
-.grade-gold { border-color: var(--color-quran) !important; }
-.grade-hasan { border-color: var(--grade-hasan, #F6C177) !important; }
-.grade-daif { border-color: var(--grade-daif, #FF3366) !important; }
-
-.grade-sahih { --grade-color: var(--grade-sahih, #22C55E); }
-.grade-gold { --grade-color: var(--color-quran); }
-.grade-hasan { --grade-color: var(--grade-hasan, #F6C177); }
-.grade-daif, .grade-mawdu { --grade-color: var(--grade-daif, #FF3366); }
+.grade-sahih { border-color: var(--grade-sahih, #22C55E) !important; --grade-color: var(--grade-sahih, #22C55E); }
+.grade-gold { border-color: var(--color-quran) !important; --grade-color: var(--color-quran); }
+.grade-hasan { border-color: var(--grade-hasan, #F6C177) !important; --grade-color: var(--grade-hasan, #F6C177); }
+.grade-daif { border-color: var(--grade-daif, #FF3366) !important; --grade-color: var(--grade-daif, #FF3366); }
+.grade-mawdu { border-color: var(--grade-daif, #FF3366) !important; --grade-color: var(--grade-daif, #FF3366); }
 .grade-munkar { --grade-color: var(--color-primary); }
 .grade-other { --grade-color: var(--color-text-secondary); }

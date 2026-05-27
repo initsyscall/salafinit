@@ -36,8 +36,8 @@ const LearnView = (() => {
     }, [
       Utils.createElement('div', { className: 'learn-card-arabic' }, 'السَّلَفِيَّةُ'),
       Utils.createElement('div', { className: 'learn-card-title' }, 'Salafiyyah'),
-      Utils.createElement('div', { className: 'learn-card-desc' }, 'Asma ul Husna — the 99 Names of Allah'),
-      Utils.createElement('div', { className: 'learn-card-badge' }, 'Read')
+      Utils.createElement('div', { className: 'learn-card-desc' }, 'Asma ul Husna — the 99 Beautiful Names of Allah · Authentic Duas from Quran & Sunnah · The Path of the Righteous Predecessors'),
+      Utils.createElement('div', { className: 'learn-card-badge' }, 'Return to Truth')
     ]);
     return card;
   }
@@ -50,7 +50,7 @@ const LearnView = (() => {
       Utils.createElement('div', { className: 'learn-card-arabic' }, 'أَدْيَانٌ أُخْرَى'),
       Utils.createElement('div', { className: 'learn-card-title' }, 'Other Religions'),
       Utils.createElement('div', { className: 'learn-card-desc' }, 'Bible, Hinduism, Judaism — comparative study'),
-      Utils.createElement('div', { className: 'learn-card-badge' }, 'Read')
+      Utils.createElement('div', { className: 'learn-card-badge' }, 'Academic')
     ]);
     return card;
   }

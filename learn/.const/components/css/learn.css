@@ -53,12 +53,31 @@
   text-align: center;
 }
 
+.learn-card--salafiyyah {
+  border-color: color-mix(in srgb, var(--color-quran) 50%, transparent);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--color-quran) 15%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--color-quran) 10%, transparent);
+  background: linear-gradient(135deg, var(--color-surface) 0%, color-mix(in srgb, var(--color-quran) 4%, var(--color-surface)) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.learn-card--salafiyyah::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-quran), transparent);
+  opacity: 0.6;
+}
+
 .learn-card--salafiyyah .learn-card-arabic {
   color: var(--color-quran);
 }
 
 .learn-card--shia .learn-card-arabic {
-  color: var(--color-shia);
+  color: var(--color-text-muted);
 }
 
 .learn-card--other .learn-card-arabic {
@@ -93,12 +112,17 @@
 
 .learn-card--salafiyyah:hover {
   border-color: var(--color-quran);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-quran) 15%, transparent);
+  box-shadow: 0 0 30px color-mix(in srgb, var(--color-quran) 30%, transparent), 0 0 60px color-mix(in srgb, var(--color-quran) 10%, transparent);
+  transform: translateY(-3px);
+}
+
+.learn-card--salafiyyah:hover::before {
+  opacity: 1;
 }
 
 .learn-card--shia:hover {
-  border-color: var(--color-shia);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-shia) 15%, transparent);
+  border-color: var(--color-border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .learn-card--other:hover {

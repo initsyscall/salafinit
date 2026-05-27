@@ -8,7 +8,7 @@ export function createPageHeader() {
     Utils.createElement('p', { className: 'page-header__subtitle' }, QuranConfig.PAGE_SUBTITLE),
     Utils.createElement('button', {
       className: 'quran-settings-btn',
-      onClick: () => import('./settings.js?t=' + Date.now()).then(m => m.openSettingsModal())
+      onClick: () => import('./settings.js').then(m => m.openSettingsModal())
     }, '⚙')
   ]);
 }

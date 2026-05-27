@@ -64,18 +64,13 @@ const SalafiyyahView = (() => {
       const names = data.data.names;
       if (!names || names.length !== 99) throw new Error('Invalid data');
 
-      // FZF search
-      const fzfWrapper = Utils.createElement('div', { className: 'salf-fzf' });
-      const fzfHidden = Utils.createElement('input', { type: 'hidden', id: 'asma-fzf-id' });
-      const fzfInput = Utils.createElement('input', {
+      const searchInput = Utils.createElement('input', {
         type: 'text',
         className: 'salf-fzf-input',
         placeholder: 'Search a name…',
         autocomplete: 'off'
       });
-      const fzfDropdown = Utils.createElement('div', { className: 'salf-fzf-dropdown' });
-      fzfWrapper.append(fzfInput, fzfDropdown, fzfHidden);
-      page.insertBefore(fzfWrapper, wrapper);
+      page.insertBefore(searchInput, wrapper);
 
       const scrollContainer = Utils.createElement('div', { className: 'asma-scroll' });
 
@@ -114,64 +109,32 @@ const SalafiyyahView = (() => {
         scrollContainer.appendChild(card);
       });
 
-      // FZF event handlers
-      fzfInput.addEventListener('input', () => {
-        const q = fzfInput.value.toLowerCase().trim();
-        fzfHidden.value = '';
-        if (!q) { fzfDropdown.classList.remove('visible'); return; }
-        const matches = names.filter(n =>
-          n.arabic.includes(q) ||
-          n.transliteration.toLowerCase().includes(q) ||
-          n.meaning.toLowerCase().includes(q) ||
-          String(n.number).includes(q)
-        );
-        fzfDropdown.innerHTML = '';
-        if (!matches.length) {
-          fzfDropdown.innerHTML = '<div class="salf-fzf-empty">No names found</div>';
-          fzfDropdown.classList.add('visible');
-          return;
-        }
-        matches.slice(0, 12).forEach(n => {
-          const item = document.createElement('div');
-          item.className = 'salf-fzf-item';
-          item.dataset.id = n.transliteration.toLowerCase().replace(/[^a-z0-9-]/g, '-');
-          item.innerHTML = `<span class="salf-fzf-arabic">${n.arabic}</span> <span class="salf-fzf-name">${n.transliteration}</span>`;
-          item.addEventListener('mousedown', e => { e.preventDefault(); selectName(item.dataset.id); });
-          fzfDropdown.appendChild(item);
+      searchInput.addEventListener('input', () => {
+        const q = searchInput.value.toLowerCase().trim();
+        let visibleCount = 0;
+        scrollContainer.querySelectorAll('.asma-card').forEach(card => {
+          const arabic = card.querySelector('.asma-card__arabic')?.textContent || '';
+          const trans = card.querySelector('.asma-card__trans')?.textContent || '';
+          const meaning = card.querySelector('.asma-card__meaning')?.textContent || '';
+          const number = card.querySelector('.asma-card__number')?.textContent || '';
+          const match = !q ||
+            arabic.includes(q) ||
+            trans.toLowerCase().includes(q) ||
+            meaning.toLowerCase().includes(q) ||
+            number.includes(q);
+          card.style.display = match ? '' : 'none';
+          if (match) visibleCount++;
         });
-        fzfDropdown.classList.add('visible');
-      });
-
-      fzfInput.addEventListener('keydown', e => {
-        const items = [...fzfDropdown.querySelectorAll('.salf-fzf-item')];
-        if (!items.length) return;
-        const active = fzfDropdown.querySelector('.active');
-        if (e.key === 'ArrowDown') {
-          e.preventDefault();
-          const idx = active ? items.indexOf(active) + 1 : 0;
-          if (idx < items.length) { active?.classList.remove('active'); items[idx].classList.add('active'); }
-        } else if (e.key === 'ArrowUp') {
-          e.preventDefault();
-          const idx = active ? items.indexOf(active) - 1 : items.length - 1;
-          if (idx >= 0) { active?.classList.remove('active'); items[idx].classList.add('active'); }
-        } else if (e.key === 'Enter') {
-          const target = active || (items.length === 1 ? items[0] : null);
-          if (target) { e.preventDefault(); selectName(target.dataset.id); }
-        } else if (e.key === 'Escape') {
-          fzfDropdown.classList.remove('visible');
+        const existing = scrollContainer.querySelector('.asma-no-results');
+        if (q && visibleCount === 0) {
+          if (!existing) {
+            const msg = Utils.createElement('div', { className: 'asma-no-results' }, 'No names match your search');
+            scrollContainer.appendChild(msg);
+          }
+        } else if (existing) {
+          existing.remove();
         }
       });
-
-      fzfInput.addEventListener('blur', () => setTimeout(() => fzfDropdown.classList.remove('visible'), 200));
-
-      function selectName(id) {
-        const n = names.find(x => x.transliteration.toLowerCase().replace(/[^a-z0-9-]/g, '-') === id);
-        if (!n) return;
-        fzfInput.value = n.transliteration;
-        fzfHidden.value = id;
-        fzfDropdown.classList.remove('visible');
-        scrollToName(scrollContainer, n.transliteration);
-      }
 
       // Action button delegation
       scrollContainer.addEventListener('click', (e) => {

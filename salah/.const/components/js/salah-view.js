@@ -96,10 +96,13 @@ const SalahView = (() => {
     });
 
     timerInterval = setInterval(() => {
+      if (!container.isConnected) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        return;
+      }
       const u = new Date();
-      const cur = getCurrentPrayer(prayers, u);
-      const nxt = getNextPrayer(prayers, u);
-      updateCountdown(container, prayers, nxt);
+      updateCountdown(container, prayers, getNextPrayer(prayers, u));
     }, 1000);
   }
 

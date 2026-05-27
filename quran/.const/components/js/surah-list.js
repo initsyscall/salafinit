@@ -112,7 +112,7 @@ function renderSearchResults(resultsDiv, matches, total, hasMore) {
 
   if (hasMore) {
     const loadMoreBtn = document.createElement('button');
-    loadMoreBtn.className = 'btn btn--primary';
+    loadMoreBtn.className = 'btn btn--primary load-more-btn';
     loadMoreBtn.style.cssText = 'margin-top:var(--spacing-md);width:100%;';
     loadMoreBtn.textContent = 'Load More Results';
     loadMoreBtn.onclick = () => loadMoreResults(resultsDiv);

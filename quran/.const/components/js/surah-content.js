@@ -256,7 +256,7 @@ export function renderSurahContent(container, uthmani, primaryTranslation, highl
       const isHighlighted = highlightAyah && String(ayah.numberInSurah) === String(highlightAyah);
 
       const copyAyahHandler = () => {
-        import('./tafsir.js?t=' + Date.now()).then(m => m.copyAyah(ayah, primaryTrans, uthmani));
+        import('./tafsir.js').then(m => m.copyAyah(ayah, primaryTrans, uthmani));
       };
       
       const shareAyahHandler = async () => {
@@ -274,7 +274,7 @@ export function renderSurahContent(container, uthmani, primaryTranslation, highl
           a.click();
           Utils.showToast('Image downloaded!');
         } else {
-          import('./tafsir.js?t=' + Date.now()).then(m => m.shareAyah(ayah, primaryTrans, uthmani));
+          import('./tafsir.js').then(m => m.shareAyah(ayah, primaryTrans, uthmani));
         }
       };
       
@@ -411,7 +411,7 @@ export function createPageHeader() {
     Utils.createElement('p', { className: 'page-header__subtitle' }, QuranConfig.PAGE_SUBTITLE),
     Utils.createElement('button', {
       className: 'quran-settings-btn',
-      onClick: () => import('./settings.js?t=' + Date.now()).then(m => m.openSettingsModal())
+      onClick: () => import('./settings.js').then(m => m.openSettingsModal())
     }, '⚙')
   ]);
 }

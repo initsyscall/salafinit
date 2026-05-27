@@ -47,7 +47,7 @@ const HadithFetcher = (() => {
       console.error(`Failed to fetch fawaz hadith ${book.id}#${hadithNum}:`, e.message);
       const isHttpError = e.message.includes('403') || e.message.includes('404');
       const isAtOrBeyondEnd = hadithNum >= (book.totalHadiths || 0);
-      return { notFound: true, isEndOfCollection: isHttpError && isAtOrBeyondEnd, requestedNum: hadithNum };
+      return { notFound: true, isEndOfCollection: isHttpError && isAtOrBeyondEnd, requestedNum: hadithNum, totalInCollection: book?.totalHadiths || 0 };
     }
   }
 
