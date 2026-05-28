@@ -89,6 +89,10 @@ const App = (() => {
       SalafiyyahView.render(document.getElementById('app-main'));
     });
 
+    Router.on('learn/other/hinduism/:book/:chapter/:verse', (container, params) => HinduismView.renderChapter(container, params));
+    Router.on('learn/other/hinduism/:book/:chapter', (container, params) => HinduismView.renderChapter(container, params));
+    Router.on('learn/other/hinduism/:book', (container, params) => HinduismView.renderBook(container, params));
+    Router.on('learn/other/hinduism', () => HinduismView.render(document.getElementById('app-main')));
     Router.on('learn/other/judaism/:book/:chapter/:verse', (container, params) => JudaismView.renderChapter(container, params));
     Router.on('learn/other/judaism/:book/:chapter', (container, params) => JudaismView.renderChapter(container, params));
     Router.on('learn/other/judaism/:book', (container, params) => JudaismView.renderBook(container, params));

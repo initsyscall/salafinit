@@ -2,7 +2,9 @@
   max-width: 48rem;
   margin: 0 auto;
   padding-bottom: var(--spacing-2xl);
-  --quick-jump-color: var(--color-learn);
+  --color-bible: #B55454;
+  --color-bible-subtle: rgba(181, 84, 84, 0.15);
+  --quick-jump-color: var(--color-bible);
 }
 
 .bible-back {
@@ -15,14 +17,14 @@
 }
 
 .bible-back:hover {
-  color: var(--color-learn);
+  color: var(--color-bible);
 }
 
 /* Header */
 .bible-header {
   text-align: center;
   margin-bottom: var(--spacing-xl);
-  background: linear-gradient(135deg, color-mix(in srgb, var(--color-learn) 8%, transparent) 0%, transparent 100%);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-bible) 8%, transparent) 0%, transparent 100%);
   border-radius: var(--radius-lg);
   padding: var(--spacing-xl) var(--spacing-md);
 }
@@ -31,7 +33,7 @@
   font-size: var(--font-size-2xl);
   margin-bottom: 0.25rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--color-learn), color-mix(in srgb, var(--color-learn) 70%, white));
+  background: linear-gradient(135deg, var(--color-bible), color-mix(in srgb, var(--color-bible) 70%, white));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -53,7 +55,7 @@
   margin-bottom: 1rem;
   font-weight: 600;
   padding: 0.5rem 0;
-  border-bottom: 2px solid color-mix(in srgb, var(--color-learn) 40%, transparent);
+  border-bottom: 2px solid color-mix(in srgb, var(--color-bible) 40%, transparent);
   display: inline-block;
 }
 
@@ -77,15 +79,15 @@
   padding: 1.25rem 1rem;
   min-height: 90px;
   border-radius: var(--radius-md);
-  background: linear-gradient(135deg, color-mix(in srgb, var(--color-learn) 6%, transparent) 0%, transparent 100%);
-  border: 1px solid color-mix(in srgb, var(--color-learn) 30%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-bible) 6%, transparent) 0%, transparent 100%);
+  border: 1px solid color-mix(in srgb, var(--color-bible) 30%, transparent);
   text-decoration: none;
   transition: all var(--transition-base);
 }
 
 .bible-book-card:hover {
-  border-color: var(--color-learn);
-  box-shadow: 0 4px 16px color-mix(in srgb, var(--color-learn) 15%, transparent);
+  border-color: var(--color-bible);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--color-bible) 15%, transparent);
   transform: translateY(-2px);
 }
 
@@ -113,7 +115,7 @@
 .bible-book-header {
   text-align: center;
   margin-bottom: var(--spacing-lg);
-  background: linear-gradient(135deg, color-mix(in srgb, var(--color-learn) 6%, transparent) 0%, transparent 100%);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-bible) 6%, transparent) 0%, transparent 100%);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg) var(--spacing-md);
 }
@@ -128,7 +130,7 @@
 .bible-book-arabic {
   font-family: var(--font-arabic);
   font-size: var(--font-size-lg);
-  color: var(--color-learn);
+  color: var(--color-bible);
   margin-bottom: var(--spacing-xs);
   font-weight: 500;
 }
@@ -177,8 +179,8 @@
 
 .bible-chapter-input:focus {
   outline: none;
-  border-color: var(--color-learn);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-learn) 15%, transparent);
+  border-color: var(--color-bible);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-bible) 15%, transparent);
 }
 
 .bible-chapter-input::placeholder {

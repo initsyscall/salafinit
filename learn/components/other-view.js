@@ -29,13 +29,14 @@ const OtherView = (() => {
   }
 
   function createHinduismCard() {
-    return Utils.createElement('div', {
-      className: 'other-card other-card--disabled'
+    return Utils.createElement('a', {
+      className: 'other-card other-card--hinduism',
+      href: '#learn/other/hinduism'
     }, [
       Utils.createElement('div', { className: 'other-card-name' }, 'Hinduism'),
       Utils.createElement('div', { className: 'other-card-arabic' }, 'الْهُنْدُوسِيَّةُ'),
       Utils.createElement('div', { className: 'other-card-desc' }, 'Vedas, Upanishads, Bhagavad Gita'),
-      Utils.createElement('div', { className: 'other-card-badge' }, 'Coming Soon')
+      Utils.createElement('div', { className: 'other-card-badge' }, 'Read')
     ]);
   }
 
