@@ -1,0 +1,397 @@
+:root {
+  --color-judaism: #5699C9;
+  --color-judaism-subtle: rgba(86, 153, 201, 0.15);
+}
+
+.judaism-page {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding-bottom: var(--spacing-2xl);
+  --quick-jump-color: var(--color-judaism);
+}
+
+.judaism-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  transition: color var(--transition-fast);
+}
+
+.judaism-back:hover {
+  color: var(--color-judaism);
+}
+
+.judaism-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-judaism) 8%, transparent) 0%, transparent 100%);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.judaism-title {
+  font-size: var(--font-size-2xl);
+  margin-bottom: 0.25rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--color-judaism), color-mix(in srgb, var(--color-judaism) 70%, white));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.judaism-subtitle {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.judaism-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.judaism-section-title {
+  font-size: var(--font-size-md);
+  color: var(--color-text);
+  margin-bottom: 1rem;
+  font-weight: 600;
+  padding: 0.5rem 0;
+  border-bottom: 2px solid color-mix(in srgb, var(--color-judaism) 40%, transparent);
+  display: inline-block;
+}
+
+.judaism-section-hebrew {
+  font-family: 'Times New Roman', serif;
+  font-size: var(--font-size-lg);
+}
+
+.judaism-book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+@media (max-width: 600px) {
+  .judaism-book-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.judaism-book-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 1rem;
+  min-height: 100px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-judaism) 6%, transparent) 0%, transparent 100%);
+  border: 1px solid color-mix(in srgb, var(--color-judaism) 30%, transparent);
+  text-decoration: none;
+  transition: all var(--transition-base);
+}
+
+.judaism-book-card:hover {
+  border-color: var(--color-judaism);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--color-judaism) 15%, transparent);
+  transform: translateY(-2px);
+}
+
+.judaism-book-name {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  text-align: center;
+  font-weight: 500;
+  word-wrap: break-word;
+}
+
+.judaism-book-hebrew {
+  font-family: 'Times New Roman', serif;
+  font-size: var(--font-size-xs);
+  color: var(--color-judaism);
+  text-align: center;
+  margin-top: 0.15rem;
+  direction: rtl;
+}
+
+.judaism-book-chapters {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+
+.judaism-book-header {
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-judaism) 6%, transparent) 0%, transparent 100%);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg) var(--spacing-md);
+}
+
+.judaism-book-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-xs);
+}
+
+.judaism-book-header .judaism-book-hebrew {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-xs);
+  direction: rtl;
+}
+
+.judaism-book-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-xs);
+}
+
+.judaism-book-ref {
+  font-size: var(--font-size-xs);
+  color: var(--color-judaism);
+  opacity: 0.8;
+}
+
+.judaism-chapter-input-box {
+  background: var(--color-bg-secondary);
+  border-radius: 16px;
+  padding: var(--spacing-xl);
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto var(--spacing-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.judaism-chapter-label {
+  font-size: var(--font-size-md);
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-md);
+}
+
+.judaism-chapter-row {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.judaism-chapter-input {
+  flex: 1;
+  min-width: 150px;
+  max-width: 200px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-size-md);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.judaism-chapter-input:focus {
+  outline: none;
+  border-color: var(--color-judaism);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-judaism) 15%, transparent);
+}
+
+.judaism-chapter-input::placeholder {
+  color: var(--color-text-lighter);
+}
+
+@media (max-width: 600px) {
+  .judaism-chapter-input-box {
+    padding: var(--spacing-lg);
+  }
+
+  .judaism-chapter-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .judaism-chapter-input {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+.judaism-chapter-header {
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.judaism-chapter-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-xs);
+  background: linear-gradient(135deg, var(--color-judaism), color-mix(in srgb, var(--color-judaism) 70%, white));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.judaism-chapter-translation {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.judaism-verse-card {
+  padding: 1.5rem var(--spacing-md);
+  margin: 0 0 1rem 0;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid transparent;
+  transition: all var(--transition-base);
+  border-left: 3px solid transparent;
+}
+
+.judaism-verse-card:hover {
+  border-color: color-mix(in srgb, var(--color-judaism) 35%, transparent);
+  border-left-color: var(--color-judaism);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--color-judaism) 15%, transparent);
+}
+
+.judaism-verse-card:last-child {
+  margin-bottom: 0;
+}
+
+.judaism-verse-card--highlight {
+  border-color: color-mix(in srgb, var(--color-judaism) 50%, transparent) !important;
+  border-left-color: var(--color-judaism) !important;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--color-judaism) 25%, transparent), inset 0 0 20px color-mix(in srgb, var(--color-judaism) 5%, transparent);
+}
+
+.judaism-verse-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.judaism-verse-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.judaism-verse-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 0.7rem;
+  color: var(--color-judaism);
+  background: color-mix(in srgb, var(--color-judaism) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-judaism) 30%, transparent);
+  border-radius: 50%;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.judaism-verse-ref {
+  font-size: var(--font-size-sm);
+  color: var(--color-judaism);
+  font-weight: 500;
+  white-space: nowrap;
+  font-family: 'Times New Roman', serif;
+}
+
+.judaism-verse-text {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  font-weight: 500;
+}
+
+.judaism-verse-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-sm);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.judaism-action-btn {
+  padding: var(--spacing-xs);
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.judaism-action-btn:hover {
+  color: var(--color-judaism);
+}
+
+.judaism-action-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 600px) {
+  .judaism-verse-actions {
+    display: flex;
+    justify-content: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .judaism-action-btn {
+    padding: var(--spacing-sm);
+  }
+}
+
+.judaism-capturing .judaism-card-exclude {
+  display: none !important;
+}
+
+.judaism-capturing,
+.judaism-capturing * {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.judaism-capturing .judaism-verse-card {
+  background: var(--color-surface) !important;
+  border-color: transparent !important;
+}
+
+.judaism-chapter-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+.judaism-chapter-nav a:hover {
+  color: var(--color-judaism);
+}
+
+.judaism-loading {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--color-text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.judaism-loading::before {
+  content: '';
+  width: 24px;
+  height: 24px;
+  border: 2px solid color-mix(in srgb, var(--color-judaism) 25%, transparent);
+  border-top-color: var(--color-judaism);
+  border-radius: 50%;
+  animation: judaism-spin 0.8s linear infinite;
+}
+
+@keyframes judaism-spin {
+  to { transform: rotate(360deg); }
+}

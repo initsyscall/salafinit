@@ -60,179 +60,18 @@ const BibleView = (() => {
   }
 
   function createQuickJump() {
-    const allBooks = BibleBooks.getAll();
-
-    const bookWrapper = document.createElement('div');
-    bookWrapper.className = 'bible-book-search';
-
-    const hiddenBookId = document.createElement('input');
-    hiddenBookId.type = 'hidden';
-    hiddenBookId.id = 'bible-jump-book';
-
-    const bookInput = document.createElement('input');
-    bookInput.type = 'text';
-    bookInput.className = 'input bible-jump-input bible-book-search-input';
-    bookInput.id = 'bible-book-search';
-    bookInput.placeholder = 'Search books...';
-    bookInput.autocomplete = 'off';
-    bookInput.addEventListener('input', onBookSearchInput);
-    bookInput.addEventListener('keydown', onBookSearchKeydown);
-    bookInput.addEventListener('blur', () => setTimeout(hideDropdown, 200));
-
-    const bookDropdown = document.createElement('div');
-    bookDropdown.className = 'bible-book-dropdown';
-    bookDropdown.id = 'bible-book-dropdown';
-
-    bookWrapper.appendChild(bookInput);
-    bookWrapper.appendChild(bookDropdown);
-    bookWrapper.appendChild(hiddenBookId);
-
-    const section = Utils.createElement('div', { className: 'bible-jump' }, [
-      Utils.createElement('h2', { className: 'bible-jump-title' }, 'Quick Jump'),
-      Utils.createElement('div', { className: 'bible-jump-row' }, [
-        bookWrapper,
-        Utils.createElement('input', {
-          type: 'number',
-          min: '1',
-          className: 'input bible-jump-input',
-          id: 'bible-jump-chapter',
-          placeholder: 'Chapter',
-          onKeydown: (e) => { if (e.key === 'Enter') onGo(); },
-          onChange: onChapterChange
-        }),
-        Utils.createElement('input', {
-          type: 'number',
-          min: '1',
-          className: 'input bible-jump-input',
-          id: 'bible-jump-verse',
-          placeholder: 'Verse',
-          onKeydown: (e) => { if (e.key === 'Enter') onGo(); }
-        }),
-        Utils.createElement('button', {
-          className: 'btn btn--ghost',
-          id: 'bible-jump-go',
-          onClick: onGo
-        }, 'Go')
-      ]),
-    ]);
-
-    function onBookChange() {
-      const bookId = document.getElementById('bible-jump-book').value;
-      const chInput = document.getElementById('bible-jump-chapter');
-      const vInput = document.getElementById('bible-jump-verse');
-      chInput.value = '';
-      vInput.value = '';
-      vInput.removeAttribute('max');
-      vInput.placeholder = 'Verse';
-      if (bookId) {
+    return QuickJump.create({
+      id: 'bible',
+      books: BibleBooks.getAll(),
+      routePrefix: '#learn/other/bible',
+      getChapterInfo: async (bookId, chapter) => {
         const book = BibleBooks.getById(bookId);
-        chInput.max = book.chapters;
-        chInput.placeholder = `1 – ${book.chapters}`;
-      } else {
-        chInput.removeAttribute('max');
-        chInput.placeholder = 'Chapter';
-      }
-    }
-
-    function onBookSearchInput() {
-      const query = document.getElementById('bible-book-search').value.toLowerCase().trim();
-      const dropdown = document.getElementById('bible-book-dropdown');
-      document.getElementById('bible-jump-book').value = '';
-      onBookChange();
-
-      if (!query) { dropdown.classList.remove('visible'); return; }
-
-      const matches = allBooks.filter(b =>
-        b.name.toLowerCase().includes(query) || b.id.includes(query)
-      );
-
-      dropdown.innerHTML = '';
-      if (!matches.length) {
-        dropdown.innerHTML = '<div class="bible-book-dropdown-empty">No books found</div>';
-        dropdown.classList.add('visible');
-        return;
-      }
-
-      matches.forEach(b => {
-        const item = document.createElement('div');
-        item.className = 'bible-book-dropdown-item';
-        item.textContent = b.name;
-        item.dataset.id = b.id;
-        item.addEventListener('mousedown', e => { e.preventDefault(); selectBook(b); });
-        dropdown.appendChild(item);
-      });
-      dropdown.classList.add('visible');
-    }
-
-    function onBookSearchKeydown(e) {
-      const dropdown = document.getElementById('bible-book-dropdown');
-      const items = [...dropdown.querySelectorAll('.bible-book-dropdown-item')];
-      if (!items.length) return;
-
-      const active = dropdown.querySelector('.active');
-
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        const idx = active ? items.indexOf(active) + 1 : 0;
-        if (idx < items.length) { active?.classList.remove('active'); items[idx].classList.add('active'); }
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        const idx = active ? items.indexOf(active) - 1 : items.length - 1;
-        if (idx >= 0) { active?.classList.remove('active'); items[idx].classList.add('active'); }
-      } else if (e.key === 'Enter') {
-        const target = active || (items.length === 1 ? items[0] : null);
-        if (target) { e.preventDefault(); selectBook(allBooks.find(b => b.id === target.dataset.id)); }
-      } else if (e.key === 'Escape') {
-        hideDropdown();
-      }
-    }
-
-    function hideDropdown() {
-      document.getElementById('bible-book-dropdown')?.classList.remove('visible');
-    }
-
-    function selectBook(book) {
-      document.getElementById('bible-book-search').value = book.name;
-      document.getElementById('bible-jump-book').value = book.id;
-      hideDropdown();
-      onBookChange();
-    }
-
-    async function onChapterChange() {
-      const bookId = document.getElementById('bible-jump-book').value;
-      const ch = parseInt(document.getElementById('bible-jump-chapter').value);
-      const vInput = document.getElementById('bible-jump-verse');
-      vInput.value = '';
-      vInput.removeAttribute('max');
-
-      if (!bookId || !ch) return;
-
-      const book = BibleBooks.getById(bookId);
-      if (ch > book.chapters) return;
-
-      try {
+        if (!book) return null;
         const apiName = BibleBooks.toApiName(book);
-        const data = await ApiClient.fetchApi(`${API_BASE}/${apiName}+${ch}`);
-        const count = (data.verses || []).length;
-        if (count) {
-          vInput.max = count;
-          vInput.placeholder = `1 – ${count}`;
-        }
-      } catch (e) { /* verse range unavailable */ }
-    }
-
-    function onGo() {
-      const bookId = document.getElementById('bible-jump-book').value;
-      const ch = parseInt(document.getElementById('bible-jump-chapter').value);
-      const verse = document.getElementById('bible-jump-verse').value;
-      if (bookId && ch > 0) {
-        const book = BibleBooks.getById(bookId);
-        if (ch > book.chapters) return;
-        window.location.hash = verse ? `#learn/other/bible/${bookId}/${ch}/${verse}` : `#learn/other/bible/${bookId}/${ch}`;
+        const data = await ApiClient.fetchApi(`${API_BASE}/${apiName}+${chapter}`);
+        return { verseCount: (data.verses || []).length };
       }
-    }
-
-    return section;
+    });
   }
 
   async function renderBook(container, params) {

@@ -89,6 +89,10 @@ const App = (() => {
       SalafiyyahView.render(document.getElementById('app-main'));
     });
 
+    Router.on('learn/other/judaism/:book/:chapter/:verse', (container, params) => JudaismView.renderChapter(container, params));
+    Router.on('learn/other/judaism/:book/:chapter', (container, params) => JudaismView.renderChapter(container, params));
+    Router.on('learn/other/judaism/:book', (container, params) => JudaismView.renderBook(container, params));
+    Router.on('learn/other/judaism', () => JudaismView.render(document.getElementById('app-main')));
     Router.on('learn/other/bible/:book/:chapter/:verse', (container, params) => BibleView.renderChapter(container, params));
     Router.on('learn/other/bible/:book/:chapter', (container, params) => BibleView.renderChapter(container, params));
     Router.on('learn/other/bible/:book', (container, params) => BibleView.renderBook(container, params));

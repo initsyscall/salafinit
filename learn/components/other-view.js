@@ -10,8 +10,8 @@ const OtherView = (() => {
 
     const grid = Utils.createElement('div', { className: 'other-grid' }, [
       createBibleCard(),
-      createHinduismCard(),
-      createJudaismCard()
+      createJudaismCard(),
+      createHinduismCard()
     ]);
     container.appendChild(grid);
   }
@@ -40,13 +40,14 @@ const OtherView = (() => {
   }
 
   function createJudaismCard() {
-    return Utils.createElement('div', {
-      className: 'other-card other-card--disabled'
+    return Utils.createElement('a', {
+      className: 'other-card other-card--judaism',
+      href: '#learn/other/judaism'
     }, [
       Utils.createElement('div', { className: 'other-card-name' }, 'Judaism'),
       Utils.createElement('div', { className: 'other-card-arabic' }, 'الْيَهُودِيَّةُ'),
-      Utils.createElement('div', { className: 'other-card-desc' }, 'Torah, Talmud, Tanakh'),
-      Utils.createElement('div', { className: 'other-card-badge' }, 'Coming Soon')
+      Utils.createElement('div', { className: 'other-card-desc' }, 'Tanakh — Torah, Nevi\'im, Ketuvim'),
+      Utils.createElement('div', { className: 'other-card-badge' }, 'Read')
     ]);
   }
 
