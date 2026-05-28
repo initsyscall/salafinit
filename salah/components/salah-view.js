@@ -5,6 +5,36 @@ const SalahView = (() => {
   const ARABIC_NAMES = { fajr: 'الفجر', sunrise: 'الشروق', dhuhr: 'الظهر', asr: 'العصر', maghrib: 'المغرب', isha: 'العشاء' };
   const PRAYER_ORDER = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
 
+  const RAKAH_DETAILS = {
+    fajr: [
+      '2 Sunnah (Mu\'akkadah — Before): Better than the world and all it contains (Muslim 725).',
+      '2 Fard.'
+    ],
+    dhuhr: [
+      '4 Sunnah (Mu\'akkadah — Before): Gates of heaven are opened (Tirmidhi 478).',
+      '4 Fard.',
+      '2 Sunnah (Mu\'akkadah — After).',
+      '2 Sunnah (Ghair — After): Praying 4 before and 4 after forbids your body from Hellfire (Tirmidhi 427).'
+    ],
+    asr: [
+      '4 Sunnah (Ghair — Before): Attains the Mercy of Allah (Tirmidhi 430).',
+      '4 Fard.'
+    ],
+    maghrib: [
+      '2 Sunnah (Ghair — Before).',
+      '3 Fard.',
+      '2 Sunnah (Mu\'akkadah — After).'
+    ],
+    isha: [
+      '2 Sunnah (Ghair — Before).',
+      '4 Fard.',
+      '2 Sunnah (Mu\'akkadah — After).',
+      'Witr (1, 3, or 5): The seal of the night. Allah is single (witr) and loves what is single (Bukhari 6410).'
+    ]
+  };
+
+  const RAKAH_TOTALS = { fajr: 4, dhuhr: 12, asr: 8, maghrib: 7, isha: 8 };
+
   function capitalizeFirst(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
@@ -112,14 +142,49 @@ const SalahView = (() => {
     const arabic = ARABIC_NAMES[current] || current;
     const nextArabic = ARABIC_NAMES[next] || next;
 
-    const card = Utils.createElement('div', { className: 'sh-current' });
-    card.innerHTML = `
+    const defaultHtml = `
       <p class="sh-current__label">Current Prayer</p>
       <h2 class="sh-current__name">${arabic}</h2>
       <p class="sh-current__time">${cur?.time || '--:--'}</p>
       <p class="sh-current__next">Next: <strong>${nextArabic}</strong> at ${nxt?.time || '--:--'}</p>
     `;
+
+    const card = Utils.createElement('div', { className: 'sh-current' });
+    card.innerHTML = defaultHtml;
+
+    if (RAKAH_DETAILS[current]) {
+      card.addEventListener('click', () => {
+        const isDetails = card.classList.toggle('sh-current--details');
+        card.innerHTML = isDetails ? buildRakahHtml(current, arabic) : defaultHtml;
+      });
+    }
+
     return card;
+  }
+
+  function buildRakahHtml(prayerName, arabicName) {
+    const lines = RAKAH_DETAILS[prayerName];
+    if (!lines) return '';
+
+    const REF_MAP = { Bukhari: 'bukhari', Muslim: 'muslim', Tirmidhi: 'tirmidhi', 'Abu Dawud': 'abudawud' };
+    const rows = lines.map(l => {
+      const html = l.replace(/\((Bukhari|Muslim|Tirmidhi|Abu\s*Dawud)\s*(\d+)\)/g, (m, name, num) => {
+        const slug = REF_MAP[name];
+        return `<a href="#hadiths/${slug}/${num}" class="sh-current__ref">${m}</a>`;
+      });
+      return `<p class="sh-current__detail-line">${html}</p>`;
+    }).join('');
+
+    return `
+      <h2 class="sh-current__name sh-current__name--compact">${arabicName}</h2>
+      <p class="sh-current__label">Rak'ahs</p>
+      <div class="sh-current__divider"></div>
+      <div class="sh-current__details">
+        ${rows}
+      </div>
+      <div class="sh-current__divider"></div>
+      <p class="sh-current__detail-total">${RAKAH_TOTALS[prayerName] || ''}</p>
+    `;
   }
 
   function renderPrayerGrid(prayers, current) {
