@@ -120,21 +120,13 @@ export function copyTafsir(surahData, ayahNumber, translation, source) {
 
   const textToCopy = `${tafsirName} - ${surahData.englishName} Ayah ${ayahNumber}\n\n${translation?.text || ''}\n\n${contentDiv.textContent || ''}`;
 
-  navigator.clipboard.writeText(textToCopy).then(() => {
-    Utils.showToast('Tafsir' + QuranConfig.TOAST.COPIED);
-  }).catch(() => {
-    Utils.showToast(QuranConfig.TOAST.FAILED_COPY, 'error');
-  });
+  Share.copyText(textToCopy, { toast: 'Tafsir' + QuranConfig.TOAST.COPIED });
 }
 
 export function shareTafsirLink(surahNumber, ayahNumber, source) {
   source = source || Store.get(QuranConfig.STORAGE_KEYS.TAFSIR_SOURCE) || QuranConfig.DEFAULTS.TAFSIR_SOURCE;
   const url = `${window.location.origin}${window.location.pathname}#quran/tafsir/${source}/${surahNumber}/${ayahNumber}`;
-  navigator.clipboard.writeText(url).then(() => {
-    Utils.showToast(QuranConfig.TOAST.LINK_COPIED);
-  }).catch(() => {
-    Utils.showToast(QuranConfig.TOAST.FAILED_LINK, 'error');
-  });
+  Share.copyLink(`#quran/tafsir/${source}/${surahNumber}/${ayahNumber}`, { toast: QuranConfig.TOAST.LINK_COPIED });
 }
 
 export function copyAyah(ayah, translation, surah) {
@@ -143,11 +135,7 @@ export function copyAyah(ayah, translation, surah) {
     : surah.englishName;
   const link = `${window.location.origin}${window.location.pathname}#quran/${surah.number}/${ayah.numberInSurah}`;
   const textToCopy = `${surahName} - ${ayah.numberInSurah}\n\n${ayah.text}\n\n${translation?.text || ''}\n\nLink: ${link}`;
-  navigator.clipboard.writeText(textToCopy).then(() => {
-    Utils.showToast('Ayah' + QuranConfig.TOAST.COPIED);
-  }).catch(() => {
-    Utils.showToast(QuranConfig.TOAST.FAILED_COPY, 'error');
-  });
+  Share.copyText(textToCopy, { toast: 'Ayah' + QuranConfig.TOAST.COPIED });
 }
 
 export async function shareAyah(ayah, translation, surah, isImageMode = false) {
@@ -195,11 +183,7 @@ export async function shareAyah(ayah, translation, surah, isImageMode = false) {
       }, 'Download Image'),
       Utils.createElement('button', {
         className: 'btn btn--outline',
-        onClick: () => {
-          navigator.clipboard.writeText(window.location.origin + window.location.pathname + appUrl).then(() => {
-            Utils.showToast(QuranConfig.TOAST.LINK_COPIED);
-          });
-        }
+        onClick: () => Share.copyLink(appUrl, { toast: QuranConfig.TOAST.LINK_COPIED })
       }, 'Copy Link'),
       isImageMode ? Utils.createElement('a', {
         className: 'btn btn--ghost',
@@ -222,48 +206,39 @@ export async function shareAyah(ayah, translation, surah, isImageMode = false) {
 }
 
 export async function generateShareImage(template, ayah, surah) {
+  const filename = `quran-${surah.number}-${ayah.numberInSurah}.png`;
+  const ok = await Share.captureImage(template, filename, {
+    toast: QuranConfig.TOAST.IMAGE_DOWNLOADED
+  });
+  if (ok || typeof snapdom !== 'undefined') return;
+
   try {
-    if (typeof snapdom !== 'undefined') {
-      const img = await snapdom.toPng(template, { scale: 2 });
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = template.offsetWidth;
+    canvas.height = template.offsetHeight;
+    const svgData = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="${template.offsetWidth}" height="${template.offsetHeight}">
+        <foreignObject width="100%" height="100%">
+          <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: sans-serif;">
+            ${template.outerHTML}
+          </div>
+        </foreignObject>
+      </svg>
+    `;
+    const img = new Image();
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0);
       const a = document.createElement('a');
-      a.href = img.src;
-      a.download = `quran-${surah.number}-${ayah.numberInSurah}.png`;
+      a.download = filename;
+      a.href = canvas.toDataURL('image/png');
       a.click();
       Utils.showToast(QuranConfig.TOAST.IMAGE_DOWNLOADED);
-    } else {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = template.offsetWidth;
-      canvas.height = template.offsetHeight;
-
-      try {
-        const svgData = `
-          <svg xmlns="http://www.w3.org/2000/svg" width="${template.offsetWidth}" height="${template.offsetHeight}">
-            <foreignObject width="100%" height="100%">
-              <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: sans-serif;">
-                ${template.outerHTML}
-              </div>
-            </foreignObject>
-          </svg>
-        `;
-        const img = new Image();
-        img.onload = () => {
-          ctx.drawImage(img, 0, 0);
-          const link = document.createElement('a');
-          link.download = `quran-${surah.number}-${ayah.numberInSurah}.png`;
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-          Utils.showToast(QuranConfig.TOAST.IMAGE_DOWNLOADED);
-        };
-        img.src = 'data:image/svg+xml,' + encodeURIComponent(svgData);
-      } catch (err) {
-        console.error('SVG fallback error:', err);
-        Utils.showToast(QuranConfig.TOAST.IMAGE_NOT_SUPPORTED, 'error');
-      }
-    }
-  } catch (error) {
-    console.error('Share image error:', error);
-    Utils.showToast(QuranConfig.TOAST.IMAGE_FAILED, 'error');
+    };
+    img.src = 'data:image/svg+xml,' + encodeURIComponent(svgData);
+  } catch (err) {
+    console.error('SVG fallback error:', err);
+    Utils.showToast(QuranConfig.TOAST.IMAGE_NOT_SUPPORTED, 'error');
   }
 }
 

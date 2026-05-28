@@ -1,0 +1,184 @@
+/* Chapter reading — matching quran-ayah-card */
+.bible-chapter-header {
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.bible-chapter-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-xs);
+  background: linear-gradient(135deg, var(--color-learn), var(--color-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bible-chapter-translation {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.bible-verse-card {
+  padding: 1.5rem var(--spacing-md);
+  margin: 0 0 1rem 0;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid transparent;
+  transition: all var(--transition-base);
+  border-left: 3px solid transparent;
+}
+
+.bible-verse-card:hover {
+  border-color: color-mix(in srgb, var(--color-learn) 35%, transparent);
+  border-left-color: var(--color-learn);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--color-learn) 15%, transparent);
+}
+
+.bible-verse-card:last-child {
+  margin-bottom: 0;
+}
+
+.bible-verse-card--highlight {
+  border-color: color-mix(in srgb, var(--color-learn) 50%, transparent) !important;
+  border-left-color: var(--color-learn) !important;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--color-learn) 25%, transparent), inset 0 0 20px color-mix(in srgb, var(--color-learn) 5%, transparent);
+}
+
+.bible-verse-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.bible-verse-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bible-verse-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 0.7rem;
+  color: var(--color-learn);
+  background: color-mix(in srgb, var(--color-learn) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-learn) 30%, transparent);
+  border-radius: 50%;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.bible-verse-ref {
+  font-size: var(--font-size-sm);
+  color: var(--color-learn);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.bible-verse-text {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  font-weight: 500;
+}
+
+/* Verse actions */
+.bible-verse-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-sm);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.bible-action-btn {
+  padding: var(--spacing-xs);
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.bible-action-btn:hover {
+  color: var(--color-learn);
+}
+
+.bible-action-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 600px) {
+  .bible-verse-actions {
+    display: flex;
+    justify-content: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .bible-action-btn {
+    padding: var(--spacing-sm);
+  }
+}
+
+.bible-capturing .bible-card-exclude {
+  display: none !important;
+}
+
+.bible-capturing,
+.bible-capturing * {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.bible-capturing .bible-verse-card {
+  background: var(--color-surface) !important;
+  border-color: transparent !important;
+}
+
+.bible-chapter-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+.bible-chapter-nav a {
+  transition: color var(--transition-fast);
+}
+
+.bible-chapter-nav a:hover {
+  color: var(--color-learn);
+}
+
+.bible-loading {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--color-text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.bible-loading::before {
+  content: '';
+  width: 24px;
+  height: 24px;
+  border: 2px solid color-mix(in srgb, var(--color-learn) 25%, transparent);
+  border-top-color: var(--color-learn);
+  border-radius: 50%;
+  animation: bible-spin 0.8s linear infinite;
+}
+
+@keyframes bible-spin {
+  to { transform: rotate(360deg); }
+}

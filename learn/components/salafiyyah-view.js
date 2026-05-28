@@ -291,12 +291,7 @@ const SalafiyyahView = (() => {
     list.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-action="copy-dua-link"]');
       if (!btn) return;
-      const url = `${window.location.origin}${window.location.pathname}#learn/salafiyyah/duas/${btn.dataset.id}`;
-      navigator.clipboard.writeText(url).then(() => {
-        const orig = btn.innerHTML;
-        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-        setTimeout(() => { btn.innerHTML = orig; }, 2000);
-      });
+      Share.copyLink(`#learn/salafiyyah/duas/${btn.dataset.id}`, { btn });
     });
 
     if (isDuaParam) {
@@ -321,38 +316,22 @@ const SalafiyyahView = (() => {
     const trans = card.querySelector('.asma-card__trans')?.textContent || '';
     const num = card.querySelector('.asma-card__number')?.textContent || '';
     const text = `${num}. ${arabic} — ${trans}\n\n“${card.querySelector('.asma-card__meaning')?.textContent || ''}”`;
-    navigator.clipboard.writeText(text).then(() => {
-      const orig = btn.innerHTML;
-      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-      setTimeout(() => { btn.innerHTML = orig; }, 2000);
-    });
+    Share.copyText(text, { btn, toast: '' });
   }
 
   async function shareNameImage(btn, card) {
-    try {
-      if (typeof snapdom === 'undefined') { Utils.showToast('Image capture not available'); return; }
-      const origBg = card.style.background;
-      const bg = getComputedStyle(document.body).getPropertyValue('--color-bg').trim();
-      card.style.background = bg || '#000';
-      card.classList.add('asma-capturing');
-      const img = await snapdom.toPng(card, { scale: 2 });
-      card.classList.remove('asma-capturing');
-      card.style.background = origBg;
-      const a = document.createElement('a');
-      a.href = img.src;
-      a.download = `asma-ul-husna-${card.id || 'name'}.png`;
-      a.click();
-      Utils.showToast('Image downloaded!');
-    } catch (err) {
-      card.classList.remove('asma-capturing');
-      card.style.background = origBg;
-      Utils.showToast('Failed to generate image');
-    }
+    const origBg = card.style.background;
+    const bg = getComputedStyle(document.body).getPropertyValue('--color-bg').trim();
+    await Share.captureImage(card, `asma-ul-husna-${card.id || 'name'}.png`, {
+      captureClass: 'asma-capturing',
+      onBefore: (el) => { el.style.background = bg || '#000'; },
+      onAfter: (el) => { el.style.background = origBg; }
+    });
   }
 
   function copyNameLink(name) {
-    const url = `${window.location.origin}${window.location.pathname}#learn/salafiyyah/asmaulhusna/${name.toLowerCase().replace(/[^a-z0-9-]/g, '-')}`;
-    navigator.clipboard.writeText(url).then(() => Utils.showToast('Link copied!'));
+    const hash = `#learn/salafiyyah/asmaulhusna/${name.toLowerCase().replace(/[^a-z0-9-]/g, '-')}`;
+    Share.copyLink(hash);
   }
 
   return { render, renderAsma, renderDuas };

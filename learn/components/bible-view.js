@@ -354,7 +354,7 @@ const BibleView = (() => {
             Utils.createElement('button', {
               className: 'btn bible-action-btn',
               title: 'Copy',
-              onClick: () => copyVerse(v, book, chapterNum),
+              onClick: (e) => copyVerse(v, book, chapterNum, e.currentTarget),
               innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>'
             }),
             Utils.createElement('button', {
@@ -366,7 +366,7 @@ const BibleView = (() => {
             Utils.createElement('button', {
               className: 'btn bible-action-btn',
               title: 'Copy Link',
-              onClick: () => copyVerseLink(v, book, chapterNum),
+              onClick: (e) => Share.copyLink(`#learn/other/bible/${book.id}/${chapterNum}/${v.verse}`, { btn: e.currentTarget }),
               innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>'
             })
           ])
@@ -419,51 +419,17 @@ const BibleView = (() => {
     }
   }
 
-  function copyVerse(verse, book, chapterNum) {
+  function copyVerse(verse, book, chapterNum, btn) {
     const url = `${window.location.origin}${window.location.pathname}#learn/other/bible/${book.id}/${chapterNum}/${verse.verse}`;
     const text = `${book.name} ${chapterNum}:${verse.verse}\n\n${verse.text}\n\nWorld English Bible (WEB)\n\nLink: ${url}`;
-    navigator.clipboard.writeText(text).then(() => {
-      const btns = document.querySelectorAll('.bible-action-btn');
-      if (btns[0]) {
-        const orig = btns[0].innerHTML;
-        btns[0].innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-        setTimeout(() => { btns[0].innerHTML = orig; }, 2000);
-      }
-    });
+    Share.copyText(text, { btn, toast: '' });
   }
 
   async function shareVerseImage(verse, book, chapterNum) {
-    const cardId = `verse-${book.id}-${chapterNum}-${verse.verse}`;
-    const card = document.getElementById(cardId);
+    const card = document.getElementById(`verse-${book.id}-${chapterNum}-${verse.verse}`);
     if (!card) return;
-
-    try {
-      if (typeof snapdom !== 'undefined') {
-        document.getSelection()?.removeAllRanges();
-        card.classList.add('bible-capturing');
-        const img = await snapdom.toPng(card, { scale: 2 });
-        card.classList.remove('bible-capturing');
-        const a = document.createElement('a');
-        a.href = img.src;
-        a.download = `bible-${book.id}-${chapterNum}-${verse.verse}.png`;
-        a.click();
-        Utils.showToast('Image downloaded!');
-      }
-    } catch (err) {
-      console.error('Share image error:', err);
-      Utils.showToast('Failed to generate image');
-    }
-  }
-
-  function copyVerseLink(verse, book, chapterNum) {
-    const url = `${window.location.origin}${window.location.pathname}#learn/other/bible/${book.id}/${chapterNum}/${verse.verse}`;
-    navigator.clipboard.writeText(url).then(() => {
-      const btns = document.querySelectorAll('.bible-action-btn');
-      if (btns[2]) {
-        const orig = btns[2].innerHTML;
-        btns[2].innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-        setTimeout(() => { btns[2].innerHTML = orig; }, 2000);
-      }
+    await Share.captureImage(card, `bible-${book.id}-${chapterNum}-${verse.verse}.png`, {
+      captureClass: 'bible-capturing'
     });
   }
 

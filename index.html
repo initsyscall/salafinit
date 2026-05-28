@@ -38,31 +38,33 @@
     href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Amiri+Quran&family=Inter:wght@400;500;600;700&family=Scheherazade+New:wght@400;500;600;700&display=swap"
     rel="stylesheet">
 
-  <link rel="stylesheet" href=".const/reset.css">
-  <link rel="stylesheet" href=".const/tokens.css">
-  <link rel="stylesheet" href=".const/layout.css">
-  <script defer src=".const/theme.js"></script>
-  <link rel="stylesheet" href=".const/components/css/base-button.css">
-  <link rel="stylesheet" href=".const/components/css/base-badge.css">
-  <link rel="stylesheet" href=".const/components/css/base-card.css">
-  <link rel="stylesheet" href="learn/.const/components/css/learn.css">
-  <link rel="stylesheet" href="learn/.const/components/css/bible.css">
-  <link rel="stylesheet" href="learn/.const/components/css/salafiyyah.css">
-  <link rel="stylesheet" href=".const/components/css/base-state.css">
-  <link rel="stylesheet" href=".const/components/css/utilities.css">
-  <link rel="stylesheet" href="hadiths/.const/components/css/hadith-books.css">
-  <link rel="stylesheet" href="hadiths/.const/components/css/hadith-chapters.css">
-  <link rel="stylesheet" href="hadiths/.const/components/css/hadith-dashboard.css">
-  <link rel="stylesheet" href="hadiths/.const/components/css/hadith-detail.css">
-  <link rel="stylesheet" href="hadiths/.const/components/css/hadith-grading.css">
-  <link rel="stylesheet" href="hadiths/.const/components/css/hadith-search.css">
-  <link rel="stylesheet" href="quran/.const/components/css/quran-content.css">
-  <link rel="stylesheet" href="quran/.const/components/css/quran-list.css">
-  <link rel="stylesheet" href="quran/.const/components/css/quran-modal.css">
-  <link rel="stylesheet" href="quran/.const/components/css/quran-settings.css">
-  <link rel="stylesheet" href="salah/.const/components/css/salah-main.css">
-  <link rel="stylesheet" href="salah/.const/components/css/salah-grid.css">
-  <link rel="stylesheet" href="salah/.const/components/css/salah-extra.css">
+  <link rel="stylesheet" href="shared/css/reset.css">
+  <link rel="stylesheet" href="shared/css/tokens.css">
+  <link rel="stylesheet" href="shared/css/layout.css">
+  <script defer src="shared/theme.js"></script>
+  <link rel="stylesheet" href="shared/css/base-button.css">
+  <link rel="stylesheet" href="shared/css/base-badge.css">
+  <link rel="stylesheet" href="shared/css/base-card.css">
+  <link rel="stylesheet" href="learn/css/learn.css">
+  <link rel="stylesheet" href="learn/css/bible-index.css">
+  <link rel="stylesheet" href="learn/css/bible-reader.css">
+  <link rel="stylesheet" href="learn/css/other.css">
+  <link rel="stylesheet" href="learn/css/salafiyyah.css">
+  <link rel="stylesheet" href="shared/css/base-state.css">
+  <link rel="stylesheet" href="shared/css/utilities.css">
+  <link rel="stylesheet" href="hadiths/css/hadith-books.css">
+  <link rel="stylesheet" href="hadiths/css/hadith-chapters.css">
+  <link rel="stylesheet" href="hadiths/css/hadith-dashboard.css">
+  <link rel="stylesheet" href="hadiths/css/hadith-detail.css">
+  <link rel="stylesheet" href="hadiths/css/hadith-grading.css">
+  <link rel="stylesheet" href="hadiths/css/hadith-search.css">
+  <link rel="stylesheet" href="quran/css/quran-content.css">
+  <link rel="stylesheet" href="quran/css/quran-list.css">
+  <link rel="stylesheet" href="quran/css/quran-modal.css">
+  <link rel="stylesheet" href="quran/css/quran-settings.css">
+  <link rel="stylesheet" href="salah/css/salah-main.css">
+  <link rel="stylesheet" href="salah/css/salah-grid.css">
+  <link rel="stylesheet" href="salah/css/salah-extra.css">
 
   <style>
     .home-hero {
@@ -165,25 +167,27 @@
     </footer>
   </div>
 
-  <script src=".const/api/store.js"></script>
-  <script src=".const/api/client.js"></script>
-  <script src=".const/router.js"></script>
+  <script src="shared/api/store.js"></script>
+  <script src="shared/api/client.js"></script>
+  <script src="shared/router.js"></script>
   <script src="utils/utils.js"></script>
-  <script src="quran/.const/api.js"></script>
-  <script src="quran/.const/tafsir.js"></script>
-  <script src="hadiths/.const/api.js"></script>
-  <script src="hadiths/.const/books.js"></script>
+  <script src="shared/components/share.js"></script>
+  <script src="quran/api.js"></script>
+  <script src="quran/tafsir.js"></script>
+  <script src="hadiths/api.js"></script>
+  <script src="hadiths/books.js"></script>
   <script src="hadiths/sunni/fetcher.js"></script>
   <script src="hadiths/sunni/index.js"></script>
   <script src="hadiths/sunni/translation.js"></script>
-  <script src="salah/.const/api.js"></script>
-  <script type="module" src="quran/.const/components/js/index.js"></script>
-  <script src="hadiths/.const/components/js/hadith-view.js"></script>
-  <script src="salah/.const/components/js/salah-view.js"></script>
-  <script src="learn/.const/books/bible.js"></script>
-  <script src="learn/.const/components/js/bible-view.js"></script>
-  <script src="learn/.const/components/js/other-view.js"></script>
-  <script src="learn/.const/components/js/salafiyyah-view.js"></script>
+  <script src="salah/api.js"></script>
+  <script type="module" src="quran/components/index.js"></script>
+  <script src="hadiths/components/hadith-dashboard.js"></script>
+  <script src="hadiths/components/hadith-view.js"></script>
+  <script src="salah/components/salah-view.js"></script>
+  <script src="learn/books/bible.js"></script>
+  <script src="learn/components/bible-view.js"></script>
+  <script src="learn/components/other-view.js"></script>
+  <script src="learn/components/salafiyyah-view.js"></script>
   <script src="learn/index.js"></script>
   <script src="utils/app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@zumer/snapdom@latest/dist/snapdom.min.js"></script>

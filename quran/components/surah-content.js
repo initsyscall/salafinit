@@ -216,12 +216,7 @@ function createAyahCard(ayah, primaryTrans, isHighlighted, uthmani, allTranslati
       className: 'btn btn--ghost',
       title: 'Link',
       innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>',
-      onClick: () => {
-        const link = `${window.location.origin}${window.location.pathname}#quran/${uthmani.number}/${ayah.numberInSurah}`;
-        navigator.clipboard.writeText(link).then(() => {
-          Utils.showToast('Link copied!');
-        });
-      }
+      onClick: (e) => Share.copyLink(`#quran/${uthmani.number}/${ayah.numberInSurah}`, { btn: e.currentTarget })
     }),
     Utils.createElement('button', {
       className: 'btn btn--ghost',
@@ -263,17 +258,10 @@ export function renderSurahContent(container, uthmani, primaryTranslation, highl
         const card = document.getElementById(`ayah-${ayah.numberInSurah}`);
         if (!card) return;
         
-        if (typeof snapdom !== 'undefined') {
-          document.getSelection()?.removeAllRanges();
-          card.classList.add('quran-capturing');
-          const img = await snapdom.toPng(card, { scale: 2 });
-          card.classList.remove('quran-capturing');
-          const a = document.createElement('a');
-          a.href = img.src;
-          a.download = `quran-${uthmani.number}-${ayah.numberInSurah}.png`;
-          a.click();
-          Utils.showToast('Image downloaded!');
-        } else {
+        const captured = await Share.captureImage(card, `quran-${uthmani.number}-${ayah.numberInSurah}.png`, {
+          captureClass: 'quran-capturing'
+        });
+        if (!captured) {
           import('./tafsir.js').then(m => m.shareAyah(ayah, primaryTrans, uthmani));
         }
       };
