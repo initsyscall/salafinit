@@ -238,6 +238,28 @@ const HadithView = (() => {
             onClick: () => TranslationModule.translateHadith(hadith.arabic, hadith.english?.text || hadith.english?.narrator),
             innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>'
           }),
+          Utils.createElement('button', {
+            className: 'btn hadith-action-btn bm-btn',
+            title: 'Bookmark',
+            innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>',
+            onClick: (e) => {
+              const refId = 'hadith-' + collection + '-' + bookId + '-' + hadithNum;
+              const btn = e.currentTarget;
+              const hadithText = hadith.english?.text || hadith.english || '';
+              BookmarkPicker.show({
+                refId,
+                type: 'hadith',
+                title: (book?.name || bookId) + ' ' + hadithNum,
+                ref: (book?.name || bookId) + ' ' + hadithNum,
+                route: HadithDashboard.buildRoute(collection, bookId, hadithNum),
+                text: (typeof hadithText === 'string' ? hadithText : '').substring(0, 80),
+                onToggle: (saved) => {
+                  btn.toggleAttribute('data-bookmarked', saved);
+                }
+              });
+              BookmarkDB.isBookmarked(refId).then(s => btn.toggleAttribute('data-bookmarked', s));
+            }
+          }),
           scholarsToggleBtn
         ])
       ]);

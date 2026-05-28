@@ -219,6 +219,27 @@ function createAyahCard(ayah, primaryTrans, isHighlighted, uthmani, allTranslati
       onClick: (e) => Share.copyLink(`#quran/${uthmani.number}/${ayah.numberInSurah}`, { btn: e.currentTarget })
     }),
     Utils.createElement('button', {
+      className: 'btn btn--ghost bm-btn',
+      title: 'Bookmark',
+      innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>',
+      onClick: (e) => {
+        const refId = 'quran-' + uthmani.number + '-' + ayah.numberInSurah;
+        const btn = e.currentTarget;
+        BookmarkPicker.show({
+          refId,
+          type: 'quran',
+          title: uthmani.englishName + ' ' + ayah.numberInSurah,
+          ref: uthmani.number + ':' + ayah.numberInSurah,
+          route: '#quran/' + uthmani.number + '/' + ayah.numberInSurah,
+          text: (primaryTrans?.text || ayah.text || '').substring(0, 80),
+          onToggle: (saved) => {
+            btn.toggleAttribute('data-bookmarked', saved);
+          }
+        });
+        BookmarkDB.isBookmarked(refId).then(s => btn.toggleAttribute('data-bookmarked', s));
+      }
+    }),
+    Utils.createElement('button', {
       className: 'btn btn--ghost',
       title: 'Copy',
       innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>',

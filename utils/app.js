@@ -106,17 +106,21 @@ const App = (() => {
     Router.on('utils', () => {
       const main = document.getElementById('app-main');
       main.innerHTML = `
-        <div class="empty-state" style="min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#F472C6" stroke-width="1.5" style="margin-bottom: var(--spacing-lg); opacity: 0.8;">
-            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
-          </svg>
-          <h2 class="empty-state__title" style="color: var(--color-text);">Coming Soon</h2>
-          <p class="empty-state__description" style="max-width: 400px; text-align: center;">
-            Utils feature is under development. Bookmark your favorite hadiths, verses, and notes.
-          </p>
+        <div class="utils-page" style="max-width:600px;margin:0 auto;padding:var(--spacing-lg);">
+          <h1 style="font-size:var(--font-size-2xl);font-weight:700;margin:0 0 var(--spacing-xs);">الأدوات</h1>
+          <p style="font-size:var(--font-size-sm);color:var(--color-text-muted);margin:0 0 var(--spacing-xl);">Utilities</p>
+          <div class="grid grid--responsive" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:var(--spacing-md);">
+            <a href="#utils/bookmarks" class="card feature-card" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--spacing-xl) var(--spacing-md);min-height:100px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5" style="margin-bottom:var(--spacing-sm);"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              <span style="font-size:var(--font-size-sm);font-weight:600;color:var(--color-text);">Bookmarks</span>
+              <span style="font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:2px;">Save ayah &amp; hadith</span>
+            </a>
+          </div>
         </div>
       `;
     });
+
+    Router.on('utils/bookmarks', () => Bookmark.render(document.getElementById('app-main')));
 
     Router.notFound((container) => {
       container.innerHTML = `
