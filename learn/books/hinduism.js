@@ -23,6 +23,11 @@ const HinduismBooks = (() => {
     epics: { name: 'Itihasa (Epics)', devanagari: 'इतिहास', arabic: 'الْمَلَاحِمُ' }
   };
 
+  function splitContent(text) {
+    const cleaned = text.replace(/p:/g, '');
+    return cleaned.split(/।।\s*\p{Nd}+\s*।।/u).filter(Boolean).map(t => t.trim());
+  }
+
   function getBookConfig(book) {
     switch (book.id) {
       case 'rigveda':
@@ -68,6 +73,12 @@ const HinduismBooks = (() => {
           const url = `${DEVA_VEDA_BASE}rigveda/books/${num}.json`;
           const data = await ApiClient.fetchApi(url);
           const items = data?.data || [];
+          if (subNum) {
+            const sn = parseInt(subNum);
+            const item = items[sn - 1];
+            if (!item) return [];
+            return splitContent(item.content).map((t, i) => ({ number: i + 1, text: t }));
+          }
           return items.map((item, i) => ({
             number: i + 1,
             text: `${item.title}\n\n${item.content.replace(/p:/g, '').trim()}`
@@ -76,15 +87,18 @@ const HinduismBooks = (() => {
 
         case 'yajurveda': {
           const url = `${DHARMIC_BASE}Yajurveda/vajasneyi_madhyadina_samhita.json`;
-          const data = await ApiClient.fetchApi(url);
+          const data = await ApiClient.fetchApi(url, { timeout: 30000 });
           const match = (data || []).find(item => parseInt(item.adhyaya) === ch);
           if (!match) return [];
-          const text = match.text;
-          const parts = text.split(/।।\s*\d+।।/).filter(Boolean);
-          return parts.map((t, i) => ({
+          const verses = splitContent(match.text).map((t, i) => ({
             number: i + 1,
-            text: t.trim()
+            text: t
           }));
+          if (subNum) {
+            const sn = parseInt(subNum);
+            return verses.filter(v => v.number === sn);
+          }
+          return verses;
         }
 
         case 'samaveda': {
@@ -92,6 +106,12 @@ const HinduismBooks = (() => {
           const url = `${DEVA_VEDA_BASE}samaveda/books/${num}.json`;
           const data = await ApiClient.fetchApi(url);
           const items = data?.data || [];
+          if (subNum) {
+            const sn = parseInt(subNum);
+            const item = items.find(i => parseInt(i.key) === sn);
+            if (!item) return [];
+            return splitContent(item.content).map((t, i) => ({ number: i + 1, text: t }));
+          }
           return items.map(item => ({
             number: parseInt(item.key),
             text: `${item.title}\n\n${item.content.replace(/p:/g, '').trim()}`
@@ -103,6 +123,12 @@ const HinduismBooks = (() => {
           const url = `${DEVA_VEDA_BASE}atharvaveda/books/${num}.json`;
           const data = await ApiClient.fetchApi(url);
           const items = data?.data || [];
+          if (subNum) {
+            const sn = parseInt(subNum);
+            const item = items[sn - 1];
+            if (!item) return [];
+            return splitContent(item.content).map((t, i) => ({ number: i + 1, text: t }));
+          }
           return items.map((item, i) => ({
             number: i + 1,
             text: `${item.title}\n\n${item.content}`.trim()

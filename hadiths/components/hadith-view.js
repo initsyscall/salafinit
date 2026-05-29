@@ -246,17 +246,17 @@ const HadithView = (() => {
               const refId = 'hadith-' + collection + '-' + bookId + '-' + hadithNum;
               const btn = e.currentTarget;
               const hadithText = hadith.english?.text || hadith.english || '';
-              BookmarkPicker.show({
-                refId,
-                type: 'hadith',
-                title: (book?.name || bookId) + ' ' + hadithNum,
-                ref: (book?.name || bookId) + ' ' + hadithNum,
-                route: HadithDashboard.buildRoute(collection, bookId, hadithNum),
-                text: (typeof hadithText === 'string' ? hadithText : '').substring(0, 80),
-                onToggle: (saved) => {
-                  btn.toggleAttribute('data-bookmarked', saved);
-                }
-              });
+          BookmarkPicker.show({
+            refId,
+            type: 'hadith',
+            title: (book?.name || bookId) + ' ' + hadithNum,
+            ref: (book?.name || bookId) + ' ' + hadithNum,
+            route: HadithDashboard.buildRoute(collection, bookId, hadithNum),
+            text: '',
+            onToggle: (saved) => {
+              btn.toggleAttribute('data-bookmarked', saved);
+            }
+          });
               BookmarkDB.isBookmarked(refId).then(s => btn.toggleAttribute('data-bookmarked', s));
             }
           }),

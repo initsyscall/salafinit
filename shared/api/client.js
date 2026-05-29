@@ -12,10 +12,11 @@ const ApiClient = (() => {
     }
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
+    const timeoutMs = options.timeout || 15000;
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      const { cache, ...fetchOptions } = options;
+      const { cache, timeout: _t, ...fetchOptions } = options;
       const response = await window.fetch(url, {
         headers: {
           'Accept': 'application/json'

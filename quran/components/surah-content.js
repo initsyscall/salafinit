@@ -229,9 +229,9 @@ function createAyahCard(ayah, primaryTrans, isHighlighted, uthmani, allTranslati
           refId,
           type: 'quran',
           title: uthmani.englishName + ' ' + ayah.numberInSurah,
-          ref: uthmani.number + ':' + ayah.numberInSurah,
+          ref: uthmani.englishName + ' ' + ayah.numberInSurah,
           route: '#quran/' + uthmani.number + '/' + ayah.numberInSurah,
-          text: (primaryTrans?.text || ayah.text || '').substring(0, 80),
+          text: '',
           onToggle: (saved) => {
             btn.toggleAttribute('data-bookmarked', saved);
           }
