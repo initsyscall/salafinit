@@ -115,6 +115,28 @@ window.BookmarkDB = window.BookmarkDB || (() => {
     });
   }
 
+  async function updateLastInteracted(id) {
+    await open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('bookmarks', 'readwrite');
+      const req = tx.objectStore('bookmarks').get(id);
+      req.onsuccess = () => {
+        const b = req.result;
+        if (b) {
+          b.lastInteracted = Date.now();
+          tx.objectStore('bookmarks').put(b);
+        }
+      };
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  async function getAllBookmarks() {
+    await open();
+    return getAll('bookmarks');
+  }
+
   async function isBookmarked(refId) {
     const existing = await getBookmarksByRefId(refId);
     return existing.length > 0;
@@ -123,6 +145,7 @@ window.BookmarkDB = window.BookmarkDB || (() => {
   return {
     getAllHeadings, addHeading, removeHeading, renameHeading,
     getBookmarksByHeading, getBookmarksByRefId,
-    addBookmark, removeBookmark, isBookmarked
+    addBookmark, removeBookmark, isBookmarked,
+    updateLastInteracted, getAllBookmarks
   };
 })();
