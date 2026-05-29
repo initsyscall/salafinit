@@ -88,7 +88,7 @@ const HadithDashboard = (() => {
       id: `${collection}-hadith`,
       books: hadithBooks,
       routePrefix: getBaseRoute(collection),
-      chapterLabel: 'Hadith #',
+      chapterLabel: 'Hadith',
       hideVerse: true,
       searchPlaceholder: 'Filter books...',
       onSearch: (query) => {

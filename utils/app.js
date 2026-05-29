@@ -52,7 +52,7 @@ const App = (() => {
         createFeatureCard('ٱلْحَدِيثُ', 'Hadith Collections - Kutub al-Sittah + More', 'hadith', '#hadiths'),
         createFeatureCard('ٱلصَّلَاةُ', 'Salah Timings - Prayer times based on your location', 'salah', '#salah'),
         createFeatureCard('ٱلْعِلْمُ', 'Learn Salafiyyah, shia & other religion', 'learn', '#learn'),
-        createFeatureCard('ٱلْأَدَوَاتُ', 'Utils - Bookmark, Notes & More (Coming Soon)', 'utils', '#utils')
+        createFeatureCard('ٱلْأَدَوَاتُ', 'Utils - Bookmark, Quran Progress & Tools', 'utils', '#utils')
       ]);
       main.appendChild(grid);
     });

@@ -1,12 +1,7 @@
 window.QuranProgress = (() => {
   const STORAGE_KEY = 'quran-reading-progress';
   const TOTAL_AYAHS = QuranProgressSurahs.reduce((s, su) => s + su.a, 0);
-
-  function load() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { khatmat: [] };
-    } catch { return { khatmat: [] }; }
-  }
+  let scrollHandler;
 
   function save(data) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -188,6 +183,20 @@ window.QuranProgress = (() => {
     page.appendChild(list);
 
     container.appendChild(page);
+
+    const scrollBtn = document.createElement('button');
+    scrollBtn.className = 'scroll-to-top';
+    scrollBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg>';
+    scrollBtn.style.display = 'none';
+    scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    container.appendChild(scrollBtn);
+
+    if (scrollHandler) window.removeEventListener('scroll', scrollHandler);
+    scrollHandler = () => {
+      scrollBtn.style.display = window.scrollY > 300 ? '' : 'none';
+    };
+    window.addEventListener('scroll', scrollHandler, { passive: true });
+    scrollHandler();
   }
 
   function showSurahDialog(surah, currentRead, khatm, data, container) {
@@ -203,7 +212,7 @@ window.QuranProgress = (() => {
       <p class="qp-dialog__info">${surah.a} ayahs · ${surah.r}</p>
       <div class="qp-dialog__row">
         <label class="qp-dialog__label">Last ayah read</label>
-        <input type="number" class="qp-dialog__input" min="0" max="${surah.a}" value="${currentRead}" placeholder="0-${surah.a}">
+        <input type="number" class="qp-dialog__input" min="0" max="${surah.a}" value="${currentRead || ''}" placeholder="0-${surah.a}">
       </div>
       <div class="qp-dialog__actions">
         <button class="qp-dialog__btn qp-dialog__btn--cancel">Cancel</button>

@@ -1,6 +1,6 @@
 const QuickJump = (() => {
   function create(config) {
-    const { id, books, routePrefix, getChapterInfo, searchPlaceholder, onSearch, chapterLabel, verseLabel, hideChapter, hideVerse } = config;
+    const { id, books, routePrefix, getChapterInfo, searchPlaceholder, onSearch, chapterLabel, verseLabel, hideChapter, hideVerse, bookSearchPlaceholder } = config;
 
     const bookWrapper = document.createElement('div');
     bookWrapper.className = 'quick-jump-search';
@@ -13,7 +13,7 @@ const QuickJump = (() => {
     bookInput.type = 'text';
     bookInput.className = 'input quick-jump-input quick-jump-search-input';
     bookInput.id = `${id}-book-search`;
-    bookInput.placeholder = 'Search books...';
+    bookInput.placeholder = bookSearchPlaceholder || 'Search books...';
     bookInput.autocomplete = 'off';
     bookInput.addEventListener('input', onBookSearchInput);
     bookInput.addEventListener('keydown', onBookSearchKeydown);

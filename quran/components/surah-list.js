@@ -213,6 +213,7 @@ export async function renderSurahList(container) {
       routePrefix: '#quran',
       hideChapter: true,
       verseLabel: 'Ayah',
+      bookSearchPlaceholder: 'Surah',
       searchPlaceholder: 'Search by words...',
       onSearch: (query) => handleTextSearch(query, resultsDiv, grid)
     });

@@ -354,8 +354,6 @@ window.Bookmark = window.Bookmark || (() => {
           await BookmarkDB.removeBookmark(b.id);
           const countEl = subDiv.querySelector('.bm-section__count');
           countEl.textContent = Math.max(0, parseInt(countEl.textContent) - 1);
-          const secCount = section.querySelector('.bm-section__header .bm-section__count');
-          secCount.textContent = Math.max(0, parseInt(secCount.textContent) - 1);
           link.remove();
           if (subBody.querySelectorAll('.bm-item').length === 0) subDiv.remove();
         });
