@@ -223,6 +223,24 @@ function createAyahCard(ayah, primaryTrans, isHighlighted, uthmani, allTranslati
       title: 'Copy',
       innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>',
       onClick: () => copyAyahFn(ayah, primaryTrans, uthmani)
+    }),
+    Utils.createElement('button', {
+      className: 'btn btn--ghost',
+      title: 'Mark read up to this ayah',
+      innerHTML: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+      onClick: () => {
+        const data = JSON.parse(localStorage.getItem('quran-reading-progress')) || { khatmat: [] };
+        if (!data.khatmat.length) {
+          data.khatmat.push({ id: Date.now(), startedAt: Date.now(), completedAt: null, progress: {} });
+        }
+        let k = data.khatmat.find(k => !k.completedAt);
+        if (!k) k = data.khatmat[data.khatmat.length - 1];
+        k.progress[String(uthmani.number)] = ayah.numberInSurah;
+        const allDone = QuranProgressSurahs.every(s => (k.progress[s.n] || 0) >= s.a);
+        if (allDone) k.completedAt = Date.now();
+        localStorage.setItem('quran-reading-progress', JSON.stringify(data));
+        Utils.showToast('Progress saved — ' + uthmani.englishName + ' ' + ayah.numberInSurah, 'success');
+      }
     })
   ]);
   ayahCard.appendChild(actions);

@@ -107,13 +107,18 @@ const App = (() => {
       const main = document.getElementById('app-main');
       main.innerHTML = `
         <div class="utils-page" style="max-width:600px;margin:0 auto;padding:var(--spacing-lg);">
-          <h1 style="font-size:var(--font-size-2xl);font-weight:700;margin:0 0 var(--spacing-xs);">الأدوات</h1>
-          <p style="font-size:var(--font-size-sm);color:var(--color-text-muted);margin:0 0 var(--spacing-xl);">Utilities</p>
+          <h1 style="font-size:var(--font-size-2xl);font-weight:500;letter-spacing:-0.02em;margin:0 0 var(--spacing-xs);">الأدوات</h1>
+          <p style="font-size:var(--font-size-sm);color:var(--color-text-muted);opacity:0.6;margin:0 0 var(--spacing-xl);">Utilities</p>
           <div class="grid grid--responsive" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:var(--spacing-md);">
             <a href="#utils/bookmarks" class="card feature-card" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--spacing-xl) var(--spacing-md);min-height:100px;">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5" style="margin-bottom:var(--spacing-sm);"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               <span style="font-size:var(--font-size-sm);font-weight:600;color:var(--color-text);">Bookmarks</span>
-              <span style="font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:2px;">Save ayah &amp; hadith</span>
+              <span style="font-size:var(--font-size-xs);color:var(--color-text-muted);opacity:0.6;margin-top:2px;">Save ayah &amp; hadith</span>
+            </a>
+            <a href="#utils/quran-progress" class="card feature-card" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--spacing-xl) var(--spacing-md);min-height:100px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5" style="margin-bottom:var(--spacing-sm);"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              <span style="font-size:var(--font-size-sm);font-weight:600;color:var(--color-text);">Quran Progress</span>
+              <span style="font-size:var(--font-size-xs);color:var(--color-text-muted);opacity:0.6;margin-top:2px;">Track your reading</span>
             </a>
           </div>
         </div>
@@ -121,6 +126,7 @@ const App = (() => {
     });
 
     Router.on('utils/bookmarks', () => Bookmark.render(document.getElementById('app-main')));
+    Router.on('utils/quran-progress', () => QuranProgress.render(document.getElementById('app-main')));
 
     Router.notFound((container) => {
       container.innerHTML = `
