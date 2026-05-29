@@ -1,6 +1,6 @@
 const QuickJump = (() => {
   function create(config) {
-    const { id, books, routePrefix, getChapterInfo } = config;
+    const { id, books, routePrefix, getChapterInfo, searchPlaceholder, onSearch, chapterLabel, verseLabel, hideChapter, hideVerse } = config;
 
     const bookWrapper = document.createElement('div');
     bookWrapper.className = 'quick-jump-search';
@@ -27,50 +27,87 @@ const QuickJump = (() => {
     bookWrapper.appendChild(bookDropdown);
     bookWrapper.appendChild(hiddenBookId);
 
+    const rowChildren = [bookWrapper];
+
+    if (!hideChapter) {
+      rowChildren.push(Utils.createElement('input', {
+        type: 'number',
+        min: '1',
+        className: 'input quick-jump-input',
+        id: `${id}-jump-chapter`,
+        placeholder: chapterLabel || 'Chapter',
+        onKeydown: (e) => { if (e.key === 'Enter') onGo(); },
+        onChange: onChapterChange
+      }));
+    }
+
+    if (!hideVerse) {
+      rowChildren.push(Utils.createElement('input', {
+        type: 'number',
+        min: '1',
+        className: 'input quick-jump-input',
+        id: `${id}-jump-verse`,
+        placeholder: verseLabel || 'Verse',
+        onKeydown: (e) => { if (e.key === 'Enter') onGo(); }
+      }));
+    }
+
+    if (searchPlaceholder) {
+      rowChildren.push(
+        Utils.createElement('input', {
+          type: 'text',
+          className: 'input quick-jump-input',
+          id: `${id}-jump-search`,
+          placeholder: searchPlaceholder,
+          onKeydown: (e) => { if (e.key === 'Enter') onGo(); }
+        })
+      );
+    }
+
+    rowChildren.push(Utils.createElement('button', {
+      className: 'btn btn--ghost',
+      id: `${id}-jump-go`,
+      onClick: onGo
+    }, 'Go'));
+
     const section = Utils.createElement('div', { className: 'quick-jump' }, [
       Utils.createElement('h2', { className: 'quick-jump-title' }, 'Quick Jump'),
-      Utils.createElement('div', { className: 'quick-jump-row' }, [
-        bookWrapper,
-        Utils.createElement('input', {
-          type: 'number',
-          min: '1',
-          className: 'input quick-jump-input',
-          id: `${id}-jump-chapter`,
-          placeholder: 'Chapter',
-          onKeydown: (e) => { if (e.key === 'Enter') onGo(); },
-          onChange: onChapterChange
-        }),
-        Utils.createElement('input', {
-          type: 'number',
-          min: '1',
-          className: 'input quick-jump-input',
-          id: `${id}-jump-verse`,
-          placeholder: 'Verse',
-          onKeydown: (e) => { if (e.key === 'Enter') onGo(); }
-        }),
-        Utils.createElement('button', {
-          className: 'btn btn--ghost',
-          id: `${id}-jump-go`,
-          onClick: onGo
-        }, 'Go')
-      ])
+      Utils.createElement('div', { className: 'quick-jump-row' }, rowChildren)
     ]);
 
     function onBookChange() {
       const bookId = document.getElementById(`${id}-jump-book`).value;
-      const chInput = document.getElementById(`${id}-jump-chapter`);
-      const vInput = document.getElementById(`${id}-jump-verse`);
-      chInput.value = '';
-      vInput.value = '';
-      vInput.removeAttribute('max');
-      vInput.placeholder = 'Verse';
       const book = books.find(b => b.id === bookId);
       if (book) {
-        chInput.max = book.chapters;
-        chInput.placeholder = `1 – ${book.chapters}`;
+        if (hideChapter) {
+          const vInput = document.getElementById(`${id}-jump-verse`);
+          vInput.value = '';
+          vInput.max = book.chapters;
+          vInput.placeholder = `1 – ${book.chapters}`;
+        } else {
+          const chInput = document.getElementById(`${id}-jump-chapter`);
+          chInput.value = '';
+          chInput.max = book.chapters;
+          chInput.placeholder = `1 – ${book.chapters}`;
+          if (!hideVerse) {
+            const vInput = document.getElementById(`${id}-jump-verse`);
+            vInput.value = '';
+            vInput.removeAttribute('max');
+            vInput.placeholder = verseLabel || 'Verse';
+          }
+        }
       } else {
-        chInput.removeAttribute('max');
-        chInput.placeholder = 'Chapter';
+        if (!hideChapter) {
+          const chInput = document.getElementById(`${id}-jump-chapter`);
+          chInput.removeAttribute('max');
+          chInput.placeholder = chapterLabel || 'Chapter';
+        }
+        if (!hideVerse) {
+          const vInput = document.getElementById(`${id}-jump-verse`);
+          vInput.value = '';
+          vInput.removeAttribute('max');
+          vInput.placeholder = verseLabel || 'Verse';
+        }
       }
     }
 
@@ -139,9 +176,11 @@ const QuickJump = (() => {
     }
 
     async function onChapterChange() {
+      if (hideChapter || hideVerse) return;
       const bookId = document.getElementById(`${id}-jump-book`).value;
       const ch = parseInt(document.getElementById(`${id}-jump-chapter`).value);
       const vInput = document.getElementById(`${id}-jump-verse`);
+      if (!vInput) return;
       vInput.value = '';
       vInput.removeAttribute('max');
 
@@ -162,12 +201,24 @@ const QuickJump = (() => {
     }
 
     function onGo() {
+      if (searchPlaceholder && onSearch) {
+        const searchVal = document.getElementById(`${id}-jump-search`)?.value.trim();
+        if (searchVal) {
+          onSearch(searchVal);
+          return;
+        }
+      }
       const bookId = document.getElementById(`${id}-jump-book`).value;
-      const ch = parseInt(document.getElementById(`${id}-jump-chapter`).value);
-      const verse = document.getElementById(`${id}-jump-verse`).value;
-      if (bookId && ch > 0) {
-        const book = books.find(b => b.id === bookId);
-        if (!book || ch > book.chapters) return;
+      if (!bookId) return;
+      const book = books.find(b => b.id === bookId);
+      if (!book) return;
+      if (hideChapter) {
+        const verse = document.getElementById(`${id}-jump-verse`).value;
+        window.location.hash = verse ? `${routePrefix}/${bookId}/${verse}` : `${routePrefix}/${bookId}`;
+      } else {
+        const ch = parseInt(document.getElementById(`${id}-jump-chapter`).value);
+        if (!ch || ch > book.chapters) return;
+        const verse = hideVerse ? '' : document.getElementById(`${id}-jump-verse`).value;
         window.location.hash = verse ? `${routePrefix}/${bookId}/${ch}/${verse}` : `${routePrefix}/${bookId}/${ch}`;
       }
     }

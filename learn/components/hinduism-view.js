@@ -36,6 +36,22 @@ const HinduismView = (() => {
       const group = createBookGroup(label.devanagari, label.name, books, key);
       page.appendChild(group);
     });
+
+    const transBar = Utils.createElement('div', { className: 'hinduism-trans-bar' }, [
+      Utils.createElement('label', { className: 'hinduism-trans-label' }, 'Translate to:'),
+      Utils.createElement('select', {
+        className: 'hinduism-trans-select',
+        onChange: (e) => {
+          TranslationModule.setPreferredLanguage(e.target.value);
+          Utils.showToast('Translation language saved');
+        }
+      }, TranslationModule.getSupportedLanguages().map(lang =>
+        Utils.createElement('option', { value: lang.code }, lang.native)
+      ))
+    ]);
+    const sel = transBar.querySelector('select');
+    if (sel) sel.value = TranslationModule.getPreferredLanguage();
+    page.appendChild(transBar);
   }
 
   function createBookGroup(devanagariLabel, nameLabel, books) {
@@ -221,6 +237,22 @@ const HinduismView = (() => {
 
     const isGita = book.id === 'bhagavad-gita';
 
+    const transBar = Utils.createElement('div', { className: 'hinduism-trans-bar' }, [
+      Utils.createElement('label', { className: 'hinduism-trans-label' }, 'Translate to:'),
+      Utils.createElement('select', {
+        className: 'hinduism-trans-select',
+        onChange: (e) => {
+          TranslationModule.setPreferredLanguage(e.target.value);
+          Utils.showToast('Translation language saved');
+        }
+      }, TranslationModule.getSupportedLanguages().map(lang =>
+        Utils.createElement('option', { value: lang.code }, lang.native)
+      ))
+    ]);
+    const sel = transBar.querySelector('select');
+    if (sel) sel.value = TranslationModule.getPreferredLanguage();
+    page.appendChild(transBar);
+
     verses.forEach((v, i) => {
       const verseNum = v.number;
       const card = Utils.createElement('div', {
@@ -291,13 +323,7 @@ const HinduismView = (() => {
       onClick: () => window.scrollTo({ top: 0, behavior: 'smooth' })
     }));
 
-    if (params.verse && !subNum) {
-      const target = document.getElementById(`hverse-${book.id}-${chapterNum}-${params.verse}`);
-      if (target) {
-        target.classList.add('hinduism-verse-card--highlight');
-        setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
-      }
-    }
+
   }
 
   function copyVerse(book, chapterNum, verse, btn) {

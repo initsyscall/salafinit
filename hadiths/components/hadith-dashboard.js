@@ -36,98 +36,6 @@ const HadithDashboard = (() => {
     return 'grade-daif';
   }
 
-  function createHadithQuickJump(displayBooks, collection) {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'hadith-book-search';
-
-    const hiddenBookId = document.createElement('input');
-    hiddenBookId.type = 'hidden';
-    hiddenBookId.id = 'hadith-jump-book';
-
-    const bookInput = document.createElement('input');
-    bookInput.type = 'text';
-    bookInput.className = 'input hadith-jump-input hadith-book-search-input';
-    bookInput.id = 'hadith-book-search';
-    bookInput.placeholder = 'Search books...';
-    bookInput.autocomplete = 'off';
-    bookInput.addEventListener('input', onBookSearchInput);
-    bookInput.addEventListener('keydown', onBookSearchKeydown);
-    bookInput.addEventListener('blur', () => setTimeout(hideDropdown, 200));
-
-    const bookDropdown = document.createElement('div');
-    bookDropdown.className = 'hadith-book-dropdown';
-    bookDropdown.id = 'hadith-book-dropdown';
-
-    wrapper.appendChild(bookInput);
-    wrapper.appendChild(bookDropdown);
-    wrapper.appendChild(hiddenBookId);
-
-    function onBookSearchInput() {
-      const query = document.getElementById('hadith-book-search').value.toLowerCase().trim();
-      const dropdown = document.getElementById('hadith-book-dropdown');
-      document.getElementById('hadith-jump-book').value = '';
-
-      if (!query) { dropdown.classList.remove('visible'); return; }
-
-      const matches = displayBooks.filter(b =>
-        b.name.toLowerCase().includes(query) || b.arabic.includes(query) || b.id.includes(query)
-      );
-
-      dropdown.innerHTML = '';
-      if (!matches.length) {
-        dropdown.innerHTML = '<div class="hadith-book-dropdown-empty">No books found</div>';
-        dropdown.classList.add('visible');
-        return;
-      }
-
-      matches.forEach(b => {
-        const item = document.createElement('div');
-        item.className = 'hadith-book-dropdown-item';
-        item.innerHTML = `<span class="hadith-dropdown-arabic">${b.arabic}</span> <span class="hadith-dropdown-name">${b.name}</span>`;
-        item.dataset.id = b.id;
-        item.addEventListener('mousedown', e => { e.preventDefault(); selectBook(b); });
-        dropdown.appendChild(item);
-      });
-      dropdown.classList.add('visible');
-    }
-
-    function onBookSearchKeydown(e) {
-      const dropdown = document.getElementById('hadith-book-dropdown');
-      const items = [...dropdown.querySelectorAll('.hadith-book-dropdown-item')];
-      if (!items.length) return;
-
-      const active = dropdown.querySelector('.active');
-
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        const idx = active ? items.indexOf(active) + 1 : 0;
-        if (idx < items.length) { active?.classList.remove('active'); items[idx].classList.add('active'); }
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        const idx = active ? items.indexOf(active) - 1 : items.length - 1;
-        if (idx >= 0) { active?.classList.remove('active'); items[idx].classList.add('active'); }
-      } else if (e.key === 'Enter') {
-        const target = active || (items.length === 1 ? items[0] : null);
-        if (target) { e.preventDefault(); selectBook(displayBooks.find(b => b.id === target.dataset.id)); }
-      } else if (e.key === 'Escape') {
-        hideDropdown();
-      }
-    }
-
-    function hideDropdown() {
-      document.getElementById('hadith-book-dropdown')?.classList.remove('visible');
-    }
-
-    function selectBook(book) {
-      document.getElementById('hadith-book-search').value = book.name;
-      document.getElementById('hadith-jump-book').value = book.id;
-      hideDropdown();
-      window.location.hash = buildRoute(collection, book.id);
-    }
-
-    return wrapper;
-  }
-
   function renderDashboard(container, collection = 'sunni') {
     const { sunni, shia } = HadithApi.getAllBooks();
     const isShia = collection === 'shia';
@@ -160,9 +68,6 @@ const HadithDashboard = (() => {
       container.appendChild(warning);
     }
 
-    const searchSection = createHadithQuickJump(displayBooks, collection);
-    container.appendChild(searchSection);
-
     const booksSection = Utils.createElement('div', { className: 'hadith-section' }, [
       Utils.createElement('div', { className: 'hadith-books-grid' })
     ]);
@@ -174,6 +79,29 @@ const HadithDashboard = (() => {
       booksGrid.appendChild(card);
     });
 
+    const hadithBooks = displayBooks.map(b => ({
+      id: b.id,
+      name: b.name,
+      chapters: b.totalHadiths
+    }));
+    const quickJump = QuickJump.create({
+      id: `${collection}-hadith`,
+      books: hadithBooks,
+      routePrefix: getBaseRoute(collection),
+      chapterLabel: 'Hadith #',
+      hideVerse: true,
+      searchPlaceholder: 'Filter books...',
+      onSearch: (query) => {
+        const q = query.toLowerCase();
+        booksGrid.querySelectorAll('.hadith-book-card').forEach(card => {
+          const name = card.querySelector('.hadith-book-name')?.textContent?.toLowerCase() || '';
+          const arabic = card.querySelector('.hadith-book-arabic')?.textContent?.toLowerCase() || '';
+          const match = name.includes(q) || arabic.includes(q) || card.dataset.book?.includes(q);
+          card.style.display = match ? '' : 'none';
+        });
+      }
+    });
+    container.appendChild(quickJump);
     container.appendChild(booksSection);
 
     const footerSection = Utils.createElement('div', { className: 'hadith-footer' }, [
@@ -228,7 +156,7 @@ const HadithDashboard = (() => {
     ]);
   }
 
-  return { getBaseRoute, buildRoute, getGradeInfo, getGradeClass, createHadithQuickJump, renderDashboard, createBookCard };
+  return { getBaseRoute, buildRoute, getGradeInfo, getGradeClass, renderDashboard, createBookCard };
 })();
 
 window.HadithDashboard = HadithDashboard;

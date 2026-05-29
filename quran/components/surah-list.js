@@ -1,5 +1,4 @@
-import { formatTranslation } from './utils.js';
-import { highlightText, parseSearchQuery } from './utils.js';
+import { highlightText } from './utils.js';
 import QuranConfig from './config.js';
 
 let surahs = [];
@@ -20,23 +19,6 @@ function createErrorState() {
     Utils.createElement('div', { className: 'empty-state__title' }, QuranConfig.LABELS.FAILED_TO_LOAD),
     Utils.createElement('div', { className: 'empty-state__description' }, QuranConfig.LABELS.COULD_NOT_LOAD_SURAHLIST)
   ]);
-}
-
-function createSearchRow() {
-  const searchRow = Utils.createElement('div', { style: 'margin-bottom: var(--spacing-lg); display: flex; gap: var(--spacing-sm); align-items: stretch;' }, [
-    Utils.createElement('input', {
-      className: 'input quran-search-input',
-      id: 'surah-search',
-      placeholder: QuranConfig.LABELS.SEARCH_PLACEHOLDER,
-      style: 'flex: 1;'
-    }),
-    Utils.createElement('button', {
-      className: 'btn btn--primary quran-search-btn',
-      id: 'search-btn',
-      style: 'white-space: nowrap;'
-    }, QuranConfig.LABELS.SEARCH_BTN)
-  ]);
-  return searchRow;
 }
 
 function createResultsContainer() {
@@ -169,50 +151,38 @@ async function loadMoreResults(resultsDiv) {
   }
 }
 
-function handleSearch(searchInput, resultsDiv, grid) {
-  return function() {
-    const query = searchInput.value.trim();
-    if (!query) return;
+function handleTextSearch(query, resultsDiv, grid) {
+  if (!query) return;
 
-    const parsed = parseSearchQuery(query);
+  renderGrid(grid, surahs.filter(s =>
+    s.englishName.toLowerCase().includes(query.toLowerCase()) ||
+    s.englishNameTranslation.toLowerCase().includes(query.toLowerCase()) ||
+    String(s.number).includes(query) ||
+    s.name.toLowerCase().includes(query.toLowerCase())
+  ));
 
-    if (parsed.type === 'ayah') {
-      window.location.hash = `#quran/${parsed.surah}/${parsed.ayah}`;
-    } else if (parsed.type === 'surah') {
-      window.location.hash = `#quran/${parsed.surah}`;
-    } else {
-      resultsDiv.style.display = 'none';
-      renderGrid(grid, surahs.filter(s =>
-        s.englishName.toLowerCase().includes(query.toLowerCase()) ||
-        s.englishNameTranslation.toLowerCase().includes(query.toLowerCase()) ||
-        String(s.number).includes(query) ||
-        s.name.toLowerCase().includes(query.toLowerCase())
-      ));
+  currentSearchQuery = '';
+  currentPage = 1;
+  allMatches = [];
+  hasMoreResults = false;
 
-      currentSearchQuery = '';
+  QuranApi.search(query).then(searchResults => {
+    const data = searchResults?.data;
+    if (data && data.matches && data.matches.length > 0) {
+      currentSearchQuery = query;
       currentPage = 1;
-      allMatches = [];
-      hasMoreResults = false;
+      allMatches = data.matches;
+      hasMoreResults = data.hasMore || false;
 
-      QuranApi.search(query).then(searchResults => {
-        const data = searchResults?.data;
-        if (data && data.matches && data.matches.length > 0) {
-          currentSearchQuery = query;
-          currentPage = 1;
-          allMatches = data.matches;
-          hasMoreResults = data.hasMore || false;
-
-          renderSearchResults(resultsDiv, allMatches, data.total || data.matches.length, hasMoreResults);
-        } else {
-          resultsDiv.innerHTML = '';
-          resultsDiv.style.display = 'block';
-          resultsDiv.appendChild(Utils.createElement('p', { style: 'font-size: var(--font-size-sm); color: var(--color-text-secondary);' }, `No results found for "${query}". Try a different search.`));
-        }
-      }).catch(err => {
-        console.error('Global search error:', err);
-      });
+      renderSearchResults(resultsDiv, allMatches, data.total || data.matches.length, hasMoreResults);
+    } else {
+      resultsDiv.innerHTML = '';
+      resultsDiv.style.display = 'block';
+      resultsDiv.appendChild(Utils.createElement('p', { style: 'font-size: var(--font-size-sm); color: var(--color-text-secondary);' }, `No results found for "${query}". Try a different search.`));
     }
-  };
+  }).catch(err => {
+    console.error('Global search error:', err);
+  });
 }
 
 export async function renderSurahList(container) {
@@ -225,9 +195,6 @@ export async function renderSurahList(container) {
 
     surahs = data.data || [];
 
-    const searchRow = createSearchRow();
-    container.appendChild(searchRow);
-
     const resultsDiv = createResultsContainer();
     container.appendChild(resultsDiv);
 
@@ -235,16 +202,21 @@ export async function renderSurahList(container) {
     renderGrid(grid, surahs);
     container.appendChild(grid);
 
-    const searchInput = document.getElementById('surah-search');
-    const searchBtn = document.getElementById('search-btn');
-
-    searchBtn.addEventListener('click', handleSearch(searchInput, resultsDiv, grid));
-
-    searchInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        handleSearch(searchInput, resultsDiv, grid)();
-      }
+    const quranSurahs = surahs.map(s => ({
+      id: String(s.number),
+      name: `${s.number}. ${s.englishName}`,
+      chapters: s.numberOfAyahs
+    }));
+    const quickJump = QuickJump.create({
+      id: 'quran',
+      books: quranSurahs,
+      routePrefix: '#quran',
+      hideChapter: true,
+      verseLabel: 'Ayah',
+      searchPlaceholder: 'Search by words...',
+      onSearch: (query) => handleTextSearch(query, resultsDiv, grid)
     });
+    container.insertBefore(quickJump, resultsDiv);
 
   } catch (error) {
     loader.remove();
