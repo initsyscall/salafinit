@@ -3,6 +3,14 @@ window.QuranProgress = (() => {
   const TOTAL_AYAHS = QuranProgressSurahs.reduce((s, su) => s + su.a, 0);
   let scrollHandler;
 
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return { khatmat: [] };
+  }
+
   function save(data) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
@@ -46,8 +54,43 @@ window.QuranProgress = (() => {
       totalRead += Math.min(read, s.a);
       if (read >= s.a) completed++;
     });
-    const pct = Math.round((totalRead / TOTAL_AYAHS) * 100);
+    const pct = (totalRead / TOTAL_AYAHS) * 100;
     return { totalRead, completed, total: QuranProgressSurahs.length, pct };
+  }
+
+  function getJuzData() {
+    const result = [];
+    for (let i = 0; i < QuranProgressJuz.length; i++) {
+      const curr = QuranProgressJuz[i];
+      const next = QuranProgressJuz[i + 1];
+      let idx = curr.s - 1;
+      const surahs = [];
+      let total = 0;
+      while (idx < QuranProgressSurahs.length) {
+        const s = QuranProgressSurahs[idx];
+        const start = s.n === curr.s ? curr.a : 1;
+        let end = s.a;
+        if (next && s.n === next.s) end = next.a - 1;
+        const count = end - start + 1;
+        if (count > 0) {
+          surahs.push({ ...s, startAyah: start, endAyah: end, count });
+          total += count;
+        }
+        if (next && s.n >= next.s) break;
+        idx++;
+      }
+      result.push({ juz: curr.j, totalAyahs: total, surahs });
+    }
+    return result;
+  }
+
+  function getJuzProgress(k, juzEntry) {
+    let read = 0;
+    juzEntry.surahs.forEach(s => {
+      const p = k.progress[s.n] || 0;
+      read += Math.max(0, Math.min(p, s.endAyah) - s.startAyah + 1);
+    });
+    return read;
   }
 
   function render(container) {
@@ -72,11 +115,13 @@ window.QuranProgress = (() => {
     page.appendChild(h);
 
     /* Stats bar */
+    const RESET_SVG = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>';
+
     const sb = document.createElement('div');
     sb.className = 'qp-stats';
     const pctLabel = document.createElement('div');
     pctLabel.className = 'qp-pct';
-    pctLabel.textContent = stats.pct + '%';
+    pctLabel.textContent = stats.pct.toFixed(2) + '%';
     const barOuter = document.createElement('div');
     barOuter.className = 'qp-bar';
     const barInner = document.createElement('div');
@@ -92,9 +137,27 @@ window.QuranProgress = (() => {
     if (isComplete) {
       info.innerHTML = `<span>Khatm completed <span class="qp-check">✓</span></span>`;
     } else {
-      info.innerHTML = `<span>${stats.completed}/${stats.total} surahs</span><span>${stats.totalRead.toLocaleString()}/${TOTAL_AYAHS.toLocaleString()} ayahs</span>`;
+      info.innerHTML = `<span>${stats.completed}/${stats.total} surahs</span><span>${stats.totalRead.toLocaleString()}/${TOTAL_AYAHS.toLocaleString()} ayahs <span class="qp-reset-all">${RESET_SVG}</span></span>`;
     }
     sb.appendChild(info);
+
+    let resetAllLast = 0;
+    const resetAllEl = info.querySelector('.qp-reset-all');
+    resetAllEl?.addEventListener('click', (e) => {
+      const el = e.currentTarget;
+      el.classList.add('qp-glow');
+      setTimeout(() => { if (el.isConnected) el.classList.remove('qp-glow'); }, 500);
+      const now = Date.now();
+      if (now - resetAllLast < 500) {
+        resetAllLast = 0;
+        khatm.progress = {};
+        khatm.completedAt = null;
+        save(data);
+        render(container);
+      } else {
+        resetAllLast = now;
+      }
+    });
 
     const khatmLabel = document.createElement('div');
     khatmLabel.className = 'qp-khatm-label';
@@ -125,7 +188,7 @@ window.QuranProgress = (() => {
         const s = getKhatmStats(k);
         const item = document.createElement('button');
         item.className = 'qp-history__item';
-        item.innerHTML = `<span>Khatm #${i + 1}</span><span>${s.pct}%</span>`;
+        item.innerHTML = `<span>Khatm #${i + 1}</span><span>${s.pct.toFixed(2)}%</span>`;
         item.addEventListener('click', () => {
           khatm = k;
           render(container);
@@ -135,50 +198,102 @@ window.QuranProgress = (() => {
       page.appendChild(hist);
     }
 
-    /* Surah list */
+    /* Juz sections */
+    const juzData = getJuzData();
     const list = document.createElement('div');
     list.className = 'qp-list';
-    QuranProgressSurahs.forEach(s => {
-      const read = getSurahProgress(khatm, s.n);
-      const complete = read >= s.a;
-      const partial = read > 0 && !complete;
 
-      const item = document.createElement('button');
-      item.className = 'qp-surah' + (complete ? ' qp-surah--done' : partial ? ' qp-surah--partial' : '');
+    juzData.forEach(jd => {
+      const readAyahs = getJuzProgress(khatm, jd);
+      const juzPct = (readAyahs / jd.totalAyahs) * 100;
 
-      const num = document.createElement('span');
-      num.className = 'qp-surah__num';
-      num.textContent = String(s.n).padStart(3, '0');
+      const section = document.createElement('div');
+      section.className = 'qp-juz qp-juz--open';
 
-      const name = document.createElement('span');
-      name.className = 'qp-surah__name';
-      name.textContent = s.e;
+      const header = document.createElement('div');
+      header.className = 'qp-juz__header';
+      header.innerHTML = `
+        <span class="qp-juz__num">Juz ${jd.juz}</span>
+        <span class="qp-juz__pct">${juzPct.toFixed(1)}%</span>
+        <span class="qp-juz__bar"><span class="qp-juz__fill" style="width:${juzPct}%"></span></span>
+        <span class="qp-juz__reset" title="Double-tap to reset this juz">${RESET_SVG}</span>
+      `;
+      header.addEventListener('click', (e) => {
+        if (e.target.closest('.qp-juz__reset')) return;
+        section.classList.toggle('qp-juz--open');
+      });
+      section.appendChild(header);
 
-      const meta = document.createElement('span');
-      meta.className = 'qp-surah__meta';
+      let juzResetLast = 0;
+      const juzResetEl = header.querySelector('.qp-juz__reset');
+      juzResetEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const el = e.currentTarget;
+        el.classList.add('qp-glow');
+        setTimeout(() => { if (el.isConnected) el.classList.remove('qp-glow'); }, 500);
+        const now = Date.now();
+        if (now - juzResetLast < 500) {
+          juzResetLast = 0;
+          jd.surahs.forEach(s => {
+            delete khatm.progress[s.n];
+          });
+          khatm.completedAt = null;
+          save(data);
+          render(container);
+        } else {
+          juzResetLast = now;
+        }
+      });
 
-      if (complete) {
-        meta.innerHTML = '<span class="qp-surah__check">✓</span>';
-      } else if (partial) {
-        meta.textContent = read + '/' + s.a;
-      } else {
-        meta.textContent = s.a + ' ayahs';
-      }
+      const body = document.createElement('div');
+      body.className = 'qp-juz__body';
 
-      item.appendChild(num);
-      item.appendChild(name);
-      item.appendChild(meta);
+      jd.surahs.forEach(s => {
+        const read = getSurahProgress(khatm, s.n);
+        const effectiveRead = Math.max(0, Math.min(read, s.endAyah) - s.startAyah + 1);
+        const complete = effectiveRead >= s.count;
+        const partial = effectiveRead > 0 && !complete;
 
-      const bar = document.createElement('div');
-      bar.className = 'qp-surah__bar';
-      const fill = document.createElement('div');
-      fill.className = 'qp-surah__bar-fill';
-      fill.style.width = complete ? '100%' : (read / s.a * 100) + '%';
-      bar.appendChild(fill);
-      item.appendChild(bar);
+        const item = document.createElement('button');
+        item.className = 'qp-surah' + (complete ? ' qp-surah--done' : partial ? ' qp-surah--partial' : '');
 
-      item.addEventListener('click', () => showSurahDialog(s, read, khatm, data, container));
-      list.appendChild(item);
+        const num = document.createElement('span');
+        num.className = 'qp-surah__num';
+        num.textContent = String(s.n).padStart(3, '0');
+
+        const name = document.createElement('span');
+        name.className = 'qp-surah__name';
+        name.textContent = s.e + (s.count < s.a ? ` (${s.startAyah}-${s.endAyah})` : '');
+
+        const meta = document.createElement('span');
+        meta.className = 'qp-surah__meta';
+
+        if (complete) {
+          meta.innerHTML = '<span class="qp-surah__check">✓</span>';
+        } else if (partial) {
+          meta.textContent = effectiveRead + '/' + s.count;
+        } else {
+          meta.textContent = s.count + ' ayahs';
+        }
+
+        item.appendChild(num);
+        item.appendChild(name);
+        item.appendChild(meta);
+
+        const bar = document.createElement('div');
+        bar.className = 'qp-surah__bar';
+        const fill = document.createElement('div');
+        fill.className = 'qp-surah__bar-fill';
+        fill.style.width = complete ? '100%' : (effectiveRead / s.count * 100) + '%';
+        bar.appendChild(fill);
+        item.appendChild(bar);
+
+        item.addEventListener('click', () => showSurahDialog(s, read, khatm, data, container));
+        body.appendChild(item);
+      });
+
+      section.appendChild(body);
+      list.appendChild(section);
     });
     page.appendChild(list);
 

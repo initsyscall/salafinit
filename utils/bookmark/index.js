@@ -239,7 +239,6 @@ window.Bookmark = window.Bookmark || (() => {
     const header = document.createElement('button');
     header.className = 'bm-section__header';
 
-    let dltLast = 0;
     const fi = document.createElement('input');
     fi.type = 'file';
     fi.accept = '.json';
@@ -280,12 +279,14 @@ window.Bookmark = window.Bookmark || (() => {
 
     header.querySelector('.bm-section__dlt').addEventListener('click', async (e) => {
       e.stopPropagation();
-      const now = Date.now();
-      if (now - dltLast < 500) {
-        dltLast = 0;
+      const dlt = e.currentTarget;
+      if (dlt.classList.contains('bm-section__dlt--confirm')) {
         await BookmarkDB.removeHeading(heading.id);
         section.remove();
-      } else dltLast = now;
+      } else {
+        dlt.classList.add('bm-section__dlt--confirm');
+        setTimeout(() => dlt.classList.remove('bm-section__dlt--confirm'), 800);
+      }
     });
 
     header.querySelector('.bm-section__imp').addEventListener('click', (e) => {

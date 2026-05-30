@@ -112,7 +112,6 @@
 .qp-list {
   display: flex;
   flex-direction: column;
-  gap: 3px;
 }
 
 .qp-surah {
@@ -133,7 +132,10 @@
 }
 
 .qp-surah:hover { background: color-mix(in srgb, var(--color-primary) 3%, transparent); }
-.qp-surah--done { opacity: 0.45; }
+.qp-surah--done {
+  background: color-mix(in srgb, var(--color-quran) 8%, transparent);
+  border-radius: var(--radius-sm);
+}
 .qp-surah--partial { opacity: 0.8; }
 
 .qp-surah__num {
@@ -158,7 +160,11 @@
   flex-shrink: 0;
 }
 
-.qp-surah__check { color: var(--color-primary); opacity: 0.7; }
+.qp-surah__check {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-quran);
+}
 
 .qp-surah__bar {
   position: absolute;
@@ -177,6 +183,115 @@
 }
 
 .qp-surah--done .qp-surah__bar-fill { opacity: 0.15; }
+
+/* ── Juz Sections ── */
+.qp-juz {
+  border: 1px solid color-mix(in srgb, var(--color-rose) 12%, transparent);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color var(--transition-fast);
+}
+
+.qp-juz:hover { border-color: color-mix(in srgb, var(--color-rose) 20%, transparent); }
+
+.qp-juz + .qp-juz { margin-top: 6px; }
+
+.qp-juz__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px var(--spacing-sm);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--color-primary) 4%, transparent) 0%, color-mix(in srgb, var(--color-hadith) 3%, transparent) 100%);
+  color: var(--color-text);
+  cursor: pointer;
+  text-align: left;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  transition: background var(--transition-fast);
+  user-select: none;
+}
+
+.qp-juz__header:hover { background: linear-gradient(90deg, color-mix(in srgb, var(--color-primary) 6%, transparent) 0%, color-mix(in srgb, var(--color-hadith) 5%, transparent) 100%); }
+
+.qp-juz__num { flex: 1; font-weight: 600; letter-spacing: 0.4px; }
+
+.qp-juz__pct {
+  font-size: 0.6rem;
+  color: var(--color-rose);
+  font-weight: 500;
+  min-width: 34px;
+  text-align: right;
+}
+
+.qp-juz__bar {
+  width: 60px;
+  height: 3px;
+  background: color-mix(in srgb, var(--color-text) 6%, transparent);
+  border-radius: 2px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.qp-juz__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-rose));
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.qp-juz__reset {
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 2px 4px;
+  color: color-mix(in srgb, var(--color-danger) 45%, transparent);
+  transition: color var(--transition-fast);
+  display: flex;
+  align-items: center;
+}
+
+.qp-juz__reset:hover { color: var(--color-danger); }
+
+.qp-reset-all {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  cursor: pointer;
+  color: color-mix(in srgb, var(--color-danger) 50%, transparent);
+  opacity: 0.5;
+  transition: opacity var(--transition-fast), color var(--transition-fast);
+  margin-left: 4px;
+}
+
+.qp-reset-all:hover { opacity: 1; color: var(--color-danger); }
+
+.qp-glow { filter: drop-shadow(0 0 4px var(--color-danger)); }
+
+.qp-juz__body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease;
+}
+
+.qp-juz--open .qp-juz__body {
+  max-height: 5000px;
+}
+
+.qp-juz__body .qp-surah {
+  padding-left: var(--spacing-lg);
+  padding-right: var(--spacing-sm);
+}
+
+.qp-juz__body .qp-surah__num { width: 20px; }
+.qp-juz__body .qp-surah:first-child { margin-top: 2px; }
+.qp-juz__body .qp-surah:last-child { margin-bottom: 2px; }
+
+.qp-juz .qp-surah:hover { background: color-mix(in srgb, var(--color-primary) 3%, transparent); }
+.qp-juz .qp-surah__check { font-size: 1rem; font-weight: 700; color: var(--color-quran); }
+.qp-juz .qp-surah__bar-fill { background: var(--color-primary); }
+.qp-juz .qp-surah--done { background: color-mix(in srgb, var(--color-quran) 8%, transparent); }
+.qp-juz .qp-surah--done .qp-surah__bar-fill { background: var(--color-hadith); }
+.qp-juz .qp-surah__num { color: var(--color-learn); opacity: 0.6; }
 
 /* Dialog */
 .qp-overlay {
