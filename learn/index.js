@@ -36,7 +36,7 @@ const LearnView = (() => {
     }, [
       Utils.createElement('div', { className: 'learn-card-arabic' }, 'السَّلَفِيَّةُ'),
       Utils.createElement('div', { className: 'learn-card-title' }, 'Salafiyyah'),
-      Utils.createElement('div', { className: 'learn-card-desc' }, 'Asma ul Husna — the 99 Beautiful Names of Allah · Authentic Duas from Quran & Sunnah · The Path of the Righteous Predecessors'),
+      Utils.createElement('div', { className: 'learn-card-desc' }, 'Salafiyyah is adherence to the Qur\'an and authentic Sunnah upon the understanding of the righteous Salaf of this Ummah.'),
       Utils.createElement('div', { className: 'learn-card-badge' }, 'Return to Truth')
     ]);
     return card;

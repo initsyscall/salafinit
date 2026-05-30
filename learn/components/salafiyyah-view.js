@@ -7,28 +7,53 @@ const SalafiyyahView = (() => {
     const header = Utils.createElement('div', { className: 'salf-header' });
     header.innerHTML = `
       <h1 class="salf-header__title">ٱلسَّلَفِيَّةُ</h1>
-      <p class="salf-header__sub">Salafiyyah is the luminous path of the Prophet and his Companions; a return to the pure spring of Revelation, unclouded by innovation, seeking Allah's pleasure through the Truth.</p>
+      <p class="salf-header__sub">Salafiyyah is adherence to the Qur'an and authentic Sunnah upon the understanding of the righteous Salaf of this Ummah.</p>
     `;
     page.appendChild(header);
 
-    const cards = Utils.createElement('div', { className: 'salf-cards' });
-    cards.appendChild(createCard(
+    const section1 = Utils.createElement('div', { className: 'salf-section' });
+    section1.innerHTML = '<h3 class="salf-section__title">Salafiyyah Primary Resources</h3>';
+    const cards1 = Utils.createElement('div', { className: 'salf-cards' });
+    cards1.appendChild(createCard(
+      'القرآن الكريم',
+      'The Quran',
+      'The final revelation from Allah to mankind',
+      '#quran',
+      'quran'
+    ));
+    cards1.appendChild(createCard(
+      'السنة النبوية',
+      'Sahih Hadiths',
+      'The sayings, actions, and approvals of Prophet Muhammad ﷺ present in Sahih Hadiths',
+      '#hadiths',
+      'hadith'
+    ));
+    section1.appendChild(cards1);
+    page.appendChild(section1);
+
+    const section2 = Utils.createElement('div', { className: 'salf-section' });
+    section2.innerHTML = '<h3 class="salf-section__title">Authentic Resources</h3>';
+    const cards2 = Utils.createElement('div', { className: 'salf-cards' });
+    cards2.appendChild(createCard(
       'أسماء الله الحسنى',
       'Asma ul Husna',
       'The 99 Beautiful Names of Allah',
-      '#learn/salafiyyah/asmaulhusna'
+      '#learn/salafiyyah/asmaulhusna',
+      'asma'
     ));
-    cards.appendChild(createCard(
+    cards2.appendChild(createCard(
       'الأَدْعِيَةُ',
       'Duas',
       'Authentic supplications from the Qur\'an and Sunnah',
-      '#learn/salafiyyah/duas'
+      '#learn/salafiyyah/duas',
+      'duas'
     ));
-    page.appendChild(cards);
+    section2.appendChild(cards2);
+    page.appendChild(section2);
   }
 
-  function createCard(arabic, title, desc, href) {
-    return Utils.createElement('a', { className: 'salf-card', href }, [
+  function createCard(arabic, title, desc, href, color) {
+    return Utils.createElement('a', { className: `salf-card salf-card--${color}`, href }, [
       Utils.createElement('div', { className: 'salf-card__arabic' }, arabic),
       Utils.createElement('div', { className: 'salf-card__title' }, title),
       Utils.createElement('div', { className: 'salf-card__desc' }, desc)
