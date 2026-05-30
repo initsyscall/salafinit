@@ -1,34 +1,38 @@
 # SalafInit
 
-A comprehensive Islamic web application built with sincerity (*ikhlas*) and mindfulness of accountability before Allah. Follows the methodology of the salaf - straightforward, beneficial, free from unnecessary complexity.
+A comprehensive Islamic web application built with sincerity (ikhlas) and mindfulness of accountability before Allah. Follows the methodology of the salaf and the app is for salafiyyah - straightforward, beneficial, free from unnecessary complexity.
 
-live at [SalafInit](https://initsyscall.codeberg.page/salafInit)
+**Live:** [SalafInit](https://initsyscall.codeberg.page/salafInit)
 
-## Purpose
+## Note! 
 
-A companion for the believer's daily Islamic life:
+> This app is for the salafiyyah student so it is presented how the manhaj percive it.
 
-- **Salah** - Prayer times based on location, with clear time ranges
-- **Quran** - Read, search, and reflect on the Book of Allah
-- **Hadith** - Access authentic narrations from the Prophet ﷺ
-- **Learn** - Structured Islamic learning resources
-- **Notes** - Personal reflections and study notes
+## Features
+
+- **Quran** — Read the Mushaf (Uthmani script) with multiple translations and tafsir. Search verses, bookmark ayahs, play audio, and track your reading progress per surah.
+- **Hadith** — Access Kutub al-Sittah (Sahih Bukhari, Muslim, Abu Dawud, Tirmidhi, etc.) with grading, translation support, and search.
+- **Salah** — Accurate prayer times based on location (IP or GPS), with current prayer highlighting, countdown, rakah details, and forbidden time periods.
+- **Learn** — Structured resources organized by tradition:
+  - **Salafiyyah** — Core resources: Asma ul Husna (99 Names), authentic Duas, and direct access to Quran and Sahih Hadiths.
+  - **Shia Hadiths** — Hadith collections from the Shia tradition listed for academic study.
+  - **Comparative Religion** — Biblia, Judaism, Hinduism texts for study.
+- **Utilities** — Bookmarks (save ayahs and hadiths) and Quran Progress tracker (juz-based reading completion).
 
 ## Principles
 
-Built on the salaf's approach:
-- **Clarity over cleverness** - Code remains readable and maintainable
-- **Benefit over features** - Every addition serves a clear purpose
-- **Privacy by design** - No data leaves your device; works offline
-- **No dependencies** - Lightweight, fast, self-contained
+- **Clarity over cleverness** — Code remains readable and maintainable.
+- **Benefit over features** — Every addition serves a clear purpose.
+- **Privacy by design** — No tracking, no accounts, no data leaves your device. Works offline.
+- **No dependencies** — Pure JavaScript, no frameworks, no build tools. Just open `index.html`.
 
 ## Technical
 
-Progressive Web App (PWA) - works offline, installable on any device. Pure JavaScript, no frameworks, no build tools. Just open `index.html`.
+Progressive Web App (PWA). Service worker caches static assets for offline use. Installable on any device. Single-page application with hash-based routing. No build step required.
 
 ## Reminder
 
-> *"And I did not create the jinn and mankind except to worship Me."* - [Quran 51:56]
+> *"And I did not create the jinn and mankind except to worship Me."* — [Qur'an 51:56](https://initsyscall.codeberg.page/salafInit/#quran/51/56)
 
 This project is a small effort to assist in that worship through technology. May Allah accept it from us and you, forgive our shortcomings, and guide us all to what pleases Him.
 
