@@ -346,6 +346,21 @@ export function renderSurahContent(container, uthmani, primaryTranslation, highl
 
   container.appendChild(ayahsContainer);
 
+  const surahNav = Utils.createElement('div', { className: 'quran-surah-nav' });
+  if (uthmani.number > 1) {
+    surahNav.appendChild(Utils.createElement('a', {
+      className: 'quran-surah-nav__link',
+      href: `#quran/${uthmani.number - 1}`
+    }, '← Previous Surah'));
+  }
+  if (uthmani.number < 114) {
+    surahNav.appendChild(Utils.createElement('a', {
+      className: 'quran-surah-nav__link',
+      href: `#quran/${uthmani.number + 1}`
+    }, 'Next Surah →'));
+  }
+  container.appendChild(surahNav);
+
   const scrollToTopBtn = createScrollToTopBtn();
   container.appendChild(scrollToTopBtn);
 }

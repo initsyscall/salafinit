@@ -7,29 +7,29 @@ const SalahView = (() => {
 
   const RAKAH_DETAILS = {
     fajr: [
-      '2 Sunnah (Mu\'akkadah — Before): Better than the world and all it contains (Muslim 725).',
-      '2 Fard.'
+      { rakah: '2 Sunnah Mu\'akkadah', desc: 'Before', note: 'Better than the world and all it contains', source: 'Muslim 725' },
+      { rakah: '2 Fard' }
     ],
     dhuhr: [
-      '4 Sunnah (Mu\'akkadah — Before): Gates of heaven are opened (Tirmidhi 478).',
-      '4 Fard.',
-      '2 Sunnah (Mu\'akkadah — After).',
-      '2 Sunnah (Ghair — After): Praying 4 before and 4 after forbids your body from Hellfire (Tirmidhi 427).'
+      { rakah: '4 Sunnah Mu\'akkadah', desc: 'Before', note: 'Gates of heaven are opened', source: 'Tirmidhi 478' },
+      { rakah: '4 Fard' },
+      { rakah: '2 Sunnah Mu\'akkadah', desc: 'After' },
+      { rakah: '2 Sunnah Ghair Mu\'akkadah', desc: 'After', note: 'Praying 4 before and 4 after forbids your body from Hellfire', source: 'Tirmidhi 427' }
     ],
     asr: [
-      '4 Sunnah (Ghair — Before): Attains the Mercy of Allah (Tirmidhi 430).',
-      '4 Fard.'
+      { rakah: '4 Sunnah Ghair Mu\'akkadah', desc: 'Before', note: 'Attains the Mercy of Allah', source: 'Tirmidhi 430' },
+      { rakah: '4 Fard' }
     ],
     maghrib: [
-      '2 Sunnah (Ghair — Before).',
-      '3 Fard.',
-      '2 Sunnah (Mu\'akkadah — After).'
+      { rakah: '2 Sunnah Ghair Mu\'akkadah', desc: 'Before' },
+      { rakah: '3 Fard' },
+      { rakah: '2 Sunnah Mu\'akkadah', desc: 'After' }
     ],
     isha: [
-      '2 Sunnah (Ghair — Before).',
-      '4 Fard.',
-      '2 Sunnah (Mu\'akkadah — After).',
-      'Witr (1, 3, or 5): The seal of the night. Allah is single (witr) and loves what is single (Bukhari 6410).'
+      { rakah: '2 Sunnah Ghair Mu\'akkadah', desc: 'Before' },
+      { rakah: '4 Fard' },
+      { rakah: '2 Sunnah Mu\'akkadah', desc: 'After' },
+      { rakah: 'Witr (1, 3, or 5)', desc: 'The seal of the night. Allah is single (witr) and loves what is single', source: 'Bukhari 6410' }
     ]
   };
 
@@ -146,7 +146,7 @@ const SalahView = (() => {
       <p class="sh-current__label">Current Prayer</p>
       <h2 class="sh-current__name">${arabic}</h2>
       <p class="sh-current__time">${cur?.time || '--:--'}</p>
-      <p class="sh-current__next">Next: <strong>${nextArabic}</strong> at ${nxt?.time || '--:--'}</p>
+      <p class="sh-current__next"><strong>${nextArabic}</strong> at ${nxt?.time || '--:--'}</p>
     `;
 
     const card = Utils.createElement('div', { className: 'sh-current' });
@@ -167,12 +167,36 @@ const SalahView = (() => {
     if (!lines) return '';
 
     const REF_MAP = { Bukhari: 'bukhari', Muslim: 'muslim', Tirmidhi: 'tirmidhi', 'Abu Dawud': 'abudawud' };
-    const rows = lines.map(l => {
-      const html = l.replace(/\((Bukhari|Muslim|Tirmidhi|Abu\s*Dawud)\s*(\d+)\)/g, (m, name, num) => {
+
+    function linkSource(text) {
+      return text.replace(/\((Bukhari|Muslim|Tirmidhi|Abu\s*Dawud)\s*(\d+)\)/g, (m, name, num) => {
         const slug = REF_MAP[name];
         return `<a href="#hadiths/${slug}/${num}" class="sh-current__ref">${m}</a>`;
       });
-      return `<p class="sh-current__detail-line">${html}</p>`;
+    }
+
+    const rows = lines.map(item => {
+      let descHtml = '';
+      if (item.desc) {
+        descHtml = `<span class="sh-current__detail-desc">${linkSource(item.desc)}</span>`;
+      }
+      if (item.note || item.source) {
+        let noteText = item.note || '';
+        if (item.source) {
+          const linked = linkSource(`(${item.source})`);
+          noteText = noteText ? `${noteText} ${linked}` : linked;
+        } else if (item.note) {
+          noteText = linkSource(item.note);
+        }
+        descHtml += `<span class="sh-current__detail-note">${noteText}</span>`;
+      }
+
+      return `
+        <div class="sh-current__detail-item">
+          <span class="sh-current__detail-rakah">${item.rakah}</span>
+          ${descHtml}
+        </div>
+      `;
     }).join('');
 
     return `
